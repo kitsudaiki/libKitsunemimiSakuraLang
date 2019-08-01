@@ -27,7 +27,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <jsonObjects.h>
+#include <jsonItems.hpp>
 
 namespace Kitsune
 {
@@ -84,13 +84,13 @@ YY_DECL;
 %type  <JsonObject*> blossom
 %type  <JsonArray*> blossom_set
 
-%type  <std::pair<std::string, AbstractJson*>> item
+%type  <std::pair<std::string, JsonItem*>> item
 %type  <JsonObject*> item_set
 %type  <JsonArray*> item_list
 %type  <JsonArray*> forest_parts
 %type  <JsonObject*> forest_part
 
-%type  <std::pair<std::string, AbstractJson*>> setting
+%type  <std::pair<std::string, JsonItem*>> setting
 %type  <JsonObject*> setting_set
 
 %type  <JsonObject*> branch
@@ -246,7 +246,7 @@ setting_set:
 setting:
    "identifier" ":" "identifier"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -254,7 +254,7 @@ setting:
 |
    "identifier" ":" "string"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue(driver.removeQuotes($3));
        $$ = tempItem;
@@ -262,7 +262,7 @@ setting:
 |
    "identifier" ":" "number"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -270,7 +270,7 @@ setting:
 |
    "identifier" ":" "float"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -299,7 +299,7 @@ item:
    {
        // uset value
        std::string empty = "{{}}";
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue(empty);
        $$ = tempItem;
@@ -307,7 +307,7 @@ item:
 |
    "identifier" ":" "identifier"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -315,7 +315,7 @@ item:
 |
    "identifier" ":" "string"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue(driver.removeQuotes($3));
        $$ = tempItem;
@@ -323,7 +323,7 @@ item:
 |
    "identifier" ":" "number"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -331,7 +331,7 @@ item:
 |
    "identifier" ":" "float"
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new JsonValue($3);
        $$ = tempItem;
@@ -339,7 +339,7 @@ item:
 |
    "identifier" ":" item_list
    {
-       std::pair<std::string, AbstractJson*> tempItem;
+       std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = $3;
        $$ = tempItem;
