@@ -9,14 +9,14 @@
 
 #include "parsingTest.h"
 
-#include <libKitsuneSakuraParser.h>
+#include <libKitsuneSakuraParser.hpp>
 #include <testStrings/branchTestString.h>
 #include <testStrings/forestTestString.h>
 #include <testStrings/treeTestString.h>
 
-#include <jsonItems.hpp>
+#include <data_structure/dataItems.hpp>
 
-using namespace Kitsune::Json;
+using namespace Kitsune::Data;
 
 namespace Kitsune
 {
@@ -39,7 +39,7 @@ void ParsingTest::initTestCase()
 
 void ParsingTest::parseBranchTest()
 {
-    std::pair<Json::JsonItem*, bool> result = m_parser->convert(testBranchString);
+    std::pair<Data::DataItem*, bool> result = m_parser->convert(testBranchString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
@@ -49,7 +49,7 @@ void ParsingTest::parseBranchTest()
 
 void ParsingTest::parseTreeTest()
 {
-    std::pair<Json::JsonItem*, bool> result = m_parser->convert(testTreeString);
+    std::pair<Data::DataItem*, bool> result = m_parser->convert(testTreeString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
@@ -58,7 +58,7 @@ void ParsingTest::parseTreeTest()
 
 void ParsingTest::parseForestTest()
 {
-    std::pair<Json::JsonItem*, bool> result = m_parser->convert(testForestString);
+    std::pair<Data::DataItem*, bool> result = m_parser->convert(testForestString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);

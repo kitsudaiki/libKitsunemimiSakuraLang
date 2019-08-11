@@ -10,7 +10,7 @@
 #ifndef PARSERTEST_H
 #define PARSERTEST_H
 
-#include <testing/commonTest.hpp>
+#include <testing/test.hpp>
 
 namespace Kitsune
 {

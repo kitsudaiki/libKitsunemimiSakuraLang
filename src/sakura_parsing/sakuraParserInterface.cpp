@@ -26,7 +26,7 @@ namespace Sakura
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_errorMessage = new JsonObject();
+    m_errorMessage = new DataObject();
 }
 
 /**
@@ -39,7 +39,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
-    m_errorMessage = new JsonObject();
+    m_errorMessage = new DataObject();
     m_output = nullptr;
 
     // run parser-code
@@ -60,7 +60,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @param output
  */
 void
-SakuraParserInterface::setOutput(JsonObject *output)
+SakuraParserInterface::setOutput(Common::DataItem* output)
 {
     m_output = output;
 }
@@ -69,8 +69,7 @@ SakuraParserInterface::setOutput(JsonObject *output)
  * @brief SakuraParserInterface::getOutput
  * @return
  */
-JsonObject*
-SakuraParserInterface::getOutput() const
+Common::DataItem* SakuraParserInterface::getOutput() const
 {
     return m_output;
 }
@@ -97,7 +96,7 @@ SakuraParserInterface::error(const Kitsune::Sakura::location& location,
     errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
     errorString += "broken part in template: \"" + errorStringPart + "\" \n";
 
-    m_errorMessage->insert("error", new JsonValue(errorString));
+    m_errorMessage->toObject()->insert("error", new DataValue(errorString));
 }
 
 /**
@@ -105,8 +104,7 @@ SakuraParserInterface::error(const Kitsune::Sakura::location& location,
  *
  * @return error-message
  */
-JsonObject*
-SakuraParserInterface::getErrorMessage() const
+Common::DataItem* SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
 }

@@ -27,7 +27,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <jsonItems.hpp>
+#include <data_structure/dataItems.hpp>
+
+using Kitsune::Common::DataItem;
+using Kitsune::Common::DataArray;
+using Kitsune::Common::DataValue;
+using Kitsune::Common::DataObject;
 
 namespace Kitsune
 {
@@ -35,7 +40,6 @@ namespace Sakura
 {
 
 class SakuraParserInterface;
-using namespace Kitsune::Json;
 
 }  // namespace Sakura
 }  // namespace Kitsune
@@ -81,25 +85,25 @@ YY_DECL;
 
 %type  <std::string> name_item
 
-%type  <JsonObject*> blossom
-%type  <JsonArray*> blossom_set
+%type  <DataObject*> blossom
+%type  <DataArray*> blossom_set
 
-%type  <std::pair<std::string, JsonItem*>> item
-%type  <JsonObject*> item_set
-%type  <JsonArray*> item_list
-%type  <JsonArray*> forest_parts
-%type  <JsonObject*> forest_part
+%type  <std::pair<std::string, DataItem*>> item
+%type  <DataObject*> item_set
+%type  <DataArray*> item_list
+%type  <DataArray*> forest_parts
+%type  <DataObject*> forest_part
 
 %type  <std::pair<std::string, JsonItem*>> setting
-%type  <JsonObject*> setting_set
+%type  <DataObject*> setting_set
 
-%type  <JsonObject*> branch
-%type  <JsonObject*> tree
-%type  <JsonObject*> forest
+%type  <DataObject*> branch
+%type  <DataObject*> tree
+%type  <DataObject*> forest
 
-%type  <JsonObject*> tree_branch
-%type  <JsonObject*> tree_sequentiell
-%type  <JsonObject*> tree_parallel
+%type  <DataObject*> tree_branch
+%type  <DataObject*> tree_sequentiell
+%type  <DataObject*> tree_parallel
 
 %%
 %start startpoint;
@@ -123,9 +127,9 @@ startpoint:
 forest:
    "[" "FOREST" ":" name_item "]" linebreaks item_set forest_parts
    {
-       $$ = new JsonObject();
-       $$->insert("name", new JsonValue($4));
-       $$->insert("type", new JsonValue("forest"));
+       $$ = new DataObject();
+       $$->insert("name", new DataValue($4));
+       $$->insert("type", new DataValue("forest"));
        $$->insert("items", $7);
        $$->insert("parts", $8);
    }
@@ -133,12 +137,12 @@ forest:
 tree:
    "[" "TREE" ":" name_item "]" linebreaks item_set tree_parallel
    {
-       $$ = new JsonObject();
-       $$->insert("name", new JsonValue($4));
-       $$->insert("type", new JsonValue("tree"));
+       $$ = new DataObject();
+       $$->insert("name", new DataValue($4));
+       $$->insert("type", new DataValue("tree"));
        $$->insert("items", $7);
 
-       JsonArray* tempItem = new JsonArray();
+       DataArray* tempItem = new DataArray();
        tempItem->append($8);
        $$->insert("parts", tempItem);
    }
@@ -146,9 +150,9 @@ tree:
 branch:
    "[" "BRANCH" ":" name_item "]" linebreaks item_set blossom_set
    {
-       $$ = new JsonObject();
-       $$->insert("name", new JsonValue($4));
-       $$->insert("type", new JsonValue("branch"));
+       $$ = new DataObject();
+       $$->insert("name", new DataValue($4));
+       $$->insert("type", new DataValue("branch"));
        $$->insert("items", $7);
        $$->insert("parts", $8);
    }
@@ -156,22 +160,22 @@ branch:
 blossom:
    "[" name_item "]" linebreaks setting_set "-" "identifier" ":" linebreaks item_set
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("blossom"));
-       $$->insert("name", new JsonValue($2));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("blossom"));
+       $$->insert("name", new DataValue($2));
        $$->insert("common-settings", $5);
-       $$->insert("blossom-type", new JsonValue($7));
-       $$->insert("blossom-subtypes", new JsonArray());
+       $$->insert("blossom-type", new DataValue($7));
+       $$->insert("blossom-subtypes", new DataArray());
        $$->insert("items-input", $10);
    }
 |
    "[" name_item "]" linebreaks setting_set "-" "identifier" linebreaks "-" item_list ":" linebreaks item_set
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("blossom"));
-       $$->insert("name", new JsonValue($2));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("blossom"));
+       $$->insert("name", new DataValue($2));
        $$->insert("common-settings", $5);
-       $$->insert("blossom-type", new JsonValue($7));
+       $$->insert("blossom-type", new DataValue($7));
        $$->insert("blossom-subtypes", $10);
        $$->insert("items-input", $13);
    }
@@ -185,30 +189,30 @@ forest_parts:
 |
    forest_part
    {
-       $$ = new JsonArray();
+       $$ = new DataArray();
        $$->append($1);
    }
 
 forest_part:
    "[" name_item "]" linebreaks setting_set "-" "TREE" name_item ":" linebreaks item_set
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("forest"));
-       $$->insert("name", new JsonValue($2));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("forest"));
+       $$->insert("name", new DataValue($2));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new JsonValue($8));
-       $$->insert("item-type", new JsonValue("tree"));
+       $$->insert("item-name", new DataValue($8));
+       $$->insert("item-type", new DataValue("tree"));
        $$->insert("items-input", $11);
    }
 |
    "[" name_item "]" linebreaks setting_set "-" "BRANCH" name_item ":" linebreaks item_set
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("forest"));
-       $$->insert("name", new JsonValue($2));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("forest"));
+       $$->insert("name", new DataValue($2));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new JsonValue($8));
-       $$->insert("item-type", new JsonValue("branch"));
+       $$->insert("item-name", new DataValue($8));
+       $$->insert("item-type", new DataValue("branch"));
        $$->insert("items-input", $11);
    }
 
@@ -221,14 +225,14 @@ blossom_set:
 |
    blossom
    {
-       $$ = new JsonArray();
+       $$ = new DataArray();
        $$->append($1);
    }
 
 setting_set:
    %empty
    {
-       $$ = new JsonObject();
+       $$ = new DataObject();
    }
 |
    setting_set setting linebreaks
@@ -239,7 +243,7 @@ setting_set:
 |
    setting linebreaks
    {
-       $$ = new JsonObject();
+       $$ = new DataObject();
        $$->insert($1.first, $1.second);
    }
 
@@ -248,7 +252,7 @@ setting:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 |
@@ -256,7 +260,7 @@ setting:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue(driver.removeQuotes($3));
+       tempItem.second = new DataValue(driver.removeQuotes($3));
        $$ = tempItem;
    }
 |
@@ -264,7 +268,7 @@ setting:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 |
@@ -272,14 +276,14 @@ setting:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 
 item_set:
    %empty
    {
-       $$ = new JsonObject();
+       $$ = new DataObject();
    }
 |
    item_set  item  linebreaks
@@ -290,7 +294,7 @@ item_set:
 |
    item linebreaks
    {
-       $$ = new JsonObject();
+       $$ = new DataObject();
        $$->insert($1.first, $1.second);
    }
 
@@ -301,7 +305,7 @@ item:
        std::string empty = "{{}}";
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue(empty);
+       tempItem.second = new DataValue(empty);
        $$ = tempItem;
    }
 |
@@ -309,7 +313,7 @@ item:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 |
@@ -317,7 +321,7 @@ item:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue(driver.removeQuotes($3));
+       tempItem.second = new DataValue(driver.removeQuotes($3));
        $$ = tempItem;
    }
 |
@@ -325,7 +329,7 @@ item:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 |
@@ -333,7 +337,7 @@ item:
    {
        std::pair<std::string, JsonItem*> tempItem;
        tempItem.first = $1;
-       tempItem.second = new JsonValue($3);
+       tempItem.second = new DataValue($3);
        $$ = tempItem;
    }
 |
@@ -348,57 +352,57 @@ item:
 item_list:
    item_list "," "identifier"
    {
-       $1->append(new JsonValue($3));
+       $1->append(new DataValue($3));
        $$ = $1;
    }
 |
    item_list "identifier"
    {
-       $1->append(new JsonValue($2));
+       $1->append(new DataValue($2));
        $$ = $1;
    }
 |
    "identifier" "identifier"
    {
-       $$ = new JsonArray();
-       $$->append(new JsonValue($1));
-       $$->append(new JsonValue($2));
+       $$ = new DataArray();
+       $$->append(new DataValue($1));
+       $$->append(new DataValue($2));
    }
 |
    "identifier" "," "identifier"
    {
-       $$ = new JsonArray();
-       $$->append(new JsonValue($1));
-       $$->append(new JsonValue($3));
+       $$ = new DataArray();
+       $$->append(new DataValue($1));
+       $$->append(new DataValue($3));
    }
 |
    "identifier"
    {
-       $$ = new JsonArray();
-       $$->append(new JsonValue($1));
+       $$ = new DataArray();
+       $$->append(new DataValue($1));
    }
 
 tree_sequentiell:
    tree_sequentiell linebreaks_sp tree_branch
    {
-       JsonArray* array = (JsonArray*)$1->get("parts");
+       DataArray* array = (DataArray*)$1->get("parts");
        array->append($3);
        $$ = $1;
    }
 |
    tree_sequentiell linebreaks_sp "[" linebreaks_sp tree_parallel linebreaks_sp "]"
    {
-       JsonArray* array = (JsonArray*)$1->get("parts");
+       DataArray* array = (DataArray*)$1->get("parts");
        array->append($5);
        $$ = $1;
    }
 |
    tree_branch
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("sequentiell"));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("sequentiell"));
 
-       JsonArray* tempItem = new JsonArray();
+       DataArray* tempItem = new DataArray();
        tempItem->append($1);
 
        $$->insert("parts", tempItem);
@@ -406,10 +410,10 @@ tree_sequentiell:
 |
    "[" linebreaks_sp tree_parallel linebreaks_sp "]"
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("sequentiell"));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("sequentiell"));
 
-       JsonArray* tempItem = new JsonArray();
+       DataArray* tempItem = new DataArray();
        tempItem->append($3);
 
        $$->insert("parts", tempItem);
@@ -418,10 +422,10 @@ tree_sequentiell:
 tree_parallel:
    "{" linebreaks_sp tree_sequentiell linebreaks_sp "}"
    {
-       $$ = new JsonObject();
-       $$->insert("type", new JsonValue("parallel"));
+       $$ = new DataObject();
+       $$->insert("type", new DataValue("parallel"));
 
-       JsonArray* tempItem = new JsonArray();
+       DataArray* tempItem = new DataArray();
        tempItem->append($3);
 
        $$->insert("parts", tempItem);
@@ -430,9 +434,9 @@ tree_parallel:
 tree_branch:
    "[" "BRANCH" ":" name_item "]" linebreaks item_set
    {
-       JsonObject* tempItem = new JsonObject();
-       tempItem->insert("type", new JsonValue("branch"));
-       tempItem->insert("name", new JsonValue(driver.removeQuotes($4)));
+       DataObject* tempItem = new DataObject();
+       tempItem->insert("type", new DataValue("branch"));
+       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
        tempItem->insert("items-input", $7);
        $$ = tempItem;
    }

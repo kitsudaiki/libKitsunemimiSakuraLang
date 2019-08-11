@@ -12,10 +12,12 @@
 
 #include <utility>
 #include <string>
-#include <jsonItems.hpp>
 
 namespace Kitsune
 {
+namespace Common {
+class DataItem;
+}
 namespace Sakura
 {
 class SakuraParserInterface;
@@ -26,7 +28,7 @@ public:
     LibKitsuneSakuraParser(const bool traceParsing);
     ~LibKitsuneSakuraParser();
 
-    std::pair<Json::JsonObject*, bool> convert(const std::string &templateString);
+    std::pair<Common::DataItem*, bool> convert(const std::string &inputString);
 
 private:
     SakuraParserInterface* m_parser = nullptr;

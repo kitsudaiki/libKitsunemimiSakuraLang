@@ -12,7 +12,7 @@
 
 #include <vector>
 #include <string>
-#include <jsonItems.hpp>
+#include <data_structure/dataItems.hpp>
 
 #include <iostream>
 
@@ -34,13 +34,13 @@ public:
     bool parse(const std::string &inputString);
 
     // output-handling
-    void setOutput(Json::JsonObject* output);
-    Json::JsonObject* getOutput() const;
+    void setOutput(Common::DataItem* output);
+    Common::DataItem* getOutput() const;
 
     // Error handling.
     void error(const Kitsune::Sakura::location &location,
                const std::string& message);
-    Json::JsonObject *getErrorMessage() const;
+    Common::DataItem* getErrorMessage() const;
 
     std::string removeQuotes(std::string input);
 
@@ -48,8 +48,8 @@ private:
     bool m_traceParsing = false;
 
     std::string m_inputString = "";
-    Json::JsonObject* m_output = nullptr;
-    Json::JsonObject* m_errorMessage = nullptr;
+    Common::DataItem* m_output = nullptr;
+    Common::DataItem* m_errorMessage = nullptr;
 };
 
 }  // namespace Sakura
