@@ -1,5 +1,5 @@
 /**
- *  @file    sakuraParserInterface.cpp
+ *  @file    sakura_parser_interface.cpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,12 +7,18 @@
  *  Apache License Version 2.0
  */
 
-#include <sakura_parsing/sakuraParserInterface.h>
-#include <sakuraparser.h>
+#include <sakura_parsing/sakura_parser_interface.hpp>
+#include <sakura_parser.hpp>
+#include <sakura_converter.hpp>
 
 # define YY_DECL \
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
 YY_DECL;
+
+using Kitsune::Common::DataItem;
+using Kitsune::Common::DataArray;
+using Kitsune::Common::DataValue;
+using Kitsune::Common::DataObject;
 
 namespace Kitsune
 {

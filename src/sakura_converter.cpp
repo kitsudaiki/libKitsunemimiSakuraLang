@@ -1,5 +1,5 @@
 /**
- *  @file    libKitsuneSakuraParser.cpp
+ *  @file    sakura_converter.cpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,9 +7,9 @@
  *  Apache License Version 2.0
  */
 
-#include <libKitsuneSakuraParser.hpp>
+#include <sakura_converter.hpp>
 
-#include <sakura_parsing/sakuraParserInterface.h>
+#include <sakura_parsing/sakura_parser_interface.hpp>
 #include <data_structure/dataItems.hpp>
 
 namespace Kitsune
@@ -20,7 +20,7 @@ namespace Sakura
 /**
  * constructor
  */
-LibKitsuneSakuraParser::LibKitsuneSakuraParser(const bool traceParsing)
+SakuraConverter::SakuraConverter(const bool traceParsing)
 {
     m_parser = new SakuraParserInterface(traceParsing);
 }
@@ -28,7 +28,7 @@ LibKitsuneSakuraParser::LibKitsuneSakuraParser(const bool traceParsing)
 /**
  * destructor
  */
-LibKitsuneSakuraParser::~LibKitsuneSakuraParser()
+SakuraConverter::~SakuraConverter()
 {
     delete m_parser;
 }
@@ -43,7 +43,7 @@ LibKitsuneSakuraParser::~LibKitsuneSakuraParser()
  *         else the string contains the error-message
  */
 std::pair<Common::DataItem*, bool>
-LibKitsuneSakuraParser::convert(const std::string &inputString)
+SakuraConverter::parse(const std::string &inputString)
 {
     std::pair<Common::DataItem*, bool> result;
 

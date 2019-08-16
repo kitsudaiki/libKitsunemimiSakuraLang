@@ -1,5 +1,5 @@
 /**
- *  @file    forestTestString.h
+ *  @file    forest_test_string.hpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,8 +7,8 @@
  *  Apache License Version 2.0
  */
 
-#ifndef FORESTTESTSTRING_H
-#define FORESTTESTSTRING_H
+#ifndef FOREST_TEST_STRING_HPP
+#define FOREST_TEST_STRING_HPP
 
 #include <iostream>
 
@@ -22,4 +22,4 @@ std::string testForestString = "[FOREST: test_forest]\n"
                                "-TREE test_tree:\n"
                                "\n";
 
-#endif // FORESTTESTSTRING_H
+#endif // FOREST_TEST_STRING_HPP

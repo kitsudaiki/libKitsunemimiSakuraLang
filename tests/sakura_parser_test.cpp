@@ -1,5 +1,5 @@
 /**
- *  @file    parsingTest.cpp
+ *  @file    sakura_parser_test.cpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,23 +7,26 @@
  *  Apache License Version 2.0
  */
 
-#include "parsingTest.h"
+#include "sakura_parser_test.hpp"
 
-#include <libKitsuneSakuraParser.hpp>
-#include <testStrings/branchTestString.h>
-#include <testStrings/forestTestString.h>
-#include <testStrings/treeTestString.h>
+#include <sakura_converter.hpp>
+#include <test_strings/branch_test_string.hpp>
+#include <test_strings/forest_test_string.hpp>
+#include <test_strings/tree_test_string.hpp>
 
 #include <data_structure/dataItems.hpp>
 
-using namespace Kitsune::Data;
+using Kitsune::Common::DataItem;
+using Kitsune::Common::DataArray;
+using Kitsune::Common::DataValue;
+using Kitsune::Common::DataObject;
 
 namespace Kitsune
 {
 namespace Sakura
 {
 
-ParsingTest::ParsingTest() : Kitsune::CommonTest("ParsingTest")
+ParsingTest::ParsingTest() : Kitsune::Common::Test("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
@@ -34,12 +37,12 @@ ParsingTest::ParsingTest() : Kitsune::CommonTest("ParsingTest")
 
 void ParsingTest::initTestCase()
 {
-    m_parser = new LibKitsuneSakuraParser(false);
+    m_parser = new SakuraConverter(false);
 }
 
 void ParsingTest::parseBranchTest()
 {
-    std::pair<Data::DataItem*, bool> result = m_parser->convert(testBranchString);
+    std::pair<DataItem*, bool> result = m_parser->parse(testBranchString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
@@ -49,7 +52,7 @@ void ParsingTest::parseBranchTest()
 
 void ParsingTest::parseTreeTest()
 {
-    std::pair<Data::DataItem*, bool> result = m_parser->convert(testTreeString);
+    std::pair<DataItem*, bool> result = m_parser->parse(testTreeString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
@@ -58,7 +61,7 @@ void ParsingTest::parseTreeTest()
 
 void ParsingTest::parseForestTest()
 {
-    std::pair<Data::DataItem*, bool> result = m_parser->convert(testForestString);
+    std::pair<DataItem*, bool> result = m_parser->parse(testForestString);
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
@@ -70,6 +73,6 @@ void ParsingTest::cleanupTestCase()
     delete m_parser;
 }
 
-}
+}  // namespace Sakura
 }  // namespace Kitsune
 

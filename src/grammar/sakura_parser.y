@@ -52,7 +52,7 @@ class SakuraParserInterface;
 
 %code
 {
-#include <sakura_parsing/sakuraParserInterface.h>
+#include <sakura_parsing/sakura_parser_interface.hpp>
 # undef YY_DECL
 # define YY_DECL \
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
@@ -94,7 +94,7 @@ YY_DECL;
 %type  <DataArray*> forest_parts
 %type  <DataObject*> forest_part
 
-%type  <std::pair<std::string, JsonItem*>> setting
+%type  <std::pair<std::string, DataItem*>> setting
 %type  <DataObject*> setting_set
 
 %type  <DataObject*> branch
@@ -250,7 +250,7 @@ setting_set:
 setting:
    "identifier" ":" "identifier"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -258,7 +258,7 @@ setting:
 |
    "identifier" ":" "string"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue(driver.removeQuotes($3));
        $$ = tempItem;
@@ -266,7 +266,7 @@ setting:
 |
    "identifier" ":" "number"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -274,7 +274,7 @@ setting:
 |
    "identifier" ":" "float"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -303,7 +303,7 @@ item:
    {
        // uset value
        std::string empty = "{{}}";
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue(empty);
        $$ = tempItem;
@@ -311,7 +311,7 @@ item:
 |
    "identifier" ":" "identifier"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -319,7 +319,7 @@ item:
 |
    "identifier" ":" "string"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue(driver.removeQuotes($3));
        $$ = tempItem;
@@ -327,7 +327,7 @@ item:
 |
    "identifier" ":" "number"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -335,7 +335,7 @@ item:
 |
    "identifier" ":" "float"
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = new DataValue($3);
        $$ = tempItem;
@@ -343,7 +343,7 @@ item:
 |
    "identifier" ":" item_list
    {
-       std::pair<std::string, JsonItem*> tempItem;
+       std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $1;
        tempItem.second = $3;
        $$ = tempItem;

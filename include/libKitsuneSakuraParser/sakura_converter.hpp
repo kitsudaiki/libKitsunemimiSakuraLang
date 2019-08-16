@@ -1,5 +1,5 @@
 /**
- *  @file    libKitsuneSakuraParser.h
+ *  @file    sakura_converter.hpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,8 +7,8 @@
  *  Apache License Version 2.0
  */
 
-#ifndef LIBKITSUNESAKURAPARSER_H
-#define LIBKITSUNESAKURAPARSER_H
+#ifndef LIBKITSUNE_SAKURA_PARSER_HPP
+#define LIBKITSUNE_SAKURA_PARSER_HPP
 
 #include <utility>
 #include <string>
@@ -22,13 +22,13 @@ namespace Sakura
 {
 class SakuraParserInterface;
 
-class LibKitsuneSakuraParser
+class SakuraConverter
 {
 public:
-    LibKitsuneSakuraParser(const bool traceParsing);
-    ~LibKitsuneSakuraParser();
+    SakuraConverter(const bool traceParsing);
+    ~SakuraConverter();
 
-    std::pair<Common::DataItem*, bool> convert(const std::string &inputString);
+    std::pair<Common::DataItem*, bool> parse(const std::string &inputString);
 
 private:
     SakuraParserInterface* m_parser = nullptr;
@@ -37,4 +37,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // LIBKITSUNESAKURAPARSER_H
+#endif // LIBKITSUNE_SAKURA_PARSER_HPP
