@@ -1,5 +1,5 @@
 /**
- *  @file    sakuraParserInterface.h
+ *  @file    sakura_parser_interface.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,12 +7,12 @@
  *  Apache License Version 2.0
  */
 
-#ifndef JINJA2PARSERINTERFACE_HH
-#define JINJA2PARSERINTERFACE_HH
+#ifndef SAKURA_PARSER_INTERFACE_H
+#define SAKURA_PARSER_INTERFACE_H
 
 #include <vector>
 #include <string>
-#include <jsonItems.hpp>
+#include <data_structure/data_items.h>
 
 #include <iostream>
 
@@ -34,13 +34,13 @@ public:
     bool parse(const std::string &inputString);
 
     // output-handling
-    void setOutput(Json::JsonObject* output);
-    Json::JsonObject* getOutput() const;
+    void setOutput(Common::DataItem* output);
+    Common::DataItem* getOutput() const;
 
     // Error handling.
     void error(const Kitsune::Sakura::location &location,
                const std::string& message);
-    Json::JsonObject *getErrorMessage() const;
+    Common::DataItem* getErrorMessage() const;
 
     std::string removeQuotes(std::string input);
 
@@ -48,11 +48,11 @@ private:
     bool m_traceParsing = false;
 
     std::string m_inputString = "";
-    Json::JsonObject* m_output = nullptr;
-    Json::JsonObject* m_errorMessage = nullptr;
+    Common::DataItem* m_output = nullptr;
+    Common::DataItem* m_errorMessage = nullptr;
 };
 
 }  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // JINJA2PARSERINTERFACE_HH
+#endif // SAKURA_PARSER_INTERFACE_H

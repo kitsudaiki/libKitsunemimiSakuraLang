@@ -1,5 +1,5 @@
 /**
- *  @file    parsingTest.h
+ *  @file    sakura_parser_test.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,18 +7,18 @@
  *  Apache License Version 2.0
  */
 
-#ifndef PARSERTEST_H
-#define PARSERTEST_H
+#ifndef SAKURA_PARSER_TEST_H
+#define SAKURA_PARSER_TEST_H
 
-#include <testing/commonTest.hpp>
+#include <testing/test.h>
 
 namespace Kitsune
 {
 namespace Sakura
 {
-class LibKitsuneSakuraParser;
+class SakuraConverter;
 
-class ParsingTest : public Kitsune::CommonTest
+class ParsingTest : public Kitsune::Common::Test
 {
 public:
     ParsingTest();
@@ -30,10 +30,10 @@ private:
     void parseForestTest();
     void cleanupTestCase();
 
-    LibKitsuneSakuraParser* m_parser = nullptr;
+    SakuraConverter* m_parser = nullptr;
 };
 
-}
+}  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // PARSERTEST_H
+#endif // SAKURA_PARSER_TEST_H
