@@ -14,7 +14,7 @@
 #include <test_strings/forest_test_string.h>
 #include <test_strings/tree_test_string.h>
 
-#include <data_structure/dataItems.h>
+#include <data_structure/data_items.h>
 
 using Kitsune::Common::DataItem;
 using Kitsune::Common::DataArray;
@@ -46,7 +46,7 @@ void ParsingTest::parseBranchTest()
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
-    std::cout<<"output: "<<output<<std::endl;;
+    //std::cout<<"output: "<<output<<std::endl;;
 
 }
 
@@ -56,7 +56,7 @@ void ParsingTest::parseTreeTest()
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
-    std::cout<<"output: "<<output<<std::endl;;
+    //std::cout<<"output: "<<output<<std::endl;;
 }
 
 void ParsingTest::parseForestTest()
@@ -65,7 +65,7 @@ void ParsingTest::parseForestTest()
     UNITTEST(result.second, true);
     std::string output = "";
     result.first->print(&output, true);
-    std::cout<<"output: "<<output<<std::endl;;
+    //std::cout<<"output: "<<output<<std::endl;;
 }
 
 void ParsingTest::cleanupTestCase()

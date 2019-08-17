@@ -12,6 +12,7 @@ build:
     - cd libKitsuneCommon
     - /usr/lib/x86_64-linux-gnu/qt5/bin/qmake /builds/kitsune_libs/libKitsuneCommon/libKitsuneCommon.pro -spec linux-g++
     - /usr/bin/make
+    - mv /builds/kitsune_libs/libKitsuneCommon /builds/kitsune_automation/
 
     - cd /builds/build
     - mkdir libKitsuneSakuraParser
