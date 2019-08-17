@@ -1,5 +1,5 @@
 /**
- *  @file    sakuraParserInterface.cpp
+ *  @file    sakura_parser_interface.cpp
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,12 +7,18 @@
  *  Apache License Version 2.0
  */
 
-#include <sakura_parsing/sakuraParserInterface.h>
-#include <sakuraparser.h>
+#include <sakura_parsing/sakura_parser_interface.h>
+#include <sakura_parser.h>
+#include <sakura_converter.h>
 
 # define YY_DECL \
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
 YY_DECL;
+
+using Kitsune::Common::DataItem;
+using Kitsune::Common::DataArray;
+using Kitsune::Common::DataValue;
+using Kitsune::Common::DataObject;
 
 namespace Kitsune
 {
@@ -26,7 +32,7 @@ namespace Sakura
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_errorMessage = new JsonObject();
+    m_errorMessage = new DataObject();
 }
 
 /**
@@ -39,7 +45,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
-    m_errorMessage = new JsonObject();
+    m_errorMessage = new DataObject();
     m_output = nullptr;
 
     // run parser-code
@@ -60,7 +66,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @param output
  */
 void
-SakuraParserInterface::setOutput(JsonObject *output)
+SakuraParserInterface::setOutput(Common::DataItem* output)
 {
     m_output = output;
 }
@@ -69,8 +75,7 @@ SakuraParserInterface::setOutput(JsonObject *output)
  * @brief SakuraParserInterface::getOutput
  * @return
  */
-JsonObject*
-SakuraParserInterface::getOutput() const
+Common::DataItem* SakuraParserInterface::getOutput() const
 {
     return m_output;
 }
@@ -97,7 +102,7 @@ SakuraParserInterface::error(const Kitsune::Sakura::location& location,
     errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
     errorString += "broken part in template: \"" + errorStringPart + "\" \n";
 
-    m_errorMessage->insert("error", new JsonValue(errorString));
+    m_errorMessage->toObject()->insert("error", new DataValue(errorString));
 }
 
 /**
@@ -105,8 +110,7 @@ SakuraParserInterface::error(const Kitsune::Sakura::location& location,
  *
  * @return error-message
  */
-JsonObject*
-SakuraParserInterface::getErrorMessage() const
+Common::DataItem* SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
 }

@@ -11,22 +11,17 @@ LIBS += -L../../libKitsuneCommon/src/debug -lKitsuneCommon
 LIBS += -L../../libKitsuneCommon/src/release -lKitsuneCommon
 INCLUDEPATH += ../../libKitsuneCommon/include/libKitsuneCommon
 
-LIBS += -L../../libKitsuneJson/src -lKitsuneJson
-LIBS += -L../../libKitsuneJson/src/debug -lKitsuneJson
-LIBS += -L../../libKitsuneJson/src/release -lKitsuneJson
-INCLUDEPATH += ../../libKitsuneJson/include/libKitsuneJson
-
 INCLUDEPATH += $$PWD
 
 LIBS += -L../src -lKitsuneSakuraParser
 
 SOURCES += \
         main.cpp \
-    parsingTest.cpp
+    sakura_parser_test.cpp
 
 HEADERS += \
-    parsingTest.h \
-    testStrings/treeTestString.h \
-    testStrings/forestTestString.h \
-    testStrings/branchTestString.h
+    test_strings/branch_test_string.h \
+    sakura_parser_test.h \
+    test_strings/tree_test_string.h \
+    test_strings/forest_test_string.h
 

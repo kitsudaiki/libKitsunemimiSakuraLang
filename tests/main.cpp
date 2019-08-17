@@ -8,7 +8,7 @@
  */
 
 #include <iostream>
-#include <parsingTest.h>
+#include <sakura_parser_test.h>
 
 int main()
 {

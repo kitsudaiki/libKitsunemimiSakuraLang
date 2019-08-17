@@ -3,8 +3,8 @@
 # include <climits>
 # include <cstdlib>
 # include <string>
-# include <sakura_parsing/sakuraParserInterface.h>
-# include <sakuraparser.h>
+# include <sakura_parsing/sakura_parser_interface.h>
+# include <sakura_parser.h>
 
 # undef yywrap
 # define yywrap() 1
@@ -18,7 +18,6 @@
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
 YY_DECL;
 Kitsune::Sakura::location sakuraloc;
-
 %}
 
 
@@ -52,7 +51,7 @@ blank [ \t]
 "."         return Kitsune::Sakura::SakuraParser::make_DOT (sakuraloc);
 ","         return Kitsune::Sakura::SakuraParser::make_COMMA (sakuraloc);
 
-\"(\\.|[^"\\])*\" {
+\"(\$\{.*\}|\\.|[^\"\\])*\" {
     return Kitsune::Sakura::SakuraParser::make_STRING(yytext, sakuraloc);
 }
 

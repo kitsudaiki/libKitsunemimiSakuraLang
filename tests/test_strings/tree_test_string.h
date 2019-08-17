@@ -1,5 +1,5 @@
 /**
- *  @file    treeTestString.h
+ *  @file    tree_test_string.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,8 +7,8 @@
  *  Apache License Version 2.0
  */
 
-#ifndef TREETESTSTRING_H
-#define TREETESTSTRING_H
+#ifndef TREE_TEST_STRING_H
+#define TREE_TEST_STRING_H
 
 #include <iostream>
 
@@ -20,4 +20,4 @@ std::string testTreeString = "[TREE: test_tree]\n"
                              "	 packages: \"{{packages}}\"\n"
                              "}\n\n";
 
-#endif // TREETESTSTRING_H
+#endif // TREE_TEST_STRING_H
