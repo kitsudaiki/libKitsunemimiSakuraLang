@@ -1,5 +1,5 @@
 /**
- *  @file    branch_test_string.hpp
+ *  @file    branch_test_string.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,8 +7,8 @@
  *  Apache License Version 2.0
  */
 
-#ifndef BRANCH_TEST_STRING_HPP
-#define BRANCH_TEST_STRING_HPP
+#ifndef BRANCH_TEST_STRING_H
+#define BRANCH_TEST_STRING_H
 
 #include <iostream>
 
@@ -26,4 +26,4 @@ std::string testBranchString = "[BRANCH: install_branch]\n"
                                "    names: \"{{packages}}\"\n"
                                "\n";
 
-#endif // BRANCH_TEST_STRING_HPP
+#endif // BRANCH_TEST_STRING_H

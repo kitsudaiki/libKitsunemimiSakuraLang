@@ -7,9 +7,9 @@
  *  Apache License Version 2.0
  */
 
-#include <sakura_parsing/sakura_parser_interface.hpp>
-#include <sakura_parser.hpp>
-#include <sakura_converter.hpp>
+#include <sakura_parsing/sakura_parser_interface.h>
+#include <sakura_parser.h>
+#include <sakura_converter.h>
 
 # define YY_DECL \
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)

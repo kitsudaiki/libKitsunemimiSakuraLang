@@ -18,8 +18,8 @@ SOURCES += \
     sakura_converter.cpp
 
 HEADERS += \
-    sakura_parsing/sakura_parser_interface.hpp \
-    ../include/libKitsuneSakuraParser/sakura_converter.hpp
+    ../include/libKitsuneSakuraParser/sakura_converter.h \
+    sakura_parsing/sakura_parser_interface.h
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y
@@ -33,7 +33,7 @@ OTHER_FILES +=  \
 # The resulting source-code-files are stored in the build-directory of the sakura-converter.
 flexsource.input = FLEXSOURCES
 flexsource.output = ${QMAKE_FILE_BASE}.cpp
-flexsource.commands = flex --header-file=${QMAKE_FILE_BASE}.hpp -o ${QMAKE_FILE_BASE}.cpp ${QMAKE_FILE_IN}
+flexsource.commands = flex --header-file=${QMAKE_FILE_BASE}.h -o ${QMAKE_FILE_BASE}.cpp ${QMAKE_FILE_IN}
 flexsource.variable_out = SOURCES
 flexsource.name = Flex Sources ${QMAKE_FILE_IN}
 flexsource.CONFIG += target_predeps
@@ -53,7 +53,7 @@ QMAKE_EXTRA_COMPILERS += flexheader
 
 bisonsource.input = BISONSOURCES
 bisonsource.output = ${QMAKE_FILE_BASE}.cpp
-bisonsource.commands = bison -d --defines=${QMAKE_FILE_BASE}.hpp -o ${QMAKE_FILE_BASE}.cpp ${QMAKE_FILE_IN}
+bisonsource.commands = bison -d --defines=${QMAKE_FILE_BASE}.h -o ${QMAKE_FILE_BASE}.cpp ${QMAKE_FILE_IN}
 bisonsource.variable_out = SOURCES
 bisonsource.name = Bison Sources ${QMAKE_FILE_IN}
 bisonsource.CONFIG += target_predeps

@@ -1,5 +1,5 @@
 /**
- *  @file    sakura_parser_test.hpp
+ *  @file    sakura_parser_test.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,10 +7,10 @@
  *  Apache License Version 2.0
  */
 
-#ifndef SAKURA_PARSER_TEST_HPP
-#define SAKURA_PARSER_TEST_HPP
+#ifndef SAKURA_PARSER_TEST_H
+#define SAKURA_PARSER_TEST_H
 
-#include <testing/test.hpp>
+#include <testing/test.h>
 
 namespace Kitsune
 {
@@ -36,4 +36,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // SAKURA_PARSER_TEST_HPP
+#endif // SAKURA_PARSER_TEST_H

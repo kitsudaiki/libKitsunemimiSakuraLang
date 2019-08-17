@@ -1,5 +1,5 @@
 /**
- *  @file    sakura_parser_interface.hpp
+ *  @file    sakura_parser_interface.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,12 +7,12 @@
  *  Apache License Version 2.0
  */
 
-#ifndef SAKURA_PARSER_INTERFACE_HPP
-#define SAKURA_PARSER_INTERFACE_HPP
+#ifndef SAKURA_PARSER_INTERFACE_H
+#define SAKURA_PARSER_INTERFACE_H
 
 #include <vector>
 #include <string>
-#include <data_structure/dataItems.hpp>
+#include <data_structure/data_items.h>
 
 #include <iostream>
 
@@ -55,4 +55,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // SAKURA_PARSER_INTERFACE_HPP
+#endif // SAKURA_PARSER_INTERFACE_H

@@ -1,5 +1,5 @@
 /**
- *  @file    sakura_converter.hpp
+ *  @file    sakura_converter.h
  *
  *  @author  Tobias Anker
  *  Contact: tobias.anker@kitsunemimi.moe
@@ -7,8 +7,8 @@
  *  Apache License Version 2.0
  */
 
-#ifndef LIBKITSUNE_SAKURA_PARSER_HPP
-#define LIBKITSUNE_SAKURA_PARSER_HPP
+#ifndef LIBKITSUNE_SAKURA_PARSER_H
+#define LIBKITSUNE_SAKURA_PARSER_H
 
 #include <utility>
 #include <string>
@@ -37,4 +37,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsune
 
-#endif // LIBKITSUNE_SAKURA_PARSER_HPP
+#endif // LIBKITSUNE_SAKURA_PARSER_H

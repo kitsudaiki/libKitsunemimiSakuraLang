@@ -7,10 +7,10 @@
  *  Apache License Version 2.0
  */
 
-#include <sakura_converter.hpp>
+#include <sakura_converter.h>
 
-#include <sakura_parsing/sakura_parser_interface.hpp>
-#include <data_structure/dataItems.hpp>
+#include <sakura_parsing/sakura_parser_interface.h>
+#include <data_structure/data_items.h>
 
 namespace Kitsune
 {

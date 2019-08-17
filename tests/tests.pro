@@ -20,8 +20,8 @@ SOURCES += \
     sakura_parser_test.cpp
 
 HEADERS += \
-    test_strings/branch_test_string.hpp \
-    test_strings/forest_test_string.hpp \
-    test_strings/tree_test_string.hpp \
-    sakura_parser_test.hpp
+    test_strings/branch_test_string.h \
+    sakura_parser_test.h \
+    test_strings/tree_test_string.h \
+    test_strings/forest_test_string.h
 

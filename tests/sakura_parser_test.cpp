@@ -7,14 +7,14 @@
  *  Apache License Version 2.0
  */
 
-#include "sakura_parser_test.hpp"
+#include "sakura_parser_test.h"
 
-#include <sakura_converter.hpp>
-#include <test_strings/branch_test_string.hpp>
-#include <test_strings/forest_test_string.hpp>
-#include <test_strings/tree_test_string.hpp>
+#include <sakura_converter.h>
+#include <test_strings/branch_test_string.h>
+#include <test_strings/forest_test_string.h>
+#include <test_strings/tree_test_string.h>
 
-#include <data_structure/dataItems.hpp>
+#include <data_structure/dataItems.h>
 
 using Kitsune::Common::DataItem;
 using Kitsune::Common::DataArray;

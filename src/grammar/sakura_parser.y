@@ -27,7 +27,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <data_structure/dataItems.hpp>
+#include <data_structure/data_items.h>
 
 using Kitsune::Common::DataItem;
 using Kitsune::Common::DataArray;
@@ -52,7 +52,7 @@ class SakuraParserInterface;
 
 %code
 {
-#include <sakura_parsing/sakura_parser_interface.hpp>
+#include <sakura_parsing/sakura_parser_interface.h>
 # undef YY_DECL
 # define YY_DECL \
     Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)

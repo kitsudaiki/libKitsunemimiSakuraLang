@@ -3,8 +3,8 @@
 # include <climits>
 # include <cstdlib>
 # include <string>
-# include <sakura_parsing/sakura_parser_interface.hpp>
-# include <sakura_parser.hpp>
+# include <sakura_parsing/sakura_parser_interface.h>
+# include <sakura_parser.h>
 
 # undef yywrap
 # define yywrap() 1
