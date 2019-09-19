@@ -10,7 +10,7 @@
 #include <sakura_converter.h>
 
 #include <sakura_parsing/sakura_parser_interface.h>
-#include <data_structure/data_items.h>
+#include <common_items/data_items.h>
 
 namespace Kitsune
 {

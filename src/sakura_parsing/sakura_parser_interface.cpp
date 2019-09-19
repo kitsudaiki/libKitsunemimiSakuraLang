@@ -18,7 +18,7 @@ YY_DECL;
 using Kitsune::Common::DataItem;
 using Kitsune::Common::DataArray;
 using Kitsune::Common::DataValue;
-using Kitsune::Common::DataObject;
+using Kitsune::Common::DataMap;
 
 namespace Kitsune
 {
@@ -32,7 +32,7 @@ namespace Sakura
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_errorMessage = new DataObject();
+    m_errorMessage = new DataMap();
 }
 
 /**
@@ -45,7 +45,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
-    m_errorMessage = new DataObject();
+    m_errorMessage = new DataMap();
     m_output = nullptr;
 
     // run parser-code
@@ -102,7 +102,7 @@ SakuraParserInterface::error(const Kitsune::Sakura::location& location,
     errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
     errorString += "broken part in template: \"" + errorStringPart + "\" \n";
 
-    m_errorMessage->toObject()->insert("error", new DataValue(errorString));
+    m_errorMessage->toMap()->insert("error", new DataValue(errorString));
 }
 
 /**

@@ -14,19 +14,19 @@
 #include <test_strings/forest_test_string.h>
 #include <test_strings/tree_test_string.h>
 
-#include <data_structure/data_items.h>
+#include <common_items/data_items.h>
 
 using Kitsune::Common::DataItem;
 using Kitsune::Common::DataArray;
 using Kitsune::Common::DataValue;
-using Kitsune::Common::DataObject;
+using Kitsune::Common::DataMap;
 
 namespace Kitsune
 {
 namespace Sakura
 {
 
-ParsingTest::ParsingTest() : Kitsune::Common::Test("ParsingTest")
+ParsingTest::ParsingTest() : Kitsune::Common::UnitTest("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
@@ -44,8 +44,7 @@ void ParsingTest::parseBranchTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testBranchString);
     UNITTEST(result.second, true);
-    std::string output = "";
-    result.first->print(&output, true);
+    std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 
 }
@@ -54,8 +53,7 @@ void ParsingTest::parseTreeTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testTreeString);
     UNITTEST(result.second, true);
-    std::string output = "";
-    result.first->print(&output, true);
+    std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 }
 
@@ -63,8 +61,7 @@ void ParsingTest::parseForestTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testForestString);
     UNITTEST(result.second, true);
-    std::string output = "";
-    result.first->print(&output, true);
+    std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 }
 

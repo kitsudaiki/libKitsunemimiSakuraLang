@@ -10,7 +10,7 @@
 #ifndef SAKURA_PARSER_TEST_H
 #define SAKURA_PARSER_TEST_H
 
-#include <testing/test.h>
+#include <testing/unit_test.h>
 
 namespace Kitsune
 {
@@ -18,7 +18,7 @@ namespace Sakura
 {
 class SakuraConverter;
 
-class ParsingTest : public Kitsune::Common::Test
+class ParsingTest : public Kitsune::Common::UnitTest
 {
 public:
     ParsingTest();
