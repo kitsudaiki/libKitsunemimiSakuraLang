@@ -1,4 +1,4 @@
-# LibKitsuneSakuraParser
+# LibKitsunemimiSakuraParser
 
 ## License
 
@@ -17,6 +17,6 @@ flex | 2.6.1 | lexer for the the bison-parser-generator
 
 Repository-Name | Version-Tag | Download-Path
 --- | --- | ---
-LibKitsuneCommon | 0.5.3 |  git@gitlab.com:kitsune_libs/libKitsuneCommon.git$
+libKitsunemimiCommon | v0.7.0 |  https://github.com/tobiasanker/libKitsunemimiCommon.git
 
 
