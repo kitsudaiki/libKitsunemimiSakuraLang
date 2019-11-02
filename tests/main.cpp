@@ -12,5 +12,5 @@
 
 int main()
 {
-    Kitsune::Sakura::ParsingTest();
+    Kitsunemimi::Sakura::ParsingTest();
 }

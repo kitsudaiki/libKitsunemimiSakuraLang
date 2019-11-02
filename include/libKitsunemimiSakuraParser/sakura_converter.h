@@ -13,7 +13,7 @@
 #include <utility>
 #include <string>
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Common {
 class DataItem;
@@ -35,6 +35,6 @@ private:
 };
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi
 
 #endif // LIBKITSUNE_SAKURA_PARSER_H

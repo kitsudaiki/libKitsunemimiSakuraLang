@@ -12,7 +12,7 @@
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <common_items/data_items.h>
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Sakura
 {
@@ -61,4 +61,4 @@ SakuraConverter::parse(const std::string &inputString)
 }
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi

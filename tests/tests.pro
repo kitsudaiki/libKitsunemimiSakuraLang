@@ -6,14 +6,14 @@ CONFIG -= app_bundle
 CONFIG += c++14 console
 
 
-LIBS += -L../../libKitsuneCommon/src -lKitsuneCommon
-LIBS += -L../../libKitsuneCommon/src/debug -lKitsuneCommon
-LIBS += -L../../libKitsuneCommon/src/release -lKitsuneCommon
-INCLUDEPATH += ../../libKitsuneCommon/include/libKitsuneCommon
+LIBS += -L../../libKitsunemimiCommon/src -lKitsunemimiCommon
+LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
+LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
+INCLUDEPATH += ../../libKitsunemimiCommon/include/libKitsunemimiCommon
 
 INCLUDEPATH += $$PWD
 
-LIBS += -L../src -lKitsuneSakuraParser
+LIBS += -L../src -lKitsunemimiSakuraParser
 
 SOURCES += \
         main.cpp \

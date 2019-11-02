@@ -6,11 +6,11 @@ build:
 
     - apt-get install -y libboost-filesystem-dev libsqlite3-dev
 
-    - cd /builds/tobiasanker/libKitsuneSakuraParser
+    - cd /builds/tobiasanker/libKitsunemimiSakuraParser
     - ./build.sh
 
     - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:'/builds/tobiasanker/result'
-    - /builds/tobiasanker/build/libKitsuneSakuraParser/tests/tests
+    - /builds/tobiasanker/build/libKitsunemimiSakuraParser/tests/tests
 
   tags:
     - docker

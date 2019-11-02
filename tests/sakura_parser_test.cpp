@@ -16,17 +16,17 @@
 
 #include <common_items/data_items.h>
 
-using Kitsune::Common::DataItem;
-using Kitsune::Common::DataArray;
-using Kitsune::Common::DataValue;
-using Kitsune::Common::DataMap;
+using Kitsunemimi::Common::DataItem;
+using Kitsunemimi::Common::DataArray;
+using Kitsunemimi::Common::DataValue;
+using Kitsunemimi::Common::DataMap;
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Sakura
 {
 
-ParsingTest::ParsingTest() : Kitsune::Common::UnitTest("ParsingTest")
+ParsingTest::ParsingTest() : Kitsunemimi::Common::Test("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
@@ -43,7 +43,7 @@ void ParsingTest::initTestCase()
 void ParsingTest::parseBranchTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testBranchString);
-    UNITTEST(result.second, true);
+    TEST_EQUAL(result.second, true);
     std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 
@@ -52,7 +52,7 @@ void ParsingTest::parseBranchTest()
 void ParsingTest::parseTreeTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testTreeString);
-    UNITTEST(result.second, true);
+    TEST_EQUAL(result.second, true);
     std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 }
@@ -60,7 +60,7 @@ void ParsingTest::parseTreeTest()
 void ParsingTest::parseForestTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testForestString);
-    UNITTEST(result.second, true);
+    TEST_EQUAL(result.second, true);
     std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;
 }
@@ -71,5 +71,5 @@ void ParsingTest::cleanupTestCase()
 }
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi
 

@@ -1,2 +1,2 @@
 INCLUDEPATH += $$PWD/src \
-               $$PWD/include/libKitsuneSakuraParser
+               $$PWD/include/libKitsunemimiSakuraParser

@@ -16,7 +16,7 @@
 %define parser_class_name {SakuraParser}
 
 %define api.prefix {sakura}
-%define api.namespace {Kitsune::Sakura}
+%define api.namespace {Kitsunemimi::Sakura}
 %define api.token.constructor
 %define api.value.type variant
 
@@ -29,12 +29,12 @@
 #include <vector>
 #include <common_items/data_items.h>
 
-using Kitsune::Common::DataItem;
-using Kitsune::Common::DataArray;
-using Kitsune::Common::DataValue;
-using Kitsune::Common::DataMap;
+using Kitsunemimi::Common::DataItem;
+using Kitsunemimi::Common::DataArray;
+using Kitsunemimi::Common::DataValue;
+using Kitsunemimi::Common::DataMap;
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Sakura
 {
@@ -42,11 +42,11 @@ namespace Sakura
 class SakuraParserInterface;
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi
 }
 
 // The parsing context.
-%param { Kitsune::Sakura::SakuraParserInterface& driver }
+%param { Kitsunemimi::Sakura::SakuraParserInterface& driver }
 
 %locations
 
@@ -55,7 +55,7 @@ class SakuraParserInterface;
 #include <sakura_parsing/sakura_parser_interface.h>
 # undef YY_DECL
 # define YY_DECL \
-    Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
+    Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)
 YY_DECL;
 }
 
@@ -466,7 +466,7 @@ linebreaks_sp:
 
 %%
 
-void Kitsune::Sakura::SakuraParser::error(const Kitsune::Sakura::location& location,
+void Kitsunemimi::Sakura::SakuraParser::error(const Kitsunemimi::Sakura::location& location,
                                           const std::string& message)
 {
     driver.error(location, message);
