@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Sakura
 {
@@ -38,7 +38,7 @@ public:
     Common::DataItem* getOutput() const;
 
     // Error handling.
-    void error(const Kitsune::Sakura::location &location,
+    void error(const Kitsunemimi::Sakura::location &location,
                const std::string& message);
     Common::DataItem* getErrorMessage() const;
 
@@ -53,6 +53,6 @@ private:
 };
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi
 
 #endif // SAKURA_PARSER_INTERFACE_H

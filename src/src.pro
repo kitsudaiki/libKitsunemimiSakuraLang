@@ -1,24 +1,24 @@
 QT -= qt core gui
 
-TARGET = KitsuneSakuraParser
+TARGET = KitsunemimiSakuraParser
 CONFIG += c++14
 TEMPLATE = lib
 VERSION = 0.1.0
 
-LIBS += -L../../libKitsuneCommon/src -lKitsuneCommon
-LIBS += -L../../libKitsuneCommon/src/debug -lKitsuneCommon
-LIBS += -L../../libKitsuneCommon/src/release -lKitsuneCommon
-INCLUDEPATH += ../../libKitsuneCommon/include/libKitsuneCommon
+LIBS += -L../../libKitsunemimiCommon/src -lKitsunemimiCommon
+LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
+LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
+INCLUDEPATH += ../../libKitsunemimiCommon/include/libKitsunemimiCommon
 
 INCLUDEPATH += $$PWD \
-            $$PWD/../include/libKitsuneSakuraParser
+            $$PWD/../include/libKitsunemimiSakuraParser
 
 SOURCES += \
     sakura_parsing/sakura_parser_interface.cpp \
     sakura_converter.cpp
 
 HEADERS += \
-    ../include/libKitsuneSakuraParser/sakura_converter.h \
+    ../include/libKitsunemimiSakuraParser/sakura_converter.h \
     sakura_parsing/sakura_parser_interface.h
 
 FLEXSOURCES = grammar/sakura_lexer.l

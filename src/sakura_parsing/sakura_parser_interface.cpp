@@ -12,15 +12,15 @@
 #include <sakura_converter.h>
 
 # define YY_DECL \
-    Kitsune::Sakura::SakuraParser::symbol_type sakuralex (Kitsune::Sakura::SakuraParserInterface& driver)
+    Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)
 YY_DECL;
 
-using Kitsune::Common::DataItem;
-using Kitsune::Common::DataArray;
-using Kitsune::Common::DataValue;
-using Kitsune::Common::DataMap;
+using Kitsunemimi::Common::DataItem;
+using Kitsunemimi::Common::DataArray;
+using Kitsunemimi::Common::DataValue;
+using Kitsunemimi::Common::DataMap;
 
-namespace Kitsune
+namespace Kitsunemimi
 {
 namespace Sakura
 {
@@ -50,7 +50,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 
     // run parser-code
     this->scan_begin(inputString);
-    Kitsune::Sakura::SakuraParser parser(*this);
+    Kitsunemimi::Sakura::SakuraParser parser(*this);
     int res = parser.parse();
     this->scan_end();
 
@@ -86,7 +86,7 @@ Common::DataItem* SakuraParserInterface::getOutput() const
  * @param message error-specific message from the parser
  */
 void
-SakuraParserInterface::error(const Kitsune::Sakura::location& location,
+SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
                              const std::string& message)
 {
     // get the broken part of the parsed string
@@ -141,4 +141,4 @@ SakuraParserInterface::removeQuotes(std::string input)
 }
 
 }  // namespace Sakura
-}  // namespace Kitsune
+}  // namespace Kitsunemimi
