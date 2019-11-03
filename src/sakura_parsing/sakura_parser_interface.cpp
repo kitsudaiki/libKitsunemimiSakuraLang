@@ -11,6 +11,8 @@
 #include <sakura_parser.h>
 #include <sakura_converter.h>
 
+#include <libKitsunemimiCommon/common_methods/string_methods.h>
+
 # define YY_DECL \
     Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)
 YY_DECL;
@@ -24,6 +26,7 @@ namespace Kitsunemimi
 {
 namespace Sakura
 {
+using Common::splitStringByDelimiter;
 
 /**
  * The class is the interface for the bison-generated parser.
@@ -92,13 +95,18 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
     // get the broken part of the parsed string
     const uint32_t errorStart = location.begin.column;
     const uint32_t errorLength = location.end.column - location.begin.column;
-    const std::string errorStringPart = m_inputString.substr(errorStart, errorLength);
+    const uint32_t linenumber = location.begin.line;
 
+    const std::vector<std::string> splittedContent = splitStringByDelimiter(m_inputString, '\n');
+
+    // -1 because the number starts for user-readability at 1 instead of 0
+    const std::string errorStringPart = splittedContent[linenumber - 1].substr(errorStart - 1,
+                                                                               errorLength);
     // build error-message
     std::string errorString = "";
-    errorString += "error while parsing jinja2-template \n";
+    errorString += "error while parsing sakura-file \n";
     errorString += "parser-message: " + message + " \n";
-    errorString += "line-number: " + std::to_string(location.begin.line) + " \n";
+    errorString += "line-number: " + std::to_string(linenumber) + " \n";
     errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
     errorString += "broken part in template: \"" + errorStringPart + "\" \n";
 
