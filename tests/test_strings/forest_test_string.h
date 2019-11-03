@@ -19,7 +19,9 @@ std::string testForestString = "[FOREST: test_forest]\n"
                                "user: testuser\n"
                                "port: 22\n"
                                "ssh_key: \"~/.ssh/test_key\"\n"
-                               "-TREE test_tree:\n"
+                               "{\n"
+                               "    [TREE: test_tree]\n"
+                               "}\n"
                                "\n";
 
 #endif // FOREST_TEST_STRING_H
