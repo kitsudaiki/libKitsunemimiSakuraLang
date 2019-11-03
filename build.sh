@@ -14,47 +14,42 @@ mkdir -p $RESULT_DIR
 
 #-----------------------------------------------------------------------------------------------------------------
 
-# clone libKitsunemimiCommon
-git clone  git@gitlab.com:tobiasanker/libKitsunemimiCommon.git "$PARENT_DIR/libKitsunemimiCommon"
-cd "$PARENT_DIR/libKitsunemimiCommon"
-git checkout v0.7.0
+function build_kitsune_lib_repo () {
+    REPO_NAME=$1
 
-# create build directory for libKitsunemimiCommon and go into this directory
-LIB_KITSUNE_COMMON_DIR="$BUILD_DIR/libKitsunemimiCommon"
-mkdir -p $LIB_KITSUNE_COMMON_DIR
-cd $LIB_KITSUNE_COMMON_DIR
+    # create build directory for repo and go into this directory
+    REPO_DIR="$BUILD_DIR/$REPO_NAME"
+    mkdir -p $REPO_DIR
+    cd $REPO_DIR
 
-# build libKitsunemimiCommon library with qmake
-/usr/lib/x86_64-linux-gnu/qt5/bin/qmake "$PARENT_DIR/libKitsunemimiCommon/libKitsunemimiCommon.pro" -spec linux-g++ "CONFIG += optimize_full"
-/usr/bin/make -j4
+    # build repo library with qmake
+    /usr/lib/x86_64-linux-gnu/qt5/bin/qmake "$PARENT_DIR/$REPO_NAME/$REPO_NAME.pro" -spec linux-g++ "CONFIG += optimize_full"
+    /usr/bin/make -j4
 
-# copy build-result and include-files into the result-directory
-cp "$LIB_KITSUNE_COMMON_DIR/src/libKitsunemimiCommon.so.0.7.0" "$RESULT_DIR/"
-cp -r "$PARENT_DIR/libKitsunemimiCommon/include" "$RESULT_DIR/"
+    # copy build-result and include-files into the result-directory
+    cp -d $REPO_DIR/src/$REPO_NAME.so.* $RESULT_DIR/
+    cp -r $PARENT_DIR/$REPO_NAME/include $RESULT_DIR/
+}
 
-#-----------------------------------------------------------------------------------------------------------------
+function get_required_kitsune_lib_repo () {
+    REPO_NAME=$1
+    TAG_OR_BRANCH=$2
 
-# create build directory for libKitsunemimiSakuraParser and go into this directory
-LIB_KITSUNE_SAKURAPARSER_DIR="$BUILD_DIR/libKitsunemimiSakuraParser"
-mkdir -p $LIB_KITSUNE_SAKURAPARSER_DIR
-cd $LIB_KITSUNE_SAKURAPARSER_DIR
+    # clone repo
+    git clone  git@gitlab.com:tobiasanker/$REPO_NAME.git "$PARENT_DIR/$REPO_NAME"
+    cd "$PARENT_DIR/$REPO_NAME"
+    git checkout $TAG_OR_BRANCH
 
-# build libKitsunemimiSakuraParser library with qmake
-/usr/lib/x86_64-linux-gnu/qt5/bin/qmake "$PARENT_DIR/libKitsunemimiSakuraParser/libKitsunemimiSakuraParser.pro" -spec linux-g++ "CONFIG += optimize_full"
-/usr/bin/make -j4
-
-# copy build-result and include-files into the result-directory
-cp "$LIB_KITSUNE_SAKURAPARSER_DIR/src/libKitsunemimiSakuraParser.so.0.1.0" "$RESULT_DIR/"
-cp -r "$PARENT_DIR/libKitsunemimiSakuraParser/include" "$RESULT_DIR/"
+    build_kitsune_lib_repo $REPO_NAME
+}
 
 #-----------------------------------------------------------------------------------------------------------------
 
-# recreate symlinks
-cd "$RESULT_DIR/"
-ln -s libKitsunemimiCommon.so.0.7.0 libKitsunemimiCommon.so.0.7
-ln -s libKitsunemimiCommon.so.0.7.0 libKitsunemimiCommon.so.0
-ln -s libKitsunemimiCommon.so.0.7.0 libKitsunemimiCommon.so
+get_required_kitsune_lib_repo "libKitsunemimiCommon" "v0.7.0"
 
-ln -s libKitsunemimiSakuraParser.so.0.1.0 libKitsunemimiSakuraParser.so.0.1
-ln -s libKitsunemimiSakuraParser.so.0.1.0 libKitsunemimiSakuraParser.so.0
-ln -s libKitsunemimiSakuraParser.so.0.1.0 libKitsunemimiSakuraParser.so
+#-----------------------------------------------------------------------------------------------------------------
+
+build_kitsune_lib_repo "libKitsunemimiSakuraParser"
+
+#-----------------------------------------------------------------------------------------------------------------
+

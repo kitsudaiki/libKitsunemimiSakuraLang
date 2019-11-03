@@ -10,7 +10,7 @@
 #include <sakura_converter.h>
 
 #include <sakura_parsing/sakura_parser_interface.h>
-#include <common_items/data_items.h>
+#include <libKitsunemimiCommon/common_items/data_items.h>
 
 namespace Kitsunemimi
 {
