@@ -197,43 +197,35 @@ forest_part:
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks item_set "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("forest"));
-       $$->insert("name", new DataValue($2));
+       $$->insert("type", new DataValue("tree"));
+       $$->insert("name", new DataValue($11));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new DataValue($11));
-       $$->insert("item-type", new DataValue("tree"));
        $$->insert("items-input", $14);
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks item_set "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("forest"));
-       $$->insert("name", new DataValue($2));
+       $$->insert("type", new DataValue("branch"));
+       $$->insert("name", new DataValue($11));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new DataValue($11));
-       $$->insert("item-type", new DataValue("branch"));
        $$->insert("items-input", $14);
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("forest"));
-       $$->insert("name", new DataValue($2));
+       $$->insert("type", new DataValue("tree"));
+       $$->insert("name", new DataValue($11));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new DataValue($11));
-       $$->insert("item-type", new DataValue("tree"));
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("forest"));
-       $$->insert("name", new DataValue($2));
+       $$->insert("type", new DataValue("branch"));
+       $$->insert("name", new DataValue($11));
        $$->insert("common-settings", $5);
-       $$->insert("item-name", new DataValue($11));
-       $$->insert("item-type", new DataValue("branch"));
    }
 
 blossom_set:
