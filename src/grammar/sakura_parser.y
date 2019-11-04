@@ -196,36 +196,64 @@ forest_parts:
 forest_part:
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks item_set "}" linebreaks
    {
+       DataMap* treegroup = new DataMap();
+       treegroup->insert("type", new DataValue("tree"));
+       treegroup->insert("name", new DataValue($11));
+       treegroup->insert("items-input", $14);
+
+       DataArray* part = new DataArray();
+       part->append(treegroup);
+
        $$ = new DataMap();
-       $$->insert("type", new DataValue("tree"));
-       $$->insert("name", new DataValue($11));
+       $$->insert("type", new DataValue("treegroup"));
        $$->insert("common-settings", $5);
-       $$->insert("items-input", $14);
+       $$->insert("parts", part);
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks item_set "}" linebreaks
    {
+       DataMap* treegroup = new DataMap();
+       treegroup->insert("type", new DataValue("branch"));
+       treegroup->insert("name", new DataValue($11));
+       treegroup->insert("items-input", $14);
+
+       DataArray* part = new DataArray();
+       part->append(treegroup);
+
        $$ = new DataMap();
-       $$->insert("type", new DataValue("branch"));
-       $$->insert("name", new DataValue($11));
+       $$->insert("type", new DataValue("treegroup"));
        $$->insert("common-settings", $5);
-       $$->insert("items-input", $14);
+       $$->insert("parts", part);
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks "}" linebreaks
    {
+       DataMap* treegroup = new DataMap();
+       treegroup->insert("type", new DataValue("tree"));
+       treegroup->insert("name", new DataValue($11));
+
+       DataArray* part = new DataArray();
+       part->append(treegroup);
+
        $$ = new DataMap();
-       $$->insert("type", new DataValue("tree"));
-       $$->insert("name", new DataValue($11));
+       $$->insert("type", new DataValue("treegroup"));
        $$->insert("common-settings", $5);
+       $$->insert("parts", part);
    }
 |
    "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks "}" linebreaks
    {
+       DataMap* treegroup = new DataMap();
+       treegroup->insert("type", new DataValue("branch"));
+       treegroup->insert("name", new DataValue($11));
+
+
+       DataArray* part = new DataArray();
+       part->append(treegroup);
        $$ = new DataMap();
-       $$->insert("type", new DataValue("branch"));
-       $$->insert("name", new DataValue($11));
+       $$->insert("type", new DataValue("treegroup"));
        $$->insert("common-settings", $5);
+       $$->insert("parts", part);
    }
 
 blossom_set:
