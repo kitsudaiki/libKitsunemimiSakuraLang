@@ -11,7 +11,6 @@
 
 #include <sakura_converter.h>
 #include <test_strings/branch_test_string.h>
-#include <test_strings/forest_test_string.h>
 #include <test_strings/tree_test_string.h>
 
 #include <common_items/data_items.h>
@@ -31,13 +30,12 @@ ParsingTest::ParsingTest() : Kitsunemimi::Common::Test("ParsingTest")
     initTestCase();
     parseBranchTest();
     parseTreeTest();
-    parseForestTest();
     cleanupTestCase();
 }
 
 void ParsingTest::initTestCase()
 {
-    m_parser = new SakuraConverter(false);
+    m_parser = new SakuraConverter(true);
 }
 
 void ParsingTest::parseBranchTest()
@@ -52,14 +50,6 @@ void ParsingTest::parseBranchTest()
 void ParsingTest::parseTreeTest()
 {
     std::pair<DataItem*, bool> result = m_parser->parse(testTreeString);
-    TEST_EQUAL(result.second, true);
-    std::string output = result.first->toString(true);
-    //std::cout<<"output: "<<output<<std::endl;;
-}
-
-void ParsingTest::parseForestTest()
-{
-    std::pair<DataItem*, bool> result = m_parser->parse(testForestString);
     TEST_EQUAL(result.second, true);
     std::string output = result.first->toString(true);
     //std::cout<<"output: "<<output<<std::endl;;

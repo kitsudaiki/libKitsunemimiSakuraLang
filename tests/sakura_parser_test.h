@@ -27,7 +27,6 @@ private:
     void initTestCase();
     void parseBranchTest();
     void parseTreeTest();
-    void parseForestTest();
     void cleanupTestCase();
 
     SakuraConverter* m_parser = nullptr;
