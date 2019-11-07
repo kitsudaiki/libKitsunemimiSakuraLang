@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-std::string testBranchString = "[BRANCH: install_branch]\n"
+std::string testBranchString = "[install_branch]\n"
                                "packages: {{}}\n"
                                "\n"
                                "[apt_blossomX]\n"

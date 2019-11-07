@@ -38,8 +38,8 @@ blank [ \t]
 %}
 
 {blank}+    sakuraloc.step();
-[\n]        return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc);
-"FOREST"    return Kitsunemimi::Sakura::SakuraParser::make_FOREST (sakuraloc);
+[\n]        {sakuraloc.lines(1); return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc); }
+"HOST"      return Kitsunemimi::Sakura::SakuraParser::make_HOST (sakuraloc);
 "TREE"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
 "BRANCH"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
 "-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);

@@ -64,7 +64,7 @@ YY_DECL;
 %token
     END  0  "end of file"
     LINEBREAK "lbreak"
-    FOREST  "FOREST"
+    HOST  "HOST"
     TREE  "TREE"
     BRANCH  "BRANCH"
     ASSIGN  ":"
@@ -91,15 +91,12 @@ YY_DECL;
 %type  <std::pair<std::string, DataItem*>> item
 %type  <DataMap*> item_set
 %type  <DataArray*> item_list
-%type  <DataArray*> forest_parts
-%type  <DataMap*> forest_part
 
-%type  <std::pair<std::string, DataItem*>> setting
-%type  <DataMap*> setting_set
+%type  <std::pair<std::string, DataItem*>> static_option
+%type  <DataMap*> static_options
 
 %type  <DataMap*> branch
 %type  <DataMap*> tree
-%type  <DataMap*> forest
 
 %type  <DataMap*> tree_branch
 %type  <DataMap*> tree_sequentiell
@@ -109,11 +106,6 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    forest linebreaks_sp
-    {
-        driver.setOutput($1);
-    }
-|
     tree linebreaks_sp
     {
         driver.setOutput($1);
@@ -124,136 +116,50 @@ startpoint:
         driver.setOutput($1);
     }
 
-forest:
-   "[" "FOREST" ":" name_item "]" linebreaks item_set forest_parts
-   {
-       $$ = new DataMap();
-       $$->insert("name", new DataValue($4));
-       $$->insert("type", new DataValue("forest"));
-       $$->insert("items", $7);
-       $$->insert("parts", $8);
-   }
-
 tree:
-   "[" "TREE" ":" name_item "]" linebreaks item_set tree_parallel
+   "[" name_item "]" linebreaks item_set tree_parallel
    {
        $$ = new DataMap();
-       $$->insert("name", new DataValue($4));
+       $$->insert("name", new DataValue($2));
        $$->insert("type", new DataValue("tree"));
-       $$->insert("items", $7);
+       $$->insert("items", $5);
 
        DataArray* tempItem = new DataArray();
-       tempItem->append($8);
+       tempItem->append($6);
        $$->insert("parts", tempItem);
    }
 
 branch:
-   "[" "BRANCH" ":" name_item "]" linebreaks item_set blossom_set
+   "[" name_item "]" linebreaks item_set blossom_set
    {
        $$ = new DataMap();
-       $$->insert("name", new DataValue($4));
+       $$->insert("name", new DataValue($2));
        $$->insert("type", new DataValue("branch"));
-       $$->insert("items", $7);
-       $$->insert("parts", $8);
+       $$->insert("items", $5);
+       $$->insert("parts", $6);
    }
 
 blossom:
-   "[" name_item "]" linebreaks setting_set "-" "identifier" ":" linebreaks item_set
+   "[" name_item "]" linebreaks static_options "-" "identifier" ":" linebreaks item_set
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("blossom"));
        $$->insert("name", new DataValue($2));
-       $$->insert("common-settings", $5);
+       $$->insert("common-static_options", $5);
        $$->insert("blossom-type", new DataValue($7));
        $$->insert("blossom-subtypes", new DataArray());
        $$->insert("items-input", $10);
    }
 |
-   "[" name_item "]" linebreaks setting_set "-" "identifier" linebreaks "-" item_list ":" linebreaks item_set
+   "[" name_item "]" linebreaks static_options "-" "identifier" linebreaks "-" item_list ":" linebreaks item_set
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("blossom"));
        $$->insert("name", new DataValue($2));
-       $$->insert("common-settings", $5);
+       $$->insert("common-static_options", $5);
        $$->insert("blossom-type", new DataValue($7));
        $$->insert("blossom-subtypes", $10);
        $$->insert("items-input", $13);
-   }
-
-forest_parts:
-   forest_parts forest_part
-   {
-       $1->append($2);
-       $$ = $1;
-   }
-|
-   forest_part
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
-
-forest_part:
-   "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks item_set "}" linebreaks
-   {
-       DataMap* treegroup = new DataMap();
-       treegroup->insert("type", new DataValue("tree"));
-       treegroup->insert("name", new DataValue($11));
-       treegroup->insert("items-input", $14);
-
-       DataArray* part = new DataArray();
-       part->append(treegroup);
-
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("treegroup"));
-       $$->insert("common-settings", $5);
-       $$->insert("parts", part);
-   }
-|
-   "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks item_set "}" linebreaks
-   {
-       DataMap* treegroup = new DataMap();
-       treegroup->insert("type", new DataValue("branch"));
-       treegroup->insert("name", new DataValue($11));
-       treegroup->insert("items-input", $14);
-
-       DataArray* part = new DataArray();
-       part->append(treegroup);
-
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("treegroup"));
-       $$->insert("common-settings", $5);
-       $$->insert("parts", part);
-   }
-|
-   "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "TREE" ":" name_item "]" linebreaks "}" linebreaks
-   {
-       DataMap* treegroup = new DataMap();
-       treegroup->insert("type", new DataValue("tree"));
-       treegroup->insert("name", new DataValue($11));
-
-       DataArray* part = new DataArray();
-       part->append(treegroup);
-
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("treegroup"));
-       $$->insert("common-settings", $5);
-       $$->insert("parts", part);
-   }
-|
-   "[" name_item "]" linebreaks setting_set "{" linebreaks "[" "BRANCH" ":" name_item "]" linebreaks "}" linebreaks
-   {
-       DataMap* treegroup = new DataMap();
-       treegroup->insert("type", new DataValue("branch"));
-       treegroup->insert("name", new DataValue($11));
-
-
-       DataArray* part = new DataArray();
-       part->append(treegroup);
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("treegroup"));
-       $$->insert("common-settings", $5);
-       $$->insert("parts", part);
    }
 
 blossom_set:
@@ -269,25 +175,25 @@ blossom_set:
        $$->append($1);
    }
 
-setting_set:
+static_options:
    %empty
    {
        $$ = new DataMap();
    }
 |
-   setting_set setting linebreaks
+   static_options static_option linebreaks
    {
        $1->insert($2.first, $2.second);
        $$ = $1;
    }
 |
-   setting linebreaks
+   static_option linebreaks
    {
        $$ = new DataMap();
        $$->insert($1.first, $1.second);
    }
 
-setting:
+static_option:
    "identifier" ":" "identifier"
    {
        std::pair<std::string, DataItem*> tempItem;
@@ -422,6 +328,9 @@ item_list:
        $$->append(new DataValue($1));
    }
 
+tree_subtree:
+
+
 tree_sequentiell:
    tree_sequentiell linebreaks_sp tree_branch
    {
@@ -472,6 +381,35 @@ tree_parallel:
    }
 
 tree_branch:
+   "[" "TREE" ":" name_item "," "HOST" ":" name_item "]" linebreaks item_set
+   {
+       DataMap* tempItem = new DataMap();
+       tempItem->insert("type", new DataValue("tree"));
+       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
+       tempItem->insert("host", new DataValue(driver.removeQuotes($8)));
+       tempItem->insert("items-input", $11);
+       $$ = tempItem;
+   }
+|
+   "[" "BRANCH" ":" name_item "," "HOST" ":" name_item "]" linebreaks item_set
+   {
+       DataMap* tempItem = new DataMap();
+       tempItem->insert("type", new DataValue("branch"));
+       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
+       tempItem->insert("host", new DataValue(driver.removeQuotes($8)));
+       tempItem->insert("items-input", $11);
+       $$ = tempItem;
+   }
+|
+   "[" "TREE" ":" name_item "]" linebreaks item_set
+   {
+       DataMap* tempItem = new DataMap();
+       tempItem->insert("type", new DataValue("tree"));
+       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
+       tempItem->insert("items-input", $7);
+       $$ = tempItem;
+   }
+|
    "[" "BRANCH" ":" name_item "]" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
