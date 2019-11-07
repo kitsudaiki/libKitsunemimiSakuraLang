@@ -11,7 +11,7 @@ LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
 INCLUDEPATH += ../../libKitsunemimiCommon/include
 
 INCLUDEPATH += $$PWD \
-            $$PWD/../include/libKitsunemimiSakuraParser
+            $$PWD/../include
 
 SOURCES += \
     sakura_parsing/sakura_parser_interface.cpp \

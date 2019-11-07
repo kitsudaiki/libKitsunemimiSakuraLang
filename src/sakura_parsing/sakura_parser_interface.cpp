@@ -9,7 +9,7 @@
 
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <sakura_parser.h>
-#include <sakura_converter.h>
+#include <libKitsunemimiSakuraParser/sakura_converter.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 

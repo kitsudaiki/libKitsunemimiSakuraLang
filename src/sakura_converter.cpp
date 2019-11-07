@@ -7,7 +7,7 @@
  *  Apache License Version 2.0
  */
 
-#include <sakura_converter.h>
+#include <libKitsunemimiSakuraParser/sakura_converter.h>
 
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
