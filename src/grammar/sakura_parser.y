@@ -145,7 +145,7 @@ blossom:
        $$ = new DataMap();
        $$->insert("type", new DataValue("blossom"));
        $$->insert("name", new DataValue($2));
-       $$->insert("common-static_options", $5);
+       $$->insert("static-options", $5);
        $$->insert("blossom-type", new DataValue($7));
        $$->insert("blossom-subtypes", new DataArray());
        $$->insert("items-input", $10);
@@ -156,7 +156,7 @@ blossom:
        $$ = new DataMap();
        $$->insert("type", new DataValue("blossom"));
        $$->insert("name", new DataValue($2));
-       $$->insert("common-static_options", $5);
+       $$->insert("static-options", $5);
        $$->insert("blossom-type", new DataValue($7));
        $$->insert("blossom-subtypes", $10);
        $$->insert("items-input", $13);
