@@ -64,18 +64,22 @@ YY_DECL;
 %token
     END  0  "end of file"
     LINEBREAK "lbreak"
-    HOST  "HOST"
-    TREE  "TREE"
-    BRANCH  "BRANCH"
+    SEED  "seed"
+    TREE  "tree"
+    BRANCH  "branch"
+    PARALLEL  "parallel"
     ASSIGN  ":"
     DOT  "."
     COMMA  ","
     DELIMITER  "|"
+    ARROW   "->"
     MINUS   "-"
     LBRACK  "["
     RBRACK  "]"
     LBRACKBOW  "{"
     RBRACKBOW  "}"
+    LROUNDBRACK  "("
+    RROUNDBRACK  ")"
 ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -87,10 +91,12 @@ YY_DECL;
 
 %type  <DataMap*> blossom
 %type  <DataArray*> blossom_set
+%type  <DataMap*> blossom_leaf
+%type  <DataArray*> blossom_leaf_set
 
 %type  <std::pair<std::string, DataItem*>> item
 %type  <DataMap*> item_set
-%type  <DataArray*> item_list
+%type  <DataArray*> string_array
 
 %type  <std::pair<std::string, DataItem*>> static_option
 %type  <DataMap*> static_options
@@ -98,7 +104,7 @@ YY_DECL;
 %type  <DataMap*> branch
 %type  <DataMap*> tree
 
-%type  <DataMap*> tree_branch
+%type  <DataMap*> tree_fork
 %type  <DataMap*> tree_sequentiell
 %type  <DataMap*> tree_parallel
 
@@ -106,26 +112,26 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    tree linebreaks_sp
+    tree
     {
         driver.setOutput($1);
     }
 |
-    branch linebreaks_sp
+    branch
     {
         driver.setOutput($1);
     }
 
 tree:
-   "[" name_item "]" linebreaks item_set tree_parallel
+   "[" name_item "]" linebreaks item_set "{" linebreaks tree_sequentiell "}" linebreaks_sp
    {
        $$ = new DataMap();
-       $$->insert("name", new DataValue($2));
-       $$->insert("type", new DataValue("tree"));
+       $$->insert("id", new DataValue($2));
+       $$->insert("btype", new DataValue("tree"));
        $$->insert("items", $5);
 
        DataArray* tempItem = new DataArray();
-       tempItem->append($6);
+       tempItem->append($8);
        $$->insert("parts", tempItem);
    }
 
@@ -133,33 +139,10 @@ branch:
    "[" name_item "]" linebreaks item_set blossom_set
    {
        $$ = new DataMap();
-       $$->insert("name", new DataValue($2));
-       $$->insert("type", new DataValue("branch"));
+       $$->insert("id", new DataValue($2));
+       $$->insert("btype", new DataValue("branch"));
        $$->insert("items", $5);
        $$->insert("parts", $6);
-   }
-
-blossom:
-   "[" name_item "]" linebreaks static_options "-" "identifier" ":" linebreaks item_set
-   {
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("blossom"));
-       $$->insert("name", new DataValue($2));
-       $$->insert("static-options", $5);
-       $$->insert("blossom-type", new DataValue($7));
-       $$->insert("blossom-subtypes", new DataArray());
-       $$->insert("items-input", $10);
-   }
-|
-   "[" name_item "]" linebreaks static_options "-" "identifier" linebreaks "-" item_list ":" linebreaks item_set
-   {
-       $$ = new DataMap();
-       $$->insert("type", new DataValue("blossom"));
-       $$->insert("name", new DataValue($2));
-       $$->insert("static-options", $5);
-       $$->insert("blossom-type", new DataValue($7));
-       $$->insert("blossom-subtypes", $10);
-       $$->insert("items-input", $13);
    }
 
 blossom_set:
@@ -175,22 +158,43 @@ blossom_set:
        $$->append($1);
    }
 
-static_options:
-   %empty
+blossom:
+   "identifier" "(" name_item ")" linebreaks blossom_leaf_set
    {
        $$ = new DataMap();
+       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("name", new DataValue($3));
+       $$->insert("blossom-type", new DataValue($1));
+       $$->insert("blossom-leafs", $6);
    }
-|
-   static_options static_option linebreaks
+
+blossom_leaf_set:
+   blossom_leaf_set blossom_leaf
    {
-       $1->insert($2.first, $2.second);
+       $1->append($2);
        $$ = $1;
    }
 |
-   static_option linebreaks
+   blossom_leaf
+   {
+       $$ = new DataArray();
+       $$->append($1);
+   }
+
+blossom_leaf:
+   "->" "identifier" linebreaks
+   {
+        $$ = new DataMap();
+        $$->insert("btype", new DataValue("blossom_leaf"));
+        $$->insert("blossom-subtype", new DataValue($2));
+   }
+|
+   "->" "identifier" ":" linebreaks item_set
    {
        $$ = new DataMap();
-       $$->insert($1.first, $1.second);
+       $$->insert("btype", new DataValue("blossom_leaf"));
+       $$->insert("blossom-subtype", new DataValue($2));
+       $$->insert("items-input", $5);
    }
 
 static_option:
@@ -245,64 +249,64 @@ item_set:
    }
 
 item:
-   "identifier" ":" "{" "{" "}" "}"
+   "-" "identifier" ":" "{" "{" "}" "}"
    {
        // uset value
        std::string empty = "{{}}";
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
+       tempItem.first = $2;
        tempItem.second = new DataValue(empty);
        $$ = tempItem;
    }
 |
-   "identifier" ":" "identifier"
+   "-" "identifier" ":" "identifier"
    {
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
+       tempItem.first = $2;
+       tempItem.second = new DataValue($4);
        $$ = tempItem;
    }
 |
-   "identifier" ":" "string"
+   "-" "identifier" ":" "string"
    {
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue(driver.removeQuotes($3));
+       tempItem.first = $2;
+       tempItem.second = new DataValue(driver.removeQuotes($4));
        $$ = tempItem;
    }
 |
-   "identifier" ":" "number"
+   "-" "identifier" ":" "number"
    {
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
+       tempItem.first = $2;
+       tempItem.second = new DataValue($4);
        $$ = tempItem;
    }
 |
-   "identifier" ":" "float"
+   "-" "identifier" ":" "float"
    {
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
+       tempItem.first = $2;
+       tempItem.second = new DataValue($4);
        $$ = tempItem;
    }
 |
-   "identifier" ":" item_list
+   "-" "identifier" ":" string_array
    {
        std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = $3;
+       tempItem.first = $2;
+       tempItem.second = $4;
        $$ = tempItem;
    }
 
-item_list:
-   item_list "," "identifier"
+string_array:
+   string_array "," "identifier"
    {
        $1->append(new DataValue($3));
        $$ = $1;
    }
 |
-   item_list "identifier"
+   string_array "identifier"
    {
        $1->append(new DataValue($2));
        $$ = $1;
@@ -328,28 +332,25 @@ item_list:
        $$->append(new DataValue($1));
    }
 
-tree_subtree:
-
-
 tree_sequentiell:
-   tree_sequentiell linebreaks_sp tree_branch
+   tree_sequentiell tree_fork
    {
        DataArray* array = (DataArray*)$1->get("parts");
-       array->append($3);
+       array->append($2);
        $$ = $1;
    }
 |
-   tree_sequentiell linebreaks_sp "[" linebreaks_sp tree_parallel linebreaks_sp "]"
+   tree_sequentiell linebreaks "{" linebreaks tree_parallel "}" linebreaks
    {
        DataArray* array = (DataArray*)$1->get("parts");
        array->append($5);
        $$ = $1;
    }
 |
-   tree_branch
+   tree_fork
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("sequentiell"));
+       $$->insert("btype", new DataValue("sequentiell"));
 
        DataArray* tempItem = new DataArray();
        tempItem->append($1);
@@ -357,65 +358,55 @@ tree_sequentiell:
        $$->insert("parts", tempItem);
    }
 |
-   "[" linebreaks_sp tree_parallel linebreaks_sp "]"
+   "{" linebreaks tree_parallel "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("sequentiell"));
+       $$->insert("btype", new DataValue("sequentiell"));
 
        DataArray* tempItem = new DataArray();
        tempItem->append($3);
 
        $$->insert("parts", tempItem);
-   }
+}
 
 tree_parallel:
-   "{" linebreaks_sp tree_sequentiell linebreaks_sp "}"
+   "parallel" "(" ")" linebreaks "{" linebreaks tree_sequentiell "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("parallel"));
+       $$->insert("btype", new DataValue("parallel"));
 
        DataArray* tempItem = new DataArray();
-       tempItem->append($3);
+       tempItem->append($7);
 
        $$->insert("parts", tempItem);
    }
 
-tree_branch:
-   "[" "TREE" ":" name_item "," "HOST" ":" name_item "]" linebreaks item_set
+tree_fork:
+   "tree" "(" "identifier" ")" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("type", new DataValue("tree"));
-       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
-       tempItem->insert("host", new DataValue(driver.removeQuotes($8)));
-       tempItem->insert("items-input", $11);
+       tempItem->insert("btype", new DataValue("tree"));
+       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("items-input", $6);
        $$ = tempItem;
    }
 |
-   "[" "BRANCH" ":" name_item "," "HOST" ":" name_item "]" linebreaks item_set
+   "branch" "(" "identifier" ")" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("type", new DataValue("branch"));
-       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
-       tempItem->insert("host", new DataValue(driver.removeQuotes($8)));
-       tempItem->insert("items-input", $11);
+       tempItem->insert("btype", new DataValue("branch"));
+       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("items-input", $6);
        $$ = tempItem;
    }
 |
-   "[" "TREE" ":" name_item "]" linebreaks item_set
+   "seed" "(" "identifier" ")" linebreaks item_set "{" linebreaks tree_sequentiell "}" linebreaks_sp
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("type", new DataValue("tree"));
-       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
-       tempItem->insert("items-input", $7);
-       $$ = tempItem;
-   }
-|
-   "[" "BRANCH" ":" name_item "]" linebreaks item_set
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("type", new DataValue("branch"));
-       tempItem->insert("name", new DataValue(driver.removeQuotes($4)));
-       tempItem->insert("items-input", $7);
+       tempItem->insert("btype", new DataValue("seed"));
+       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("connection", $6);
+       tempItem->insert("subtree", $9);
        $$ = tempItem;
    }
 

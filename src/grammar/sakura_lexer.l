@@ -39,10 +39,14 @@ blank [ \t]
 
 {blank}+    sakuraloc.step();
 [\n]        {sakuraloc.lines(1); return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc); }
-"HOST"      return Kitsunemimi::Sakura::SakuraParser::make_HOST (sakuraloc);
-"TREE"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
-"BRANCH"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
+"seed"      return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
+"tree"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
+"branch"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
+"parallel"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
+"->"         return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
+"("         return Kitsunemimi::Sakura::SakuraParser::make_LROUNDBRACK (sakuraloc);
+")"         return Kitsunemimi::Sakura::SakuraParser::make_RROUNDBRACK (sakuraloc);
 "["         return Kitsunemimi::Sakura::SakuraParser::make_LBRACK (sakuraloc);
 "]"         return Kitsunemimi::Sakura::SakuraParser::make_RBRACK (sakuraloc);
 "{"         return Kitsunemimi::Sakura::SakuraParser::make_LBRACKBOW (sakuraloc);

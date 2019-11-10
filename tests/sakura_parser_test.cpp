@@ -9,7 +9,7 @@
 
 #include "sakura_parser_test.h"
 
-#include <sakura_converter.h>
+#include <sakura_parsing.h>
 #include <test_strings/branch_test_string.h>
 #include <test_strings/tree_test_string.h>
 
@@ -35,7 +35,7 @@ ParsingTest::ParsingTest() : Kitsunemimi::Common::Test("ParsingTest")
 
 void ParsingTest::initTestCase()
 {
-    m_parser = new SakuraConverter(true);
+    m_parser = new SakuraParsing(true);
 }
 
 void ParsingTest::parseBranchTest()

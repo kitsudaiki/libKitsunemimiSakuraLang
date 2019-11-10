@@ -13,18 +13,19 @@
 #include <iostream>
 
 std::string testTreeString = "[test_tree]\n"
-                             "packages: nano\n"
+                             "- packages: nano\n"
                              "\n"
                              "{\n"
-                             "	 [BRANCH: install_branch]\n"
-                             "	 packages: \"{{packages}}\"\n"
-                             "                              \n"
-                             "	 [BRANCH: install_branch, HOST: test_host]\n"
-                             "   address: \"127.0.0.1\"\n"
-                             "   user: testuser\n"
-                             "   port: 22\n"
-                             "   ssh_key: \"~/.ssh/test_key\"\n"
-                             "	 packages: \"{{packages}}\"\n"
+                             "	 seed (sakura)\n"
+                             "   - address: \"127.0.0.1\"\n"
+                             "   - user: testuser\n"
+                             "   - port: 22\n"
+                             "   - ssh_key: \"~/.ssh/test_key\"\n"
+                             "   {\n"
+                             "	     branch (install_branch)\n"
+                             "	     - packages: \"{{packages}}\"\n"
+                             "   }\n"
+                             "\n"
                              "}\n\n";
 
 #endif // TREE_TEST_STRING_H

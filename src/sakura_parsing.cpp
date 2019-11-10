@@ -7,7 +7,7 @@
  *  Apache License Version 2.0
  */
 
-#include <libKitsunemimiSakuraParser/sakura_converter.h>
+#include <libKitsunemimiSakuraParser/sakura_parsing.h>
 
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
@@ -20,7 +20,7 @@ namespace Sakura
 /**
  * constructor
  */
-SakuraConverter::SakuraConverter(const bool traceParsing)
+SakuraParsing::SakuraParsing(const bool traceParsing)
 {
     m_parser = new SakuraParserInterface(traceParsing);
 }
@@ -28,7 +28,7 @@ SakuraConverter::SakuraConverter(const bool traceParsing)
 /**
  * destructor
  */
-SakuraConverter::~SakuraConverter()
+SakuraParsing::~SakuraParsing()
 {
     delete m_parser;
 }
@@ -43,7 +43,7 @@ SakuraConverter::~SakuraConverter()
  *         else the string contains the error-message
  */
 std::pair<Common::DataItem*, bool>
-SakuraConverter::parse(const std::string &inputString)
+SakuraParsing::parse(const std::string &inputString)
 {
     std::pair<Common::DataItem*, bool> result;
 

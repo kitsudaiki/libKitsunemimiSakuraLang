@@ -13,17 +13,16 @@
 #include <iostream>
 
 std::string testBranchString = "[install_branch]\n"
-                               "packages: {{}}\n"
+                               "- packages: {{}}\n"
                                "\n"
-                               "[apt_blossomX]\n"
-                               "- apt \n "
-                               "- update, present:\n"
-                               "    names: \"{{packages}}\"\n"
+                               "apt (\"this is a test\")\n"
+                               "-> update \n"
+                               "-> present:\n"
+                               "    - names: \"{{packages}}\"\n"
                                "\n"
-                               "[apt_blossom1]\n"
-                               "- apt \n "
-                               "- absent:\n"
-                               "    names: \"{{packages}}\"\n"
+                               "apt (apt_blossom1)\n"
+                               "-> absent:\n"
+                               "    - names: \"{{packages}}\"\n"
                                "\n";
 
 #endif // BRANCH_TEST_STRING_H
