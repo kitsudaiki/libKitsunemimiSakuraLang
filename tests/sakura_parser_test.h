@@ -16,7 +16,7 @@ namespace Kitsunemimi
 {
 namespace Sakura
 {
-class SakuraConverter;
+class SakuraParsing;
 
 class ParsingTest : public Kitsunemimi::Common::Test
 {
@@ -29,7 +29,7 @@ private:
     void parseTreeTest();
     void cleanupTestCase();
 
-    SakuraConverter* m_parser = nullptr;
+    SakuraParsing* m_parser = nullptr;
 };
 
 }  // namespace Sakura

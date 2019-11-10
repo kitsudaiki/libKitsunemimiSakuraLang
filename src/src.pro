@@ -15,11 +15,11 @@ INCLUDEPATH += $$PWD \
 
 SOURCES += \
     sakura_parsing/sakura_parser_interface.cpp \
-    sakura_converter.cpp
+    sakura_parsing.cpp
 
 HEADERS += \
-    ../include/libKitsunemimiSakuraParser/sakura_converter.h \
-    sakura_parsing/sakura_parser_interface.h
+    sakura_parsing/sakura_parser_interface.h \
+    ../include/libKitsunemimiSakuraParser/sakura_parsing.h
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y

@@ -22,11 +22,11 @@ namespace Sakura
 {
 class SakuraParserInterface;
 
-class SakuraConverter
+class SakuraParsing
 {
 public:
-    SakuraConverter(const bool traceParsing);
-    ~SakuraConverter();
+    SakuraParsing(const bool traceParsing);
+    ~SakuraParsing();
 
     std::pair<Common::DataItem*, bool> parse(const std::string &inputString);
 
