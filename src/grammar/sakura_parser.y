@@ -1,10 +1,23 @@
 /**
- *  @file    sakuraparser.y
+ * @file        sakuraparser.y
  *
- *  @author  Tobias Anker
- *  Contact: tobias.anker@kitsunemimi.moe
+ * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
- *  Apache License Version 2.0
+ * @copyright   Apache License Version 2.0
+ *
+ *      Copyright 2019 Tobias Anker
+ *
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
  */
 
 %skeleton "lalr1.cc"
@@ -74,6 +87,7 @@ YY_DECL;
     DELIMITER  "|"
     ARROW   "->"
     MINUS   "-"
+    EQUAL   "="
     LBRACK  "["
     RBRACK  "]"
     LBRACKBOW  "{"
@@ -197,39 +211,6 @@ blossom_subtype:
        $$->insert("items-input", $5);
    }
 
-static_option:
-   "identifier" ":" "identifier"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
-       $$ = tempItem;
-   }
-|
-   "identifier" ":" "string"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue(driver.removeQuotes($3));
-       $$ = tempItem;
-   }
-|
-   "identifier" ":" "number"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
-       $$ = tempItem;
-   }
-|
-   "identifier" ":" "float"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $1;
-       tempItem.second = new DataValue($3);
-       $$ = tempItem;
-   }
-
 item_set:
    %empty
    {
@@ -249,7 +230,7 @@ item_set:
    }
 
 item:
-   "-" "identifier" ":" "{" "{" "}" "}"
+   "-" "identifier" "=" "{" "{" "}" "}"
    {
        // uset value
        std::string empty = "{{}}";
@@ -259,7 +240,7 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" ":" "identifier"
+   "-" "identifier" "=" "identifier"
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
@@ -267,7 +248,7 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" ":" "string"
+   "-" "identifier" "=" "string"
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
@@ -275,7 +256,7 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" ":" "number"
+   "-" "identifier" "=" "number"
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
@@ -283,7 +264,7 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" ":" "float"
+   "-" "identifier" "=" "float"
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
@@ -291,7 +272,7 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" ":" string_array
+   "-" "identifier" "=" string_array
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
