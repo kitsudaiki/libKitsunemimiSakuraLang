@@ -103,10 +103,10 @@ YY_DECL;
 
 %type  <std::string> name_item
 
+%type  <DataMap*> blossom_group
+%type  <DataArray*> blossom_group_set
 %type  <DataMap*> blossom
 %type  <DataArray*> blossom_set
-%type  <DataMap*> blossom_subtype
-%type  <DataArray*> blossom_subtype_set
 
 %type  <std::pair<std::string, DataItem*>> item
 %type  <DataMap*> item_set
@@ -150,13 +150,36 @@ tree:
    }
 
 branch:
-   "[" name_item "]" linebreaks item_set blossom_set
+   "[" name_item "]" linebreaks item_set blossom_group_set
    {
        $$ = new DataMap();
        $$->insert("id", new DataValue($2));
        $$->insert("btype", new DataValue("branch"));
        $$->insert("items", $5);
        $$->insert("parts", $6);
+   }
+
+blossom_group_set:
+   blossom_group_set blossom_group
+   {
+       $1->append($2);
+       $$ = $1;
+   }
+|
+   blossom_group
+   {
+       $$ = new DataArray();
+       $$->append($1);
+   }
+
+blossom_group:
+   "identifier" "(" name_item ")" linebreaks blossom_set
+   {
+       $$ = new DataMap();
+       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("name", new DataValue($3));
+       $$->insert("blossom-group-type", new DataValue($1));
+       $$->insert("blossoms", $6);
    }
 
 blossom_set:
@@ -173,41 +196,18 @@ blossom_set:
    }
 
 blossom:
-   "identifier" "(" name_item ")" linebreaks blossom_subtype_set
-   {
-       $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom"));
-       $$->insert("name", new DataValue($3));
-       $$->insert("blossom-type", new DataValue($1));
-       $$->insert("blossom-subtypes", $6);
-   }
-
-blossom_subtype_set:
-   blossom_subtype_set blossom_subtype
-   {
-       $1->append($2);
-       $$ = $1;
-   }
-|
-   blossom_subtype
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
-
-blossom_subtype:
    "->" "identifier" linebreaks
    {
         $$ = new DataMap();
-        $$->insert("btype", new DataValue("blossom_subtype"));
-        $$->insert("blossom-subtype", new DataValue($2));
+        $$->insert("btype", new DataValue("blossom"));
+        $$->insert("blossom-type", new DataValue($2));
    }
 |
    "->" "identifier" ":" linebreaks item_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom_subtype"));
-       $$->insert("blossom-subtype", new DataValue($2));
+       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("blossom-type", new DataValue($2));
        $$->insert("items-input", $5);
    }
 
