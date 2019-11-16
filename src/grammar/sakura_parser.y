@@ -1,5 +1,5 @@
 /**
- * @file        sakuraparser.y
+ * @file        sakura_parser.y
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -82,6 +82,7 @@ YY_DECL;
     BRANCH  "branch"
     PARALLEL  "parallel"
     IF  "if"
+    ELSE  "else"
     ASSIGN  ":"
     DOT  "."
     COMMA  ","
@@ -96,6 +97,11 @@ YY_DECL;
     LROUNDBRACK  "("
     RROUNDBRACK  ")"
     EQUAL_COMPARE "=="
+    GREATER_EQUAL_COMPARE ">="
+    SMALLER_EQUAL_COMPARE "<="
+    GREATER_COMPARE ">"
+    SMALLER_COMPARE "<"
+    UNEQUAL_COMPARE "!="
 ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -104,6 +110,8 @@ YY_DECL;
 %token <float> FLOAT "float"
 
 %type  <std::string> name_item
+%type  <std::string> compare_type
+%type  <DataValue*>  value_item
 %type  <DataArray*>  json_path
 
 %type  <DataMap*> blossom_group
@@ -162,29 +170,29 @@ branch:
    }
 
 if_condition:
-   "if" "(" json_path "==" name_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks_sp
+   "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks "else" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
    {
        $$ = new DataMap();
        $$->insert("btype", new DataValue("if"));
-       $$->insert("if_type", new DataValue("=="));
+       $$->insert("if_type", new DataValue($4));
        $$->insert("left", $3);
-       $$->insert("right", new DataValue($5));
+       $$->insert("right", $5);
 
        $$->insert("if_parts", $10);
-       $$->insert("else_parts", new DataArray());
+       $$->insert("else_parts", $17);
    }
 |
-   "if" "(" json_path "==" "number" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks_sp
-   {
-      $$ = new DataMap();
-      $$->insert("btype", new DataValue("if"));
-      $$->insert("if_type", new DataValue("=="));
-      $$->insert("left", $3);
-      $$->insert("right", new DataValue($5));
+    "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("btype", new DataValue("if"));
+        $$->insert("if_type", new DataValue($4));
+        $$->insert("left", $3);
+        $$->insert("right", $5);
 
-      $$->insert("if_parts", $10);
-      $$->insert("else_parts", new DataArray());
-   }
+        $$->insert("if_parts", $10);
+        $$->insert("else_parts", new DataArray());
+    }
 
 blossom_group_set:
    blossom_group_set if_condition
@@ -281,43 +289,19 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" "=" "identifier"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "string"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue(driver.removeQuotes($4));
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "number"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "float"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" string_array
+   "-" "identifier" "=" value_item
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
        tempItem.second = $4;
+       $$ = tempItem;
+   }
+|
+   "-" "identifier" "=" "[" string_array "]"
+   {
+       std::pair<std::string, DataItem*> tempItem;
+       tempItem.first = $2;
+       tempItem.second = $5;
        $$ = tempItem;
    }
 
@@ -446,6 +430,27 @@ json_path:
        $$ = tempItem;
    }
 
+value_item:
+   "float"
+   {
+      $$ = new DataValue($1);
+   }
+|
+   "number"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "identifier"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "string"
+   {
+       $$ = new DataValue(driver.removeQuotes($1));
+   }
+
 name_item:
    "identifier"
    {
@@ -455,6 +460,37 @@ name_item:
    "string"
    {
        $$ = driver.removeQuotes($1);
+   }
+
+compare_type:
+   "=="
+   {
+       $$ = "==";
+   }
+|
+   ">="
+   {
+       $$ = ">=";
+   }
+|
+   "<="
+   {
+       $$ = "<=";
+   }
+|
+   ">"
+   {
+       $$ = ">";
+   }
+|
+   "<"
+   {
+       $$ = "<";
+   }
+|
+   "!="
+   {
+       $$ = "!=";
    }
 
 linebreaks:
