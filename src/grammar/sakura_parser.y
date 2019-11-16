@@ -1,5 +1,5 @@
 /**
- * @file        sakuraparser.y
+ * @file        sakura_parser.y
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -81,6 +81,8 @@ YY_DECL;
     TREE  "tree"
     BRANCH  "branch"
     PARALLEL  "parallel"
+    IF  "if"
+    ELSE  "else"
     ASSIGN  ":"
     DOT  "."
     COMMA  ","
@@ -94,6 +96,12 @@ YY_DECL;
     RBRACKBOW  "}"
     LROUNDBRACK  "("
     RROUNDBRACK  ")"
+    EQUAL_COMPARE "=="
+    GREATER_EQUAL_COMPARE ">="
+    SMALLER_EQUAL_COMPARE "<="
+    GREATER_COMPARE ">"
+    SMALLER_COMPARE "<"
+    UNEQUAL_COMPARE "!="
 ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -102,6 +110,9 @@ YY_DECL;
 %token <float> FLOAT "float"
 
 %type  <std::string> name_item
+%type  <std::string> compare_type
+%type  <DataValue*>  value_item
+%type  <DataArray*>  json_path
 
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
@@ -112,8 +123,7 @@ YY_DECL;
 %type  <DataMap*> item_set
 %type  <DataArray*> string_array
 
-%type  <std::pair<std::string, DataItem*>> static_option
-%type  <DataMap*> static_options
+%type  <DataMap*> if_condition
 
 %type  <DataMap*> branch
 %type  <DataMap*> tree
@@ -159,11 +169,48 @@ branch:
        $$->insert("parts", $6);
    }
 
+if_condition:
+   "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks "else" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+   {
+       $$ = new DataMap();
+       $$->insert("btype", new DataValue("if"));
+       $$->insert("if_type", new DataValue($4));
+       $$->insert("left", $3);
+       $$->insert("right", $5);
+
+       $$->insert("if_parts", $10);
+       $$->insert("else_parts", $17);
+   }
+|
+    "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("btype", new DataValue("if"));
+        $$->insert("if_type", new DataValue($4));
+        $$->insert("left", $3);
+        $$->insert("right", $5);
+
+        $$->insert("if_parts", $10);
+        $$->insert("else_parts", new DataArray());
+    }
+
 blossom_group_set:
+   blossom_group_set if_condition
+   {
+       $1->append($2);
+       $$ = $1;
+   }
+|
    blossom_group_set blossom_group
    {
        $1->append($2);
        $$ = $1;
+   }
+|
+   if_condition
+   {
+       $$ = new DataArray();
+       $$->append($1);
    }
 |
    blossom_group
@@ -171,6 +218,7 @@ blossom_group_set:
        $$ = new DataArray();
        $$->append($1);
    }
+
 
 blossom_group:
    "identifier" "(" name_item ")" linebreaks blossom_set
@@ -241,43 +289,19 @@ item:
        $$ = tempItem;
    }
 |
-   "-" "identifier" "=" "identifier"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "string"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue(driver.removeQuotes($4));
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "number"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" "float"
-   {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue($4);
-       $$ = tempItem;
-   }
-|
-   "-" "identifier" "=" string_array
+   "-" "identifier" "=" value_item
    {
        std::pair<std::string, DataItem*> tempItem;
        tempItem.first = $2;
        tempItem.second = $4;
+       $$ = tempItem;
+   }
+|
+   "-" "identifier" "=" "[" string_array "]"
+   {
+       std::pair<std::string, DataItem*> tempItem;
+       tempItem.first = $2;
+       tempItem.second = $5;
        $$ = tempItem;
    }
 
@@ -392,6 +416,41 @@ tree_fork:
        $$ = tempItem;
    }
 
+json_path:
+   json_path "." "identifier"
+   {
+       $1->append(new DataValue($3));
+       $$ = $1;
+   }
+|
+   "identifier"
+   {
+       DataArray* tempItem = new DataArray();
+       tempItem->append(new DataValue($1));
+       $$ = tempItem;
+   }
+
+value_item:
+   "float"
+   {
+      $$ = new DataValue($1);
+   }
+|
+   "number"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "identifier"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "string"
+   {
+       $$ = new DataValue(driver.removeQuotes($1));
+   }
+
 name_item:
    "identifier"
    {
@@ -401,6 +460,37 @@ name_item:
    "string"
    {
        $$ = driver.removeQuotes($1);
+   }
+
+compare_type:
+   "=="
+   {
+       $$ = "==";
+   }
+|
+   ">="
+   {
+       $$ = ">=";
+   }
+|
+   "<="
+   {
+       $$ = "<=";
+   }
+|
+   ">"
+   {
+       $$ = ">";
+   }
+|
+   "<"
+   {
+       $$ = "<";
+   }
+|
+   "!="
+   {
+       $$ = "!=";
    }
 
 linebreaks:

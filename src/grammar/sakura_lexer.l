@@ -43,7 +43,15 @@ blank [ \t]
 "tree"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
 "branch"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
 "parallel"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
+"if"        return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
+"else"      return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
 "->"        return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
+"=="        return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
+">="        return Kitsunemimi::Sakura::SakuraParser::make_GREATER_EQUAL_COMPARE (sakuraloc);
+"<="        return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_EQUAL_COMPARE (sakuraloc);
+">"         return Kitsunemimi::Sakura::SakuraParser::make_GREATER_COMPARE (sakuraloc);
+"<"         return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_COMPARE (sakuraloc);
+"!="        return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
 "-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
 "="         return Kitsunemimi::Sakura::SakuraParser::make_EQUAL (sakuraloc);
 "("         return Kitsunemimi::Sakura::SakuraParser::make_LROUNDBRACK (sakuraloc);
