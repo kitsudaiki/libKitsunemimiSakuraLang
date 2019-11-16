@@ -201,6 +201,7 @@ blossom:
         $$ = new DataMap();
         $$->insert("btype", new DataValue("blossom"));
         $$->insert("blossom-type", new DataValue($2));
+        $$->insert("items-input", new DataMap());
    }
 |
    "->" "identifier" ":" linebreaks item_set
