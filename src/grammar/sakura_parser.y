@@ -97,11 +97,13 @@ YY_DECL;
     LROUNDBRACK  "("
     RROUNDBRACK  ")"
     EQUAL_COMPARE "=="
+    UNEQUAL_COMPARE "!="
     GREATER_EQUAL_COMPARE ">="
     SMALLER_EQUAL_COMPARE "<="
     GREATER_COMPARE ">"
     SMALLER_COMPARE "<"
-    UNEQUAL_COMPARE "!="
+    SHIFT_LEFT "<<"
+    SHIFT_RIGHT ">>"
 ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -219,16 +221,46 @@ blossom_group_set:
        $$->append($1);
    }
 
-
 blossom_group:
+   "identifier" "(" name_item ")" linebreaks item_set blossom_set
+   {
+       $$ = new DataMap();
+       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("name", new DataValue($3));
+       $$->insert("blossom-group-type", new DataValue($1));
+       $$->insert("items-input", $6);
+       $$->insert("blossoms", $7);
+   }
+|
    "identifier" "(" name_item ")" linebreaks blossom_set
    {
        $$ = new DataMap();
        $$->insert("btype", new DataValue("blossom_group"));
        $$->insert("name", new DataValue($3));
        $$->insert("blossom-group-type", new DataValue($1));
+       $$->insert("items-input", new DataMap());
        $$->insert("blossoms", $6);
    }
+|
+   "identifier" "(" name_item ")" linebreaks item_set
+   {
+       $$ = new DataMap();
+       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("name", new DataValue($3));
+       $$->insert("blossom-group-type", new DataValue($1));
+       $$->insert("items-input", $6);
+       $$->insert("blossoms", new DataArray());
+   }
+|
+  "identifier" "(" name_item ")" linebreaks
+  {
+      $$ = new DataMap();
+      $$->insert("btype", new DataValue("blossom_group"));
+      $$->insert("name", new DataValue($3));
+      $$->insert("blossom-group-type", new DataValue($1));
+      $$->insert("items-input", new DataMap());
+      $$->insert("blossoms", new DataArray());
+  }
 
 blossom_set:
    blossom_set blossom
