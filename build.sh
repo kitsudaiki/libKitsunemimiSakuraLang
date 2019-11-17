@@ -49,6 +49,8 @@ function get_required_kitsune_lib_repo () {
 
 get_required_kitsune_lib_repo "libKitsunemimiCommon" "v0.7.0" 4
 
+get_required_kitsune_lib_repo "libKitsunemimiJson" "master" 4
+
 #-----------------------------------------------------------------------------------------------------------------
 
 build_kitsune_lib_repo "libKitsunemimiSakuraParser" 1
