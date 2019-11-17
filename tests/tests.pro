@@ -13,6 +13,13 @@ LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
 LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
 INCLUDEPATH += ../../libKitsunemimiCommon/include/libKitsunemimiCommon
 
+LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
+INCLUDEPATH += ../../libKitsunemimiJson/include
+
+LIBS +=  -lboost_filesystem -lboost_system
+
 SOURCES += \
         main.cpp \
     sakura_parser_test.cpp
