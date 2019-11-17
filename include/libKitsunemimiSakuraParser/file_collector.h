@@ -32,6 +32,10 @@
 
 namespace Kitsunemimi
 {
+namespace Common
+{
+class DataItem;
+}
 namespace Json
 {
 class JsonItem;
@@ -42,6 +46,7 @@ class SakuraParsing;
 }
 }
 using Kitsunemimi::Json::JsonItem;
+using Kitsunemimi::Common::DataItem;
 using namespace boost::filesystem;
 using Kitsunemimi::Sakura::SakuraParsing;
 
@@ -51,23 +56,27 @@ namespace SakuraTree
 class FileCollector
 {
 public:
-    FileCollector(SakuraParsing* driver);
+    FileCollector();
 
-    bool initFileCollector(const std::string &rootPath);
+    JsonItem parseFiles(const std::string &rootPath,
+                        std::string &seedName,
+                        const bool debug = false);
 
+private:
+    std::vector<std::pair<std::string, JsonItem>> m_fileContents;
+    std::string m_errorMessage = "";
+
+    bool initFileCollector(const std::string &rootPath,
+                           SakuraParsing* sakuraParser);
     JsonItem getObject(const std::string &name,
                        const std::string &type="");
     const std::string getSeedName(const uint32_t index);
-    const std::string getErrorMessage() const;
-
-private:
-    SakuraParsing* m_driver = nullptr;
 
     void getFilesInDir(const path &directory);
     const std::string readFile(const std::string &filePath);
 
-    std::vector<std::pair<std::string, JsonItem>> m_fileContents;
-    std::string m_errorMessage = "";
+    void preProcessArray(JsonItem &object);
+    void preProcessObject(JsonItem &object);
 };
 
 }

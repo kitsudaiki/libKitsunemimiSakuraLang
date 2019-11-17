@@ -30,9 +30,113 @@
 namespace SakuraTree
 {
 
-FileCollector::FileCollector(SakuraParsing *driver)
+/**
+ * @brief constructor
+ */
+FileCollector::FileCollector() {}
+
+/**
+ * @brief SakuraCompiler::parseFiles
+ * @param rootPath
+ * @param seedName
+ * @return
+ */
+JsonItem
+FileCollector::parseFiles(const std::string &rootPath,
+                          std::string &seedName,
+                          const bool debug)
 {
-    m_driver = driver;
+    SakuraParsing* sakuraParser = new SakuraParsing(debug);
+
+    if(initFileCollector(rootPath, sakuraParser) == false)
+    {
+        //TODO: replace with better solution
+        std::cout<<"ERROR: "<<m_errorMessage<<std::endl;
+        exit(1);
+    }
+
+    if(seedName == "") {
+        seedName = getSeedName(0);
+    }
+
+    JsonItem completePlan = getObject(seedName);
+    assert(completePlan.isValid());
+
+    preProcessObject(completePlan);
+
+    delete sakuraParser;
+
+    return completePlan;
+}
+
+
+/**
+ * @brief SakuraCompiler::processObject
+ * @param value
+ * @return
+ */
+void
+FileCollector::preProcessObject(JsonItem &object)
+{
+    // precheck
+    if(object.isValid() == false) {
+        return;
+    }
+
+    // end of tree
+    if(object.get("btype").toString() == "blossom") {
+        return;
+    }
+
+    // continue building
+    JsonItem branch = object;
+
+    if(object.get("btype").toString() == "tree"
+            || object.get("btype").toString() == "branch")
+    {
+        branch = getObject(object.get("id").toString());
+        object.insert("parts", branch.get("parts"));
+        object.insert("items", branch.get("items"));
+    }
+
+    if(object.get("btype").toString() == "seed")
+    {
+        JsonItem subtree = object.get("subtree");
+        preProcessObject(subtree);
+    }
+
+    if(object.contains("parts"))
+    {
+        JsonItem parts = object.get("parts");
+        preProcessArray(parts);
+    }
+
+    if(object.contains("if_parts"))
+    {
+        JsonItem parts = object.get("if_parts");
+        preProcessArray(parts);
+    }
+
+    if(object.contains("else_parts"))
+    {
+        JsonItem parts = object.get("else_parts");
+        preProcessArray(parts);
+    }
+}
+
+/**
+ * @brief SakuraCompiler::processArray
+ * @param value
+ * @return
+ */
+void
+FileCollector::preProcessArray(JsonItem &object)
+{
+    for(uint32_t i = 0; i < object.size(); i++)
+    {
+        JsonItem item = object.get(i);
+        preProcessObject(item);
+    }
 }
 
 /**
@@ -40,7 +144,8 @@ FileCollector::FileCollector(SakuraParsing *driver)
  * @return
  */
 bool
-FileCollector::initFileCollector(const std::string &rootPath)
+FileCollector::initFileCollector(const std::string &rootPath,
+                                 SakuraParsing* sakuraParser)
 {
     boost::filesystem::path rootPathObj(rootPath);  // avoid repeated path construction below
     m_errorMessage = "";
@@ -70,7 +175,7 @@ FileCollector::initFileCollector(const std::string &rootPath)
     for(uint32_t i = 0; i < m_fileContents.size(); i++)
     {
         const std::string filePath = m_fileContents.at(i).first;
-        std::pair<Kitsunemimi::Common::DataItem*, bool> result = m_driver->parse(readFile(filePath));
+        std::pair<DataItem*, bool> result = sakuraParser->parse(readFile(filePath));
 
         if(result.second == false)
         {
@@ -139,16 +244,6 @@ FileCollector::getSeedName(const uint32_t index)
     }
 
     return m_fileContents.at(index).second.get("name").toString();
-}
-
-/**
- * @brief FileCollector::getErrorMessage
- * @return
- */
-const std::string
-FileCollector::getErrorMessage() const
-{
-    return m_errorMessage;
 }
 
 /**
