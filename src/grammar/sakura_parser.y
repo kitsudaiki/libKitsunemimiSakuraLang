@@ -153,7 +153,7 @@ tree:
    {
        $$ = new DataMap();
        $$->insert("id", new DataValue($2));
-       $$->insert("btype", new DataValue("tree"));
+       $$->insert("b_type", new DataValue("tree"));
        $$->insert("items", $5);
 
        DataArray* tempItem = new DataArray();
@@ -166,7 +166,7 @@ branch:
    {
        $$ = new DataMap();
        $$->insert("id", new DataValue($2));
-       $$->insert("btype", new DataValue("branch"));
+       $$->insert("b_type", new DataValue("branch"));
        $$->insert("items", $5);
        $$->insert("parts", $6);
    }
@@ -175,7 +175,7 @@ if_condition:
    "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks "else" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("if"));
+       $$->insert("b_type", new DataValue("if"));
        $$->insert("if_type", new DataValue($4));
        $$->insert("left", $3);
        $$->insert("right", $5);
@@ -187,7 +187,7 @@ if_condition:
     "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
-        $$->insert("btype", new DataValue("if"));
+        $$->insert("b_type", new DataValue("if"));
         $$->insert("if_type", new DataValue($4));
         $$->insert("left", $3);
         $$->insert("right", $5);
@@ -225,7 +225,7 @@ blossom_group:
    "identifier" "(" name_item ")" linebreaks item_set blossom_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("b_type", new DataValue("blossom_group"));
        $$->insert("name", new DataValue($3));
        $$->insert("blossom-group-type", new DataValue($1));
        $$->insert("items-input", $6);
@@ -235,7 +235,7 @@ blossom_group:
    "identifier" "(" name_item ")" linebreaks blossom_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("b_type", new DataValue("blossom_group"));
        $$->insert("name", new DataValue($3));
        $$->insert("blossom-group-type", new DataValue($1));
        $$->insert("items-input", new DataMap());
@@ -245,7 +245,7 @@ blossom_group:
    "identifier" "(" name_item ")" linebreaks item_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom_group"));
+       $$->insert("b_type", new DataValue("blossom_group"));
        $$->insert("name", new DataValue($3));
        $$->insert("blossom-group-type", new DataValue($1));
        $$->insert("items-input", $6);
@@ -255,7 +255,7 @@ blossom_group:
   "identifier" "(" name_item ")" linebreaks
   {
       $$ = new DataMap();
-      $$->insert("btype", new DataValue("blossom_group"));
+      $$->insert("b_type", new DataValue("blossom_group"));
       $$->insert("name", new DataValue($3));
       $$->insert("blossom-group-type", new DataValue($1));
       $$->insert("items-input", new DataMap());
@@ -279,7 +279,7 @@ blossom:
    "->" "identifier" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue());
        $$->insert("items-input", new DataMap());
@@ -288,7 +288,7 @@ blossom:
    "->" "identifier" ":" linebreaks item_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue());
        $$->insert("items-input", $5);
@@ -297,7 +297,7 @@ blossom:
    "->" "identifier" ">>" "identifier" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue($4));
        $$->insert("items-input", new DataMap());
@@ -306,7 +306,7 @@ blossom:
    "->" "identifier" ">>" "identifier" ":" linebreaks item_set
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("blossom"));
+       $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue($4));
        $$->insert("items-input", $7);
@@ -408,7 +408,7 @@ tree_sequentiell:
    tree_fork
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("sequentiell"));
+       $$->insert("b_type", new DataValue("sequentiell"));
 
        DataArray* tempItem = new DataArray();
        tempItem->append($1);
@@ -419,7 +419,7 @@ tree_sequentiell:
    "{" linebreaks tree_parallel "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("sequentiell"));
+       $$->insert("b_type", new DataValue("sequentiell"));
 
        DataArray* tempItem = new DataArray();
        tempItem->append($3);
@@ -431,7 +431,7 @@ tree_parallel:
    "parallel" "(" ")" linebreaks "{" linebreaks tree_sequentiell "}" linebreaks
    {
        $$ = new DataMap();
-       $$->insert("btype", new DataValue("parallel"));
+       $$->insert("b_type", new DataValue("parallel"));
 
        DataArray* tempItem = new DataArray();
        tempItem->append($7);
@@ -443,7 +443,7 @@ tree_fork:
    "tree" "(" "identifier" ")" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("btype", new DataValue("tree"));
+       tempItem->insert("b_type", new DataValue("tree"));
        tempItem->insert("id", new DataValue($3));
        tempItem->insert("items-input", $6);
        $$ = tempItem;
@@ -452,7 +452,7 @@ tree_fork:
    "branch" "(" "identifier" ")" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("btype", new DataValue("branch"));
+       tempItem->insert("b_type", new DataValue("branch"));
        tempItem->insert("id", new DataValue($3));
        tempItem->insert("items-input", $6);
        $$ = tempItem;
@@ -461,7 +461,7 @@ tree_fork:
    "seed" "(" "identifier" ")" linebreaks item_set "{" linebreaks tree_sequentiell "}" linebreaks_sp
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("btype", new DataValue("seed"));
+       tempItem->insert("b_type", new DataValue("seed"));
        tempItem->insert("id", new DataValue($3));
        tempItem->insert("connection", $6);
        tempItem->insert("subtree", $9);
