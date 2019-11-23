@@ -84,22 +84,22 @@ FileCollector::preProcessObject(JsonItem &object)
     }
 
     // end of tree
-    if(object.get("btype").toString() == "blossom") {
+    if(object.get("b_type").toString() == "blossom") {
         return;
     }
 
     // continue building
     JsonItem branch = object;
 
-    if(object.get("btype").toString() == "tree"
-            || object.get("btype").toString() == "branch")
+    if(object.get("b_type").toString() == "tree"
+            || object.get("b_type").toString() == "branch")
     {
         branch = getObject(object.get("id").toString());
         object.insert("parts", branch.get("parts"));
         object.insert("items", branch.get("items"));
     }
 
-    if(object.get("btype").toString() == "seed")
+    if(object.get("b_type").toString() == "seed")
     {
         JsonItem subtree = object.get("subtree");
         preProcessObject(subtree);
@@ -147,7 +147,7 @@ bool
 FileCollector::initFileCollector(const std::string &rootPath,
                                  SakuraParsing* sakuraParser)
 {
-    boost::filesystem::path rootPathObj(rootPath);  // avoid repeated path construction below
+    boost::filesystem::path rootPathObj(rootPath);    
     m_errorMessage = "";
 
     // precheck
@@ -174,7 +174,7 @@ FileCollector::initFileCollector(const std::string &rootPath,
     // get and parse file-contents
     for(uint32_t i = 0; i < m_fileContents.size(); i++)
     {
-        const std::string filePath = m_fileContents.at(i).first;
+        const std::string filePath = m_fileContents.at(i).first.string();
         std::pair<DataItem*, bool> result = sakuraParser->parse(readFile(filePath));
 
         if(result.second == false)
@@ -186,7 +186,13 @@ FileCollector::initFileCollector(const std::string &rootPath,
         }
 
         m_fileContents[i].second = result.first->toMap();
-        std::string output = m_fileContents[i].second.toString(true);
+
+        const std::string directoryPath = m_fileContents.at(i).first.parent_path().string();
+        m_fileContents[i].second.insert("b_path",
+                                        new DataValue(directoryPath),
+                                        true);
+
+        const std::string output = m_fileContents[i].second.toString(true);
         std::cout<<output<<std::endl;
     }
 
@@ -209,7 +215,7 @@ FileCollector::getObject(const std::string &name,
     }
 
     // search
-    std::vector<std::pair<std::string, JsonItem>>::iterator it;
+    std::vector<std::pair<boost::filesystem::path, JsonItem>>::iterator it;
     for(it = m_fileContents.begin();
         it != m_fileContents.end();
         it++)
@@ -262,13 +268,17 @@ FileCollector::getFilesInDir(const boost::filesystem::path &directory)
     {
         if(is_directory(itr->path()))
         {
-            getFilesInDir(itr->path());
+            if(itr->path().leaf().string() != "templates"
+                    && itr->path().leaf().string() != "files")
+            {
+                getFilesInDir(itr->path());
+            }
         }
         else
         {
             //TODO: delete output
             std::cout<<"file: "<<itr->path().string()<<std::endl;
-            m_fileContents.push_back(std::make_pair(itr->path().string(), JsonItem()));
+            m_fileContents.push_back(std::make_pair(itr->path(), JsonItem()));
         }
     }
 }

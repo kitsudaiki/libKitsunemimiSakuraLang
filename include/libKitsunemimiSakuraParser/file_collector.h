@@ -35,6 +35,8 @@ namespace Kitsunemimi
 namespace Common
 {
 class DataItem;
+class DataValue;
+class DataMap;
 }
 namespace Json
 {
@@ -47,6 +49,8 @@ class SakuraParsing;
 }
 using Kitsunemimi::Json::JsonItem;
 using Kitsunemimi::Common::DataItem;
+using Kitsunemimi::Common::DataValue;
+using Kitsunemimi::Common::DataMap;
 using namespace boost::filesystem;
 using Kitsunemimi::Sakura::SakuraParsing;
 
@@ -63,7 +67,7 @@ public:
                         const bool debug = false);
 
 private:
-    std::vector<std::pair<std::string, JsonItem>> m_fileContents;
+    std::vector<std::pair<boost::filesystem::path, JsonItem>> m_fileContents;
     std::string m_errorMessage = "";
 
     bool initFileCollector(const std::string &rootPath,
