@@ -24,7 +24,7 @@ Kitsunemimi::Sakura::location sakuraloc;
 %option noyywrap nounput batch debug yylineno prefix="sakura"
 
 id    [a-zA-Z][a-zA-Z_0-9]*
-int   -?([0-9]+)
+long   -?([0-9]+)
 blank [ \t]
 
 %{
@@ -70,11 +70,11 @@ blank [ \t]
     return Kitsunemimi::Sakura::SakuraParser::make_STRING(yytext, sakuraloc);
 }
 
-{int}      {
+{long}      {
     errno = 0;
     long length = strtol(yytext, NULL, 10);
-    if (!(INT_MIN <= length
-        && length <= INT_MAX
+    if (!(LONG_MIN <= length
+        && length <= LONG_MAX
         && errno != ERANGE))
     {
         driver.error(sakuraloc, "integer is out of range");
@@ -82,8 +82,8 @@ blank [ \t]
     return Kitsunemimi::Sakura::SakuraParser::make_NUMBER(length, sakuraloc);
 }
 
-{int}+"."{int}*	{
-    float value = atof( yytext );
+{long}+"."{long}*	{
+    double value = strtod( yytext , NULL );
     return Kitsunemimi::Sakura::SakuraParser::make_FLOAT(value, sakuraloc);
 }
 
