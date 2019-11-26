@@ -108,8 +108,8 @@ YY_DECL;
 
 %token <std::string> IDENTIFIER "identifier"
 %token <std::string> STRING "string"
-%token <int> NUMBER "number"
-%token <float> FLOAT "float"
+%token <long> NUMBER "number"
+%token <double> FLOAT "float"
 
 %type  <std::string> name_item
 %type  <std::string> compare_type
@@ -121,8 +121,8 @@ YY_DECL;
 %type  <DataMap*> blossom
 %type  <DataArray*> blossom_set
 
-%type  <std::pair<std::string, DataItem*>> item
-%type  <DataMap*> item_set
+%type  <DataMap*> item
+%type  <DataArray*> item_set
 %type  <DataArray*> string_array
 
 %type  <DataMap*> if_condition
@@ -238,7 +238,7 @@ blossom_group:
        $$->insert("b_type", new DataValue("blossom_group"));
        $$->insert("name", new DataValue($3));
        $$->insert("blossom-group-type", new DataValue($1));
-       $$->insert("items-input", new DataMap());
+       $$->insert("items-input", new DataArray());
        $$->insert("blossoms", $6);
    }
 |
@@ -258,7 +258,7 @@ blossom_group:
       $$->insert("b_type", new DataValue("blossom_group"));
       $$->insert("name", new DataValue($3));
       $$->insert("blossom-group-type", new DataValue($1));
-      $$->insert("items-input", new DataMap());
+      $$->insert("items-input", new DataArray());
       $$->insert("blossoms", new DataArray());
   }
 
@@ -282,7 +282,7 @@ blossom:
        $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue());
-       $$->insert("items-input", new DataMap());
+       $$->insert("items-input", new DataArray());
    }
 |
    "->" "identifier" ":" linebreaks item_set
@@ -300,7 +300,7 @@ blossom:
        $$->insert("b_type", new DataValue("blossom"));
        $$->insert("blossom-type", new DataValue($2));
        $$->insert("output", new DataValue($4));
-       $$->insert("items-input", new DataMap());
+       $$->insert("items-input", new DataArray());
    }
 |
    "->" "identifier" ">>" "identifier" ":" linebreaks item_set
@@ -315,46 +315,62 @@ blossom:
 item_set:
    %empty
    {
-       $$ = new DataMap();
+       $$ = new DataArray();
    }
 |
    item_set  item  linebreaks
    {
-       $1->insert($2.first, $2.second);
+       $1->append($2);
        $$ = $1;
    }
 |
    item linebreaks
    {
-       $$ = new DataMap();
-       $$->insert($1.first, $1.second);
+       $$ = new DataArray();
+       $$->append($1);
    }
 
 item:
    "-" "identifier" "=" "{" "{" "}" "}"
    {
-       // uset value
+       $$ = new DataMap();
+       $$->insert("type", new DataValue("assign"));
+       $$->insert("key", new DataValue($2));
        std::string empty = "{{}}";
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = new DataValue(empty);
-       $$ = tempItem;
+       $$->insert("value", new DataValue(empty));
    }
 |
    "-" "identifier" "=" value_item
    {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = $4;
-       $$ = tempItem;
+       $$ = new DataMap();
+       $$->insert("type", new DataValue("assign"));
+       $$->insert("key", new DataValue($2));
+       $$->insert("value", $4);
    }
 |
    "-" "identifier" "=" "[" string_array "]"
    {
-       std::pair<std::string, DataItem*> tempItem;
-       tempItem.first = $2;
-       tempItem.second = $5;
-       $$ = tempItem;
+       $$ = new DataMap();
+       $$->insert("type", new DataValue("assign"));
+       $$->insert("key", new DataValue($2));
+       $$->insert("value", $5);
+   }
+|
+   "-" "identifier" ">>" "identifier"
+   {
+       $$ = new DataMap();
+       $$->insert("type", new DataValue("output"));
+       $$->insert("key", new DataValue($2));
+       $$->insert("value", new DataValue($4));
+   }
+|
+   "-" "identifier" compare_type value_item
+   {
+       $$ = new DataMap();
+       $$->insert("type", new DataValue("compare"));
+       $$->insert("compare_type", new DataValue($3));
+       $$->insert("key", new DataValue($2));
+       $$->insert("value", new DataValue($4));
    }
 
 string_array:
