@@ -293,24 +293,6 @@ blossom:
        $$->insert("output", new DataValue());
        $$->insert("items-input", $5);
    }
-|
-   "->" "identifier" ">>" "identifier" linebreaks
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom"));
-       $$->insert("blossom-type", new DataValue($2));
-       $$->insert("output", new DataValue($4));
-       $$->insert("items-input", new DataArray());
-   }
-|
-   "->" "identifier" ">>" "identifier" ":" linebreaks item_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom"));
-       $$->insert("blossom-type", new DataValue($2));
-       $$->insert("output", new DataValue($4));
-       $$->insert("items-input", $7);
-   }
 
 item_set:
    %empty
