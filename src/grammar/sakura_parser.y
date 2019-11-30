@@ -350,9 +350,9 @@ item:
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("compare"));
-       $$->insert("compare_type", new DataValue($3));
        $$->insert("key", new DataValue($2));
-       $$->insert("value", new DataValue($4));
+       $$->insert("compare_type", new DataValue($3));
+       $$->insert("value", $4);
    }
 
 string_array:

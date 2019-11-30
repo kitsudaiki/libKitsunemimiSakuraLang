@@ -47,11 +47,11 @@ blank [ \t]
 "else"      return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
 "->"        return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "=="        return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
+"!="        return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
 ">="        return Kitsunemimi::Sakura::SakuraParser::make_GREATER_EQUAL_COMPARE (sakuraloc);
 "<="        return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_EQUAL_COMPARE (sakuraloc);
 "<<"        return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_LEFT (sakuraloc);
 ">>"        return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_RIGHT (sakuraloc);
-"!="        return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
 ">"         return Kitsunemimi::Sakura::SakuraParser::make_GREATER_COMPARE (sakuraloc);
 "<"         return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_COMPARE (sakuraloc);
 "-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
