@@ -342,8 +342,8 @@ item:
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("output"));
-       $$->insert("key", new DataValue($2));
-       $$->insert("value", new DataValue($4));
+       $$->insert("key", new DataValue($4));
+       $$->insert("value", new DataValue($2));
    }
 |
    "-" "identifier" compare_type value_item
