@@ -472,7 +472,7 @@ value_item:
     "string"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("item", new DataValue(driver.removeQuotes($1)));
         tempItem->insert("type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
@@ -569,7 +569,7 @@ access:
         tempItem->insert("m_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
-        args->append(new DataValue($2));
+        args->append(new DataValue(driver.removeQuotes($2)));
         tempItem->insert("args", args);
         $$ = tempItem;
     }
