@@ -114,7 +114,6 @@ YY_DECL;
 %type  <std::string> name_item
 %type  <std::string> compare_type
 %type  <DataMap*>  value_item
-%type  <DataMap*>  identifier_item
 
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
@@ -318,32 +317,32 @@ item_set:
    }
 
 item:
-   "-" identifier_item "=" "{" "{" "}" "}"
+   "-" "identifier" "=" "{" "{" "}" "}"
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("assign"));
-       $$->insert("key", $2);
+       $$->insert("key", new DataValue($2));
        std::string empty = "{{}}";
        $$->insert("value", new DataValue(empty));
    }
 |
-   "-" identifier_item "=" value_item
+   "-" "identifier" "=" value_item
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("assign"));
-       $$->insert("key", $2);
+       $$->insert("key", new DataValue($2));
        $$->insert("value", $4);
    }
 |
-   "-" identifier_item "=" "[" string_array "]"
+   "-" "identifier" "=" "[" string_array "]"
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("assign"));
-       $$->insert("key", $2);
+       $$->insert("key", new DataValue($2));
        $$->insert("value", $5);
    }
 |
-   "-" identifier_item ">>" "identifier"
+   "-" value_item ">>" "identifier"
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("output"));
@@ -351,11 +350,11 @@ item:
        $$->insert("value", $2);
    }
 |
-   "-" identifier_item compare_type value_item
+   "-" "identifier" compare_type value_item
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("compare"));
-       $$->insert("key", $2);
+       $$->insert("key", new DataValue($2));
        $$->insert("compare_type", new DataValue($3));
        $$->insert("value", $4);
    }
@@ -451,36 +450,12 @@ tree_fork:
        $$ = tempItem;
    }
 
-identifier_item:
-   "identifier"
-   {
-   DataMap* tempItem = new DataMap();
-   tempItem->insert("item", new DataValue($1));
-   tempItem->insert("functions", new DataArray());
-   $$ = tempItem;
-   }
-|
-   "identifier" function_list
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("item", new DataValue($1));
-       tempItem->insert("functions", $2);
-       $$ = tempItem;
-   }
-|
-   "identifier" access_list
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("item", new DataValue($1));
-       tempItem->insert("functions", $2);
-       $$ = tempItem;
-   }
-
 value_item:
     "float"
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -489,6 +464,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -497,6 +473,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -505,6 +482,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -513,6 +491,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
@@ -521,6 +500,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
