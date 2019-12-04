@@ -113,8 +113,7 @@ YY_DECL;
 
 %type  <std::string> name_item
 %type  <std::string> compare_type
-%type  <DataValue*>  value_item
-%type  <DataArray*>  json_path
+%type  <DataMap*>  value_item
 
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
@@ -124,6 +123,11 @@ YY_DECL;
 %type  <DataMap*> item
 %type  <DataArray*> item_set
 %type  <DataArray*> string_array
+
+%type  <DataMap*> access
+%type  <DataArray*> access_list
+%type  <DataMap*> function
+%type  <DataArray*> function_list
 
 %type  <DataMap*> if_condition
 
@@ -172,7 +176,7 @@ branch:
    }
 
 if_condition:
-   "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks "else" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+   "if" "(" value_item compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks "else" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
    {
        $$ = new DataMap();
        $$->insert("b_type", new DataValue("if"));
@@ -184,7 +188,7 @@ if_condition:
        $$->insert("else_parts", $17);
    }
 |
-    "if" "(" json_path compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "if" "(" value_item compare_type value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("if"));
@@ -338,12 +342,12 @@ item:
        $$->insert("value", $5);
    }
 |
-   "-" "identifier" ">>" "identifier"
+   "-" value_item ">>" "identifier"
    {
        $$ = new DataMap();
        $$->insert("type", new DataValue("output"));
        $$->insert("key", new DataValue($4));
-       $$->insert("value", new DataValue($2));
+       $$->insert("value", $2);
    }
 |
    "-" "identifier" compare_type value_item
@@ -360,26 +364,6 @@ string_array:
    {
        $1->append(new DataValue($3));
        $$ = $1;
-   }
-|
-   string_array "identifier"
-   {
-       $1->append(new DataValue($2));
-       $$ = $1;
-   }
-|
-   "identifier" "identifier"
-   {
-       $$ = new DataArray();
-       $$->append(new DataValue($1));
-       $$->append(new DataValue($2));
-   }
-|
-   "identifier" "," "identifier"
-   {
-       $$ = new DataArray();
-       $$->append(new DataValue($1));
-       $$->append(new DataValue($3));
    }
 |
    "identifier"
@@ -423,7 +407,7 @@ tree_sequentiell:
        tempItem->append($3);
 
        $$->insert("parts", tempItem);
-}
+   }
 
 tree_parallel:
    "parallel" "(" ")" linebreaks "{" linebreaks tree_sequentiell "}" linebreaks
@@ -466,40 +450,129 @@ tree_fork:
        $$ = tempItem;
    }
 
-json_path:
-   json_path "." "identifier"
-   {
-       $1->append(new DataValue($3));
-       $$ = $1;
-   }
-|
-   "identifier"
-   {
-       DataArray* tempItem = new DataArray();
-       tempItem->append(new DataValue($1));
-       $$ = tempItem;
-   }
-
 value_item:
-   "float"
-   {
-      $$ = new DataValue($1);
-   }
+    "float"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
 |
-   "number"
-   {
-       $$ = new DataValue($1);
-   }
+    "number"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
 |
-   "identifier"
-   {
-       $$ = new DataValue($1);
-   }
+    "string"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue(driver.removeQuotes($1)));
+        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
 |
-   "string"
-   {
-       $$ = new DataValue(driver.removeQuotes($1));
-   }
+    "identifier"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
+|
+    "identifier" function_list
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("functions", $2);
+        $$ = tempItem;
+    }
+|
+    "identifier" access_list
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("functions", $2);
+        $$ = tempItem;
+    }
+
+function_list:
+    function_list function
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
+    function
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+
+function:
+    "." "identifier" "(" string_array ")"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("args", $4);
+        $$ = tempItem;
+    }
+
+access_list:
+    access_list access
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
+    access
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+
+access:
+    "[" "identifier" "]"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("m_type", new DataValue("get"));
+
+        DataArray* args = new DataArray();
+        args->append(new DataValue($2));
+        tempItem->insert("args", args);
+        $$ = tempItem;
+    }
+|
+    "[" "number" "]"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("m_type", new DataValue("get"));
+
+        DataArray* args = new DataArray();
+        args->append(new DataValue($2));
+        tempItem->insert("args", args);
+        $$ = tempItem;
+    }
+|
+    "[" "string" "]"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("m_type", new DataValue("get"));
+
+        DataArray* args = new DataArray();
+        args->append(new DataValue(driver.removeQuotes($2)));
+        tempItem->insert("args", args);
+        $$ = tempItem;
+    }
 
 name_item:
    "identifier"
