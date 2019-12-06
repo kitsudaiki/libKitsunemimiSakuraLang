@@ -83,12 +83,14 @@ YY_DECL;
     PARALLEL  "parallel"
     IF  "if"
     ELSE  "else"
+    FOR  "for"
     ASSIGN  ":"
     DOT  "."
     COMMA  ","
     DELIMITER  "|"
     ARROW   "->"
     MINUS   "-"
+    PLUS    "+"
     EQUAL   "="
     LBRACK  "["
     RBRACK  "]"
@@ -130,6 +132,7 @@ YY_DECL;
 %type  <DataArray*> function_list
 
 %type  <DataMap*> if_condition
+%type  <DataMap*> for_loop
 
 %type  <DataMap*> branch
 %type  <DataMap*> tree
@@ -200,8 +203,35 @@ if_condition:
         $$->insert("else_parts", new DataArray());
     }
 
+for_loop:
+    "for" "(" "identifier" ":" value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("for_each"));
+        $$->insert("variable", new DataValue($3));
+        $$->insert("list", $5);
+        $$->insert("content", $10);
+    }
+|
+    "for" "(" "identifier" ";" "identifier" compare_type value_item ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("for"));
+        $$->insert("variable1", new DataValue($3));
+        $$->insert("variable2", new DataValue($5));
+        $$->insert("variable3", new DataValue($9));
+        $$->insert("compare_type", new DataValue($6));
+        $$->insert("content", $16);
+    }
+
 blossom_group_set:
    blossom_group_set if_condition
+   {
+       $1->append($2);
+       $$ = $1;
+   }
+|
+   blossom_group_set for_loop
    {
        $1->append($2);
        $$ = $1;
@@ -214,6 +244,12 @@ blossom_group_set:
    }
 |
    if_condition
+   {
+       $$ = new DataArray();
+       $$->append($1);
+   }
+|
+   for_loop
    {
        $$ = new DataArray();
        $$->append($1);
