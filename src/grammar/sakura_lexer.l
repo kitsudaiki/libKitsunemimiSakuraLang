@@ -45,6 +45,7 @@ blank [ \t]
 "parallel"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
 "if"        return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
 "else"      return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
+"for"       return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
 "->"        return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "=="        return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
 "!="        return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
@@ -55,6 +56,7 @@ blank [ \t]
 ">"         return Kitsunemimi::Sakura::SakuraParser::make_GREATER_COMPARE (sakuraloc);
 "<"         return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_COMPARE (sakuraloc);
 "-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
+"+"         return Kitsunemimi::Sakura::SakuraParser::make_PLUS (sakuraloc);
 "="         return Kitsunemimi::Sakura::SakuraParser::make_EQUAL (sakuraloc);
 "("         return Kitsunemimi::Sakura::SakuraParser::make_LROUNDBRACK (sakuraloc);
 ")"         return Kitsunemimi::Sakura::SakuraParser::make_RROUNDBRACK (sakuraloc);
