@@ -360,13 +360,13 @@ item:
    }
 
 string_array:
-   string_array "," "identifier"
+   string_array "," name_item
    {
        $1->append(new DataValue($3));
        $$ = $1;
    }
 |
-   "identifier"
+   name_item
    {
        $$ = new DataArray();
        $$->append(new DataValue($1));
