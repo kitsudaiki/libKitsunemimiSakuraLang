@@ -65,6 +65,7 @@ blank [ \t]
 "{"         return Kitsunemimi::Sakura::SakuraParser::make_LBRACKBOW (sakuraloc);
 "}"         return Kitsunemimi::Sakura::SakuraParser::make_RBRACKBOW (sakuraloc);
 ":"         return Kitsunemimi::Sakura::SakuraParser::make_ASSIGN (sakuraloc);
+";"         return Kitsunemimi::Sakura::SakuraParser::make_SEMICOLON (sakuraloc);
 "."         return Kitsunemimi::Sakura::SakuraParser::make_DOT (sakuraloc);
 ","         return Kitsunemimi::Sakura::SakuraParser::make_COMMA (sakuraloc);
 

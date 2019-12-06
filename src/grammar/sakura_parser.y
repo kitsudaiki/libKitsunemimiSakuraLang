@@ -85,6 +85,7 @@ YY_DECL;
     ELSE  "else"
     FOR  "for"
     ASSIGN  ":"
+    SEMICOLON  ";"
     DOT  "."
     COMMA  ","
     DELIMITER  "|"
@@ -213,15 +214,17 @@ for_loop:
         $$->insert("content", $10);
     }
 |
-    "for" "(" "identifier" ";" "identifier" compare_type value_item ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "for" "(" "identifier" "=" "number" ";" "identifier" "<" "number" ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for"));
         $$->insert("variable1", new DataValue($3));
-        $$->insert("variable2", new DataValue($5));
-        $$->insert("variable3", new DataValue($9));
-        $$->insert("compare_type", new DataValue($6));
-        $$->insert("content", $16);
+        $$->insert("variable2", new DataValue($7));
+        $$->insert("variable3", new DataValue($11));
+        $$->insert("start", new DataValue($5));
+        $$->insert("end", new DataValue($9));
+        //$$->insert("compare_type", new DataValue($8));
+        $$->insert("content", $18);
     }
 
 blossom_group_set:
