@@ -565,6 +565,14 @@ function:
         tempItem->insert("args", $4);
         $$ = tempItem;
     }
+|
+    "." "identifier" "(" ")"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("args", new DataArray());
+        $$ = tempItem;
+    }
 
 access_list:
     access_list access
