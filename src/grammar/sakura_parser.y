@@ -77,6 +77,8 @@ YY_DECL;
 %token
     END  0  "end of file"
     LINEBREAK "lbreak"
+    BOOL_TRUE  "true"
+    BOOL_FALSE "false"
     SEED  "seed"
     TREE  "tree"
     BRANCH  "branch"
@@ -503,6 +505,24 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
+        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
+|
+    "true"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue(true));
+        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("functions", new DataArray());
+        $$ = tempItem;
+    }
+|
+    "false"
+    {
+        DataMap* tempItem = new DataMap();
+        tempItem->insert("item", new DataValue(false));
         tempItem->insert("type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;

@@ -39,6 +39,8 @@ blank [ \t]
 
 {blank}+    sakuraloc.step();
 [\n]        {sakuraloc.lines(1); return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc); }
+"true"      return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
+"false"     return Kitsunemimi::Sakura::SakuraParser::make_BOOL_FALSE (sakuraloc);
 "seed"      return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
 "tree"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
 "branch"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
