@@ -27,6 +27,7 @@
 #include <vector>
 #include <utility>
 #include <assert.h>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 
