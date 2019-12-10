@@ -82,6 +82,7 @@ YY_DECL;
     SEED  "seed"
     TREE  "tree"
     BRANCH  "branch"
+    PARALLEL_FOR "parallel_for"
     PARALLEL  "parallel"
     IF  "if"
     ELSE  "else"
@@ -136,6 +137,9 @@ YY_DECL;
 
 %type  <DataMap*> if_condition
 %type  <DataMap*> for_loop
+
+%type  <DataMap*> parallel
+%type  <DataMap*> parallel_for_loop
 
 %type  <DataMap*> branch
 %type  <DataMap*> tree
@@ -229,42 +233,97 @@ for_loop:
         $$->insert("content", $18);
     }
 
+parallel:
+    "parallel" "(" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("parallel"));
+        $$->insert("content", $7);
+    }
+
+parallel_for_loop:
+    "parallel_for" "(" "identifier" ":" value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("parallel_for_each"));
+        $$->insert("variable", new DataValue($3));
+        $$->insert("list", $5);
+        $$->insert("content", $10);
+    }
+|
+    "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("parallel_for"));
+        $$->insert("variable1", new DataValue($3));
+        $$->insert("variable2", new DataValue($7));
+        $$->insert("variable3", new DataValue($11));
+        $$->insert("start", $5);
+        $$->insert("end", $9);
+        //$$->insert("compare_type", new DataValue($8));
+        $$->insert("content", $18);
+    }
+
 blossom_group_set:
-   blossom_group_set if_condition
-   {
-       $1->append($2);
-       $$ = $1;
-   }
+    blossom_group_set if_condition
+    {
+        $1->append($2);
+        $$ = $1;
+    }
 |
-   blossom_group_set for_loop
-   {
-       $1->append($2);
-       $$ = $1;
-   }
+    blossom_group_set for_loop
+    {
+        $1->append($2);
+        $$ = $1;
+    }
 |
-   blossom_group_set blossom_group
-   {
-       $1->append($2);
-       $$ = $1;
-   }
+    blossom_group_set parallel
+    {
+        $1->append($2);
+        $$ = $1;
+    }
 |
-   if_condition
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
+    blossom_group_set parallel_for_loop
+    {
+        $1->append($2);
+        $$ = $1;
+    }
 |
-   for_loop
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
+    blossom_group_set blossom_group
+    {
+        $1->append($2);
+        $$ = $1;
+    }
 |
-   blossom_group
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
+    if_condition
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    for_loop
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    parallel
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    parallel_for_loop
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    blossom_group
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
 
 blossom_group:
    "identifier" "(" name_item ")" linebreaks item_set blossom_set
@@ -401,13 +460,13 @@ item:
    }
 
 string_array:
-   string_array "," name_item
+   string_array "," linebreaks_sp name_item linebreaks_sp
    {
-       $1->append(new DataValue($3));
+       $1->append(new DataValue($4));
        $$ = $1;
    }
 |
-   name_item
+   name_item linebreaks_sp
    {
        $$ = new DataArray();
        $$->append(new DataValue($1));
