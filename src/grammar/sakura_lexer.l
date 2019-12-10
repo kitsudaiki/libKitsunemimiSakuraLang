@@ -37,39 +37,40 @@ blank [ \t]
     sakuraloc.step();
 %}
 
-{blank}+    sakuraloc.step();
-[\n]        {sakuraloc.lines(1); return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc); }
-"true"      return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
-"false"     return Kitsunemimi::Sakura::SakuraParser::make_BOOL_FALSE (sakuraloc);
-"seed"      return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
-"tree"      return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
-"branch"    return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
-"parallel"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
-"if"        return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
-"else"      return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
-"for"       return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
-"->"        return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
-"=="        return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
-"!="        return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
-">="        return Kitsunemimi::Sakura::SakuraParser::make_GREATER_EQUAL_COMPARE (sakuraloc);
-"<="        return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_EQUAL_COMPARE (sakuraloc);
-"<<"        return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_LEFT (sakuraloc);
-">>"        return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_RIGHT (sakuraloc);
-">"         return Kitsunemimi::Sakura::SakuraParser::make_GREATER_COMPARE (sakuraloc);
-"<"         return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_COMPARE (sakuraloc);
-"-"         return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
-"+"         return Kitsunemimi::Sakura::SakuraParser::make_PLUS (sakuraloc);
-"="         return Kitsunemimi::Sakura::SakuraParser::make_EQUAL (sakuraloc);
-"("         return Kitsunemimi::Sakura::SakuraParser::make_LROUNDBRACK (sakuraloc);
-")"         return Kitsunemimi::Sakura::SakuraParser::make_RROUNDBRACK (sakuraloc);
-"["         return Kitsunemimi::Sakura::SakuraParser::make_LBRACK (sakuraloc);
-"]"         return Kitsunemimi::Sakura::SakuraParser::make_RBRACK (sakuraloc);
-"{"         return Kitsunemimi::Sakura::SakuraParser::make_LBRACKBOW (sakuraloc);
-"}"         return Kitsunemimi::Sakura::SakuraParser::make_RBRACKBOW (sakuraloc);
-":"         return Kitsunemimi::Sakura::SakuraParser::make_ASSIGN (sakuraloc);
-";"         return Kitsunemimi::Sakura::SakuraParser::make_SEMICOLON (sakuraloc);
-"."         return Kitsunemimi::Sakura::SakuraParser::make_DOT (sakuraloc);
-","         return Kitsunemimi::Sakura::SakuraParser::make_COMMA (sakuraloc);
+{blank}+        sakuraloc.step();
+[\n]            {sakuraloc.lines(1); return Kitsunemimi::Sakura::SakuraParser::make_LINEBREAK (sakuraloc); }
+"true"          return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
+"false"         return Kitsunemimi::Sakura::SakuraParser::make_BOOL_FALSE (sakuraloc);
+"seed"          return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
+"tree"          return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
+"branch"        return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
+"parallel_for"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL_FOR (sakuraloc);
+"parallel"      return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
+"if"            return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
+"else"          return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
+"for"           return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
+"->"            return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
+"=="            return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
+"!="            return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);
+">="            return Kitsunemimi::Sakura::SakuraParser::make_GREATER_EQUAL_COMPARE (sakuraloc);
+"<="            return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_EQUAL_COMPARE (sakuraloc);
+"<<"            return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_LEFT (sakuraloc);
+">>"            return Kitsunemimi::Sakura::SakuraParser::make_SHIFT_RIGHT (sakuraloc);
+">"             return Kitsunemimi::Sakura::SakuraParser::make_GREATER_COMPARE (sakuraloc);
+"<"             return Kitsunemimi::Sakura::SakuraParser::make_SMALLER_COMPARE (sakuraloc);
+"-"             return Kitsunemimi::Sakura::SakuraParser::make_MINUS (sakuraloc);
+"+"             return Kitsunemimi::Sakura::SakuraParser::make_PLUS (sakuraloc);
+"="             return Kitsunemimi::Sakura::SakuraParser::make_EQUAL (sakuraloc);
+"("             return Kitsunemimi::Sakura::SakuraParser::make_LROUNDBRACK (sakuraloc);
+")"             return Kitsunemimi::Sakura::SakuraParser::make_RROUNDBRACK (sakuraloc);
+"["             return Kitsunemimi::Sakura::SakuraParser::make_LBRACK (sakuraloc);
+"]"             return Kitsunemimi::Sakura::SakuraParser::make_RBRACK (sakuraloc);
+"{"             return Kitsunemimi::Sakura::SakuraParser::make_LBRACKBOW (sakuraloc);
+"}"             return Kitsunemimi::Sakura::SakuraParser::make_RBRACKBOW (sakuraloc);
+":"             return Kitsunemimi::Sakura::SakuraParser::make_ASSIGN (sakuraloc);
+";"             return Kitsunemimi::Sakura::SakuraParser::make_SEMICOLON (sakuraloc);
+"."             return Kitsunemimi::Sakura::SakuraParser::make_DOT (sakuraloc);
+","             return Kitsunemimi::Sakura::SakuraParser::make_COMMA (sakuraloc);
 
 \"(\$\{.*\}|\\.|[^\"\\])*\" {
     return Kitsunemimi::Sakura::SakuraParser::make_STRING(yytext, sakuraloc);
