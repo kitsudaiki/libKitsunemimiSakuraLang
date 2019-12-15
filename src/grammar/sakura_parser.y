@@ -81,7 +81,7 @@ YY_DECL;
     BOOL_FALSE "false"
     SEED  "seed"
     TREE  "tree"
-    BRANCH  "branch"
+    SUBTREE  "sutbree"
     PARALLEL_FOR "parallel_for"
     PARALLEL  "parallel"
     IF  "if"
@@ -120,6 +120,7 @@ YY_DECL;
 %type  <std::string> name_item
 %type  <std::string> compare_type
 %type  <DataMap*>  value_item
+%type  <DataArray*>  value_item_list
 
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
@@ -141,46 +142,24 @@ YY_DECL;
 %type  <DataMap*> parallel
 %type  <DataMap*> parallel_for_loop
 
-%type  <DataMap*> branch
-%type  <DataMap*> tree
-
+%type  <DataMap*> subtree
 %type  <DataMap*> tree_fork
-%type  <DataMap*> tree_sequentiell
-%type  <DataMap*> tree_parallel
 
 %%
 %start startpoint;
 
 startpoint:
-    tree
-    {
-        driver.setOutput($1);
-    }
-|
-    branch
+    subtree
     {
         driver.setOutput($1);
     }
 
-tree:
-   "[" name_item "]" linebreaks item_set "{" linebreaks tree_sequentiell "}" linebreaks_sp
-   {
-       $$ = new DataMap();
-       $$->insert("id", new DataValue($2));
-       $$->insert("b_type", new DataValue("tree"));
-       $$->insert("items", $5);
-
-       DataArray* tempItem = new DataArray();
-       tempItem->append($8);
-       $$->insert("parts", tempItem);
-   }
-
-branch:
+subtree:
    "[" name_item "]" linebreaks item_set blossom_group_set
    {
        $$ = new DataMap();
        $$->insert("id", new DataValue($2));
-       $$->insert("b_type", new DataValue("branch"));
+       $$->insert("b_type", new DataValue("subtree"));
        $$->insert("items", $5);
        $$->insert("parts", $6);
    }
@@ -211,16 +190,17 @@ if_condition:
     }
 
 for_loop:
-    "for" "(" "identifier" ":" value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "for" "(" "identifier" ":" value_item ")" linebreaks item_set "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for_each"));
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
-        $$->insert("content", $10);
+        $$->insert("items", $8);
+        $$->insert("content", $11);
     }
 |
-    "for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" linebreaks item_set "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for"));
@@ -229,8 +209,8 @@ for_loop:
         $$->insert("variable3", new DataValue($11));
         $$->insert("start", $5);
         $$->insert("end", $9);
-        //$$->insert("compare_type", new DataValue($8));
-        $$->insert("content", $18);
+        $$->insert("items", $16);
+        $$->insert("content", $19);
     }
 
 parallel:
@@ -242,16 +222,17 @@ parallel:
     }
 
 parallel_for_loop:
-    "parallel_for" "(" "identifier" ":" value_item ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "parallel_for" "(" "identifier" ":" value_item ")" linebreaks item_set "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel_for_each"));
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
-        $$->insert("content", $10);
+        $$->insert("items", $8);
+        $$->insert("content", $11);
     }
 |
-    "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" linebreaks "{" linebreaks blossom_group_set "}" linebreaks
+    "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" linebreaks item_set "{" linebreaks blossom_group_set "}" linebreaks
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel_for"));
@@ -260,8 +241,8 @@ parallel_for_loop:
         $$->insert("variable3", new DataValue($11));
         $$->insert("start", $5);
         $$->insert("end", $9);
-        //$$->insert("compare_type", new DataValue($8));
-        $$->insert("content", $18);
+        $$->insert("items", $16);
+        $$->insert("content", $19);
     }
 
 blossom_group_set:
@@ -472,66 +453,8 @@ string_array:
        $$->append(new DataValue($1));
    }
 
-tree_sequentiell:
-   tree_sequentiell tree_fork
-   {
-       DataArray* array = (DataArray*)$1->get("parts");
-       array->append($2);
-       $$ = $1;
-   }
-|
-   tree_sequentiell linebreaks "{" linebreaks tree_parallel "}" linebreaks
-   {
-       DataArray* array = (DataArray*)$1->get("parts");
-       array->append($5);
-       $$ = $1;
-   }
-|
-   tree_fork
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("sequentiell"));
-
-       DataArray* tempItem = new DataArray();
-       tempItem->append($1);
-
-       $$->insert("parts", tempItem);
-   }
-|
-   "{" linebreaks tree_parallel "}" linebreaks
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("sequentiell"));
-
-       DataArray* tempItem = new DataArray();
-       tempItem->append($3);
-
-       $$->insert("parts", tempItem);
-   }
-
-tree_parallel:
-   "parallel" "(" ")" linebreaks "{" linebreaks tree_sequentiell "}" linebreaks
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("parallel"));
-
-       DataArray* tempItem = new DataArray();
-       tempItem->append($7);
-
-       $$->insert("parts", tempItem);
-   }
-
 tree_fork:
-   "tree" "(" "identifier" ")" linebreaks item_set
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("b_type", new DataValue("tree"));
-       tempItem->insert("id", new DataValue($3));
-       tempItem->insert("items-input", $6);
-       $$ = tempItem;
-   }
-|
-   "branch" "(" "identifier" ")" linebreaks item_set
+   "subtree" "(" "identifier" ")" linebreaks item_set
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("branch"));
@@ -540,14 +463,26 @@ tree_fork:
        $$ = tempItem;
    }
 |
-   "seed" "(" "identifier" ")" linebreaks item_set "{" linebreaks tree_sequentiell "}" linebreaks_sp
+   "seed" "(" "identifier" ")" linebreaks item_set "{"  "}" linebreaks_sp
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
        tempItem->insert("id", new DataValue($3));
        tempItem->insert("connection", $6);
-       tempItem->insert("subtree", $9);
        $$ = tempItem;
+   }
+
+value_item_list:
+   value_item_list ","  value_item
+   {
+       $1->append($3);
+       $$ = $1;
+   }
+|
+   value_item
+   {
+       $$ = new DataArray();
+       $$->append($1);
    }
 
 value_item:
@@ -637,7 +572,7 @@ function_list:
     }
 
 function:
-    "." "identifier" "(" string_array ")"
+    "." "identifier" "(" value_item_list ")"
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("m_type", new DataValue($2));

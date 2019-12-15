@@ -42,8 +42,7 @@ blank [ \t]
 "true"          return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
 "false"         return Kitsunemimi::Sakura::SakuraParser::make_BOOL_FALSE (sakuraloc);
 "seed"          return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
-"tree"          return Kitsunemimi::Sakura::SakuraParser::make_TREE (sakuraloc);
-"branch"        return Kitsunemimi::Sakura::SakuraParser::make_BRANCH (sakuraloc);
+"sutbree"       return Kitsunemimi::Sakura::SakuraParser::make_SUBTREE (sakuraloc);
 "parallel_for"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL_FOR (sakuraloc);
 "parallel"      return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
 "if"            return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
