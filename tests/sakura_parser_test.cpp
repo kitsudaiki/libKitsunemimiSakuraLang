@@ -24,7 +24,6 @@
 
 #include <sakura_parsing.h>
 #include <test_strings/branch_test_string.h>
-#include <test_strings/tree_test_string.h>
 
 #include <common_items/data_items.h>
 
@@ -42,7 +41,6 @@ ParsingTest::ParsingTest() : Kitsunemimi::Common::Test("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
-    parseTreeTest();
     cleanupTestCase();
 }
 
@@ -58,14 +56,6 @@ void ParsingTest::parseBranchTest()
     std::string output = result.first->toString(true);
     std::cout<<"output: "<<output<<std::endl;;
 
-}
-
-void ParsingTest::parseTreeTest()
-{
-    std::pair<DataItem*, bool> result = m_parser->parse(testTreeString);
-    TEST_EQUAL(result.second, true);
-    std::string output = result.first->toString(true);
-    std::cout<<"output: "<<output<<std::endl;;
 }
 
 void ParsingTest::cleanupTestCase()
