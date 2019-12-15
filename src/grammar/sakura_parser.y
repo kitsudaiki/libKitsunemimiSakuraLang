@@ -451,6 +451,11 @@ string_array:
        $$ = new DataArray();
        $$->append(new DataValue($1));
    }
+|
+   %empty
+   {
+       $$ = new DataArray();
+   }
 
 tree_fork:
    "subtree" "(" "identifier" ")" item_set
