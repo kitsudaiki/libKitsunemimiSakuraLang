@@ -112,16 +112,25 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 
     const std::vector<std::string> splittedContent = splitStringByDelimiter(m_inputString, '\n');
 
-    // -1 because the number starts for user-readability at 1 instead of 0
-    const std::string errorStringPart = splittedContent[linenumber - 1].substr(errorStart - 1,
-                                                                               errorLength);
+
     // build error-message
     std::string errorString = "";
     errorString += "error while parsing sakura-file \n";
     errorString += "parser-message: " + message + " \n";
     errorString += "line-number: " + std::to_string(linenumber) + " \n";
-    errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
-    errorString += "broken part in template: \"" + errorStringPart + "\" \n";
+
+    if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
+    {
+        errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
+        errorString += "broken part in string: \"";
+        // -1 because the number starts for user-readability at 1 instead of 0
+        errorString +=  splittedContent[linenumber - 1].substr(errorStart - 1, errorLength);
+        errorString +=  "\" \n";
+    }
+    else
+    {
+        errorString += "UNKNOWN POSITION (maybe a string was not closed)";
+    }
 
     m_errorMessage->toMap()->insert("error", new DataValue(errorString));
 }
