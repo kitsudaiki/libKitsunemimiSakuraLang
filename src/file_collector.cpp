@@ -192,8 +192,8 @@ FileCollector::initFileCollector(const std::string &rootPath,
                                         new DataValue(directoryPath),
                                         true);
 
-        const std::string output = m_fileContents[i].second.toString(true);
-        std::cout<<output<<std::endl;
+        //const std::string output = m_fileContents[i].second.toString(true);
+        //std::cout<<output<<std::endl;
     }
 
     return true;
@@ -249,7 +249,7 @@ FileCollector::getSeedName(const uint32_t index)
         return std::string("");
     }
 
-    return m_fileContents.at(index).second.get("name").toString();
+    return m_fileContents.at(index).second.get("id").toString();
 }
 
 /**
