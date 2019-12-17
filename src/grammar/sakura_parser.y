@@ -158,7 +158,7 @@ subtree:
    "[" name_item "]" item_set blossom_group_set
    {
        $$ = new DataMap();
-       $$->insert("id", new DataValue($2));
+       $$->insert("b_id", new DataValue($2));
        $$->insert("b_type", new DataValue("subtree"));
        $$->insert("items", $4);
        $$->insert("parts", $5);
@@ -197,7 +197,7 @@ for_loop:
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
         $$->insert("items", $7);
-        $$->insert("content", $9);
+        $$->insert("parts", $9);
     }
 |
     "for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
@@ -224,7 +224,7 @@ for_loop:
         $$->insert("start", $5);
         $$->insert("end", $9);
         $$->insert("items", $15);
-        $$->insert("content", $17);
+        $$->insert("parts", $17);
     }
 
 parallel:
@@ -232,7 +232,7 @@ parallel:
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel"));
-        $$->insert("content", $5);
+        $$->insert("parts", $5);
     }
 
 parallel_for_loop:
@@ -243,7 +243,7 @@ parallel_for_loop:
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
         $$->insert("items", $7);
-        $$->insert("content", $9);
+        $$->insert("parts", $9);
     }
 |
     "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
@@ -270,7 +270,7 @@ parallel_for_loop:
         $$->insert("start", $5);
         $$->insert("end", $9);
         $$->insert("items", $15);
-        $$->insert("content", $17);
+        $$->insert("parts", $17);
     }
 
 blossom_group_set:
@@ -429,7 +429,7 @@ item:
    "-" "identifier" "=" "{" "{" "}" "}"
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        std::string empty = "{{}}";
        $$->insert("value", new DataValue(empty));
@@ -438,7 +438,7 @@ item:
    "-" "identifier" "=" value_item
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        $$->insert("value", $4);
    }
@@ -446,7 +446,7 @@ item:
    "-" "identifier" "=" "[" string_array "]"
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        $$->insert("value", $5);
    }
@@ -454,7 +454,7 @@ item:
    "-" value_item ">>" "identifier"
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("output"));
+       $$->insert("b_type", new DataValue("output"));
        $$->insert("key", new DataValue($4));
        $$->insert("value", $2);
    }
@@ -462,7 +462,7 @@ item:
    "-" "identifier" compare_type value_item
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("compare"));
+       $$->insert("b_type", new DataValue("compare"));
        $$->insert("key", new DataValue($2));
        $$->insert("compare_type", new DataValue($3));
        $$->insert("value", $4);
@@ -491,7 +491,7 @@ tree_fork:
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("branch"));
-       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
@@ -500,7 +500,7 @@ tree_fork:
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
-       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("connection", $5);
        $$ = tempItem;
    }
@@ -523,7 +523,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -532,7 +532,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -541,7 +541,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(true));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -550,7 +550,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(false));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -559,7 +559,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(driver.removeQuotes($1)));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -568,7 +568,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -577,7 +577,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
@@ -586,7 +586,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
@@ -608,7 +608,7 @@ function:
     "." "identifier" "(" value_item_list ")"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("b_type", new DataValue($2));
         tempItem->insert("args", $4);
         $$ = tempItem;
     }
@@ -616,7 +616,7 @@ function:
     "." "identifier" "(" ")"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("b_type", new DataValue($2));
         tempItem->insert("args", new DataArray());
         $$ = tempItem;
     }
@@ -638,7 +638,7 @@ access:
     "[" "identifier" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue($2));
@@ -649,7 +649,7 @@ access:
     "[" "number" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue($2));
@@ -660,7 +660,7 @@ access:
     "[" "string" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue(driver.removeQuotes($2)));

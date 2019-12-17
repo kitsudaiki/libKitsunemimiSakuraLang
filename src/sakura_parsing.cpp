@@ -111,7 +111,7 @@ SakuraParsing::preProcessObject(JsonItem &object)
     if(object.get("b_type").toString() == "tree"
             || object.get("b_type").toString() == "branch")
     {
-        branch = getObject(object.get("id").toString());
+        branch = getObject(object.get("b_id").toString());
         object.insert("parts", branch.get("parts"));
         object.insert("items", branch.get("items"));
     }
@@ -241,10 +241,10 @@ SakuraParsing::getObject(const std::string &name,
         it != m_fileContents.end();
         it++)
     {
-        if(it->second.get("id").toString() == name)
+        if(it->second.get("b_id").toString() == name)
         {
             if(type != ""
-                    && it->second.get("type").toString() == type)
+                    && it->second.get("b_type").toString() == type)
             {
                 return it->second;
             }
@@ -270,7 +270,7 @@ SakuraParsing::getSeedName(const uint32_t index)
         return std::string("");
     }
 
-    return m_fileContents.at(index).second.get("id").toString();
+    return m_fileContents.at(index).second.get("b_id").toString();
 }
 
 /**
