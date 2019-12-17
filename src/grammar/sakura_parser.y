@@ -248,6 +248,20 @@ parallel_for_loop:
 |
     "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
+        if($7 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $7 + "\"",
+                         true);
+            return 1;
+        }
+        if($11 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $11 + "\"",
+                         true);
+            return 1;
+        }
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel_for"));
         $$->insert("variable1", new DataValue($3));
