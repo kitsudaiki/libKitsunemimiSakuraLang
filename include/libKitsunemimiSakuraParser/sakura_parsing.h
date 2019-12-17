@@ -20,34 +20,61 @@
  *      limitations under the License.
  */
 
-#ifndef LIBKITSUNE_SAKURA_PARSER_H
-#define LIBKITSUNE_SAKURA_PARSER_H
+#ifndef SAKURA_PARSING_H
+#define SAKURA_PARSING_H
 
-#include <utility>
 #include <string>
+#include <vector>
+#include <utility>
+#include <assert.h>
+#include <fstream>
+
+#include <boost/filesystem.hpp>
+#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/common_items/table_item.h>
+#include <libKitsunemimiJson/json_item.h>
+
+using Kitsunemimi::Common::DataItem;
+using Kitsunemimi::Common::DataValue;
+using Kitsunemimi::Common::DataMap;
+using Kitsunemimi::Json::JsonItem;
+using Kitsunemimi::Common::TableItem;
+using namespace boost::filesystem;
 
 namespace Kitsunemimi
 {
-namespace Common {
-class DataItem;
-}
 namespace Sakura
 {
+
 class SakuraParserInterface;
 
 class SakuraParsing
 {
 public:
-    SakuraParsing(const bool traceParsing);
-    ~SakuraParsing();
+    SakuraParsing(const bool debug = false);
 
-    std::pair<Common::DataItem*, bool> parse(const std::string &inputString);
+    JsonItem parseFiles(const std::string &rootPath,
+                        const std::string &seedName="");
+    TableItem getError() const;
 
 private:
+    std::vector<std::pair<boost::filesystem::path, JsonItem>> m_fileContents;
     SakuraParserInterface* m_parser = nullptr;
+    TableItem m_errorMessage;
+
+    bool initFileCollector(const std::string &rootPath);
+    JsonItem getObject(const std::string &name,
+                       const std::string &type="");
+    const std::string getSeedName(const uint32_t index);
+
+    void getFilesInDir(const path &directory);
+    const std::string readFile(const std::string &filePath);
+
+    void preProcessArray(JsonItem &object);
+    void preProcessObject(JsonItem &object);
 };
 
 }  // namespace Sakura
 }  // namespace Kitsunemimi
 
-#endif // LIBKITSUNE_SAKURA_PARSER_H
+#endif // SAKURA_PARSING_H

@@ -48,7 +48,6 @@ using Common::splitStringByDelimiter;
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_errorMessage = new DataMap();
 }
 
 /**
@@ -61,7 +60,13 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
-    m_errorMessage = new DataMap();
+    m_errorMessage.clearTable();
+    m_errorMessage.addColumn("key");
+    m_errorMessage.addColumn("value");
+    m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
+    if(m_output != nullptr) {
+        delete m_output;
+    }
     m_output = nullptr;
 
     // run parser-code
@@ -116,27 +121,35 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 
     // build error-message
     std::string errorString = "";
-    errorString += "error while parsing sakura-file \n";
-    errorString += "parser-message: " + message + " \n";
-    errorString += "line-number: " + std::to_string(linenumber) + " \n";
+    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
+    m_errorMessage.addRow(std::vector<std::string>{"source", "while parsing sakura-file"});
+    m_errorMessage.addRow(std::vector<std::string>{"message", message});
+    m_errorMessage.addRow(std::vector<std::string>{"line-number", std::to_string(linenumber)});
 
     if(customError == false)
     {
         if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
         {
-            errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
-            errorString += "broken part in string: \"";
-            // -1 because the number starts for user-readability at 1 instead of 0
-            errorString +=  splittedContent[linenumber - 1].substr(errorStart - 1, errorLength);
-            errorString +=  "\" \n";
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "position in line",
+                std::to_string(location.begin.column)
+            });
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "broken part in string",
+                "\"" + splittedContent[linenumber - 1].substr(errorStart - 1, errorLength) + "\""
+            });
         }
         else
         {
-            errorString += "UNKNOWN POSITION (maybe a string was not closed)";
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "position in line",
+                "UNKNOWN POSITION (maybe a string was not closed)"
+            });
         }
     }
-
-    m_errorMessage->toMap()->insert("error", new DataValue(errorString));
 }
 
 /**
@@ -144,7 +157,7 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
  *
  * @return error-message
  */
-Common::DataItem* SakuraParserInterface::getErrorMessage() const
+Common::TableItem SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
 }

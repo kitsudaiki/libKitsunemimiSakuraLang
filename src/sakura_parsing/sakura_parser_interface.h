@@ -26,6 +26,7 @@
 #include <vector>
 #include <string>
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/common_items/table_item.h>
 
 #include <iostream>
 
@@ -54,7 +55,7 @@ public:
     void error(const Kitsunemimi::Sakura::location &location,
                const std::string& message,
                const bool customError=false);
-    Common::DataItem* getErrorMessage() const;
+    Common::TableItem getErrorMessage() const;
 
     std::string removeQuotes(std::string input);
 
@@ -63,7 +64,7 @@ private:
 
     std::string m_inputString = "";
     Common::DataItem* m_output = nullptr;
-    Common::DataItem* m_errorMessage = nullptr;
+    Common::TableItem m_errorMessage;
 };
 
 }  // namespace Sakura
