@@ -52,7 +52,8 @@ public:
 
     // Error handling.
     void error(const Kitsunemimi::Sakura::location &location,
-               const std::string& message);
+               const std::string& message,
+               const bool customError=false);
     Common::DataItem* getErrorMessage() const;
 
     std::string removeQuotes(std::string input);

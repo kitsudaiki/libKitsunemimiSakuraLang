@@ -103,7 +103,8 @@ Common::DataItem* SakuraParserInterface::getOutput() const
  */
 void
 SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
-                             const std::string& message)
+                             const std::string& message,
+                             const bool customError)
 {
     // get the broken part of the parsed string
     const uint32_t errorStart = location.begin.column;
@@ -119,17 +120,20 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
     errorString += "parser-message: " + message + " \n";
     errorString += "line-number: " + std::to_string(linenumber) + " \n";
 
-    if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
+    if(customError == false)
     {
-        errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
-        errorString += "broken part in string: \"";
-        // -1 because the number starts for user-readability at 1 instead of 0
-        errorString +=  splittedContent[linenumber - 1].substr(errorStart - 1, errorLength);
-        errorString +=  "\" \n";
-    }
-    else
-    {
-        errorString += "UNKNOWN POSITION (maybe a string was not closed)";
+        if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
+        {
+            errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
+            errorString += "broken part in string: \"";
+            // -1 because the number starts for user-readability at 1 instead of 0
+            errorString +=  splittedContent[linenumber - 1].substr(errorStart - 1, errorLength);
+            errorString +=  "\" \n";
+        }
+        else
+        {
+            errorString += "UNKNOWN POSITION (maybe a string was not closed)";
+        }
     }
 
     m_errorMessage->toMap()->insert("error", new DataValue(errorString));

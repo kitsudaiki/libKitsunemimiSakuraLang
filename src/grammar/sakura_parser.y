@@ -32,6 +32,7 @@
 %define api.namespace {Kitsunemimi::Sakura}
 %define api.token.constructor
 %define api.value.type variant
+%locations
 
 %define parse.assert
 
@@ -201,6 +202,20 @@ for_loop:
 |
     "for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
+        if($7 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $7 + "\"",
+                         true);
+            return 1;
+        }
+        if($11 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $11 + "\"",
+                         true);
+            return 1;
+        }
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for"));
         $$->insert("variable1", new DataValue($3));
@@ -684,7 +699,7 @@ compare_type:
 %%
 
 void Kitsunemimi::Sakura::SakuraParser::error(const Kitsunemimi::Sakura::location& location,
-                                          const std::string& message)
+                                              const std::string& message)
 {
-    driver.error(location, message);
+    driver.error(location, message, false);
 }
