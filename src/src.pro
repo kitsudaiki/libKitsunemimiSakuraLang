@@ -10,6 +10,11 @@ LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
 LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
 INCLUDEPATH += ../../libKitsunemimiCommon/include
 
+LIBS += -L../../libKitsunemimiPersistence/src -lKitsunemimiPersistence
+LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
+LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
+INCLUDEPATH += ../../libKitsunemimiPersistence/include
+
 LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
 LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
 LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson

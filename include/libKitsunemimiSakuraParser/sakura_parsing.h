@@ -52,26 +52,20 @@ class SakuraParsing
 {
 public:
     SakuraParsing(const bool debug = false);
+    ~SakuraParsing();
 
-    JsonItem parseFiles(const std::string &rootPath,
-                        const std::string &seedName="");
+    bool parseFiles(const std::string &rootPath);
     TableItem getError() const;
+    JsonItem getParsedFileContent(const std::string &name="");
 
 private:
     std::vector<std::pair<boost::filesystem::path, JsonItem>> m_fileContents;
     SakuraParserInterface* m_parser = nullptr;
     TableItem m_errorMessage;
+    bool m_debug = false;
 
-    bool initFileCollector(const std::string &rootPath);
-    JsonItem getObject(const std::string &name,
-                       const std::string &type="");
-    const std::string getSeedName(const uint32_t index);
-
+    bool parseAllFiles(const std::string &rootPath);
     void getFilesInDir(const path &directory);
-    const std::string readFile(const std::string &filePath);
-
-    void preProcessArray(JsonItem &object);
-    void preProcessObject(JsonItem &object);
 };
 
 }  // namespace Sakura

@@ -41,6 +41,7 @@ class SakuraParserInterface
 
 public:
     SakuraParserInterface(const bool traceParsing);
+    ~SakuraParserInterface();
 
     // connection the the scanner and parser
     void scan_begin(const std::string &inputString);
@@ -57,7 +58,7 @@ public:
                const bool customError=false);
     Common::TableItem getErrorMessage() const;
 
-    std::string removeQuotes(std::string input);
+    const std::string removeQuotes(const std::string &input);
 
 private:
     bool m_traceParsing = false;

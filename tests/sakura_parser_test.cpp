@@ -53,15 +53,11 @@ void ParsingTest::initTestCase()
 
 void ParsingTest::parseBranchTest()
 {
-    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.tree", testBranchString, true);
-    JsonItem tree = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
-    TEST_EQUAL(tree.isValid(), true);
-    std::string output = tree.toString(true);
-    std::cout<<"output: "<<output<<std::endl;
-    if(tree.isValid() == false) {
-        std::cout<<m_parser->getError().toString()<<std::endl;
-    }
-
+    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.tree",
+                                        testBranchString,
+                                        true);
+    const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
+    TEST_EQUAL(result, true);
 }
 
 void ParsingTest::cleanupTestCase()

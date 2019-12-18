@@ -51,6 +51,16 @@ SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 }
 
 /**
+ * @brief destructor
+ */
+SakuraParserInterface::~SakuraParserInterface()
+{
+    if(m_output != nullptr) {
+        delete m_output;
+    }
+}
+
+/**
  * Start the scanner and parser
  *
  * @return true, if parsing was successful, else false
@@ -83,8 +93,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 }
 
 /**
- * @brief SakuraParserInterface::setOutput
- * @param output
+ * @brief setter for the output-variable
  */
 void
 SakuraParserInterface::setOutput(Common::DataItem* output)
@@ -93,8 +102,7 @@ SakuraParserInterface::setOutput(Common::DataItem* output)
 }
 
 /**
- * @brief SakuraParserInterface::getOutput
- * @return
+ * @brief getter for the output-variable
  */
 Common::DataItem* SakuraParserInterface::getOutput() const
 {
@@ -102,9 +110,11 @@ Common::DataItem* SakuraParserInterface::getOutput() const
 }
 
 /**
- * Is called from the parser in case of an error
- *
+ * @brief Is called from the parser in case of an error
+ * @param location locaion-information of the error-position in the parsed file
  * @param message error-specific message from the parser
+ * @param customError true to avoid a position-in line, because this would be missleading in
+ *                    a custom error. (Default=false)
  */
 void
 SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
@@ -153,9 +163,9 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 }
 
 /**
- * getter fot the error-message in case of an error while parsing
+ * getter for the error-message in case of an error while parsing
  *
- * @return error-message
+ * @return error-message as table-item
  */
 Common::TableItem SakuraParserInterface::getErrorMessage() const
 {
@@ -167,8 +177,8 @@ Common::TableItem SakuraParserInterface::getErrorMessage() const
  * @param input
  * @return
  */
-std::string
-SakuraParserInterface::removeQuotes(std::string input)
+const std::string
+SakuraParserInterface::removeQuotes(const std::string &input)
 {
     if(input.length() == 0) {
         return input;
