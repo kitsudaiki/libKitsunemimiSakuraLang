@@ -185,7 +185,7 @@ SakuraParsing::getParsedFileContent(const std::string &name)
     if(name == ""
             && m_fileContents.size() > 0)
     {
-        return m_fileContents.at(0).second.get("b_id").toString();
+        return m_fileContents.at(0).second;
     }
 
     // search

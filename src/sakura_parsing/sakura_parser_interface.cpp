@@ -71,6 +71,7 @@ SakuraParserInterface::parse(const std::string &inputString)
     // init global values
     m_inputString = inputString;
     m_registeredKeys.clear();
+    m_registeredKeys.push_back("blossom_output");
     m_errorMessage.clearTable();
     m_errorMessage.addColumn("key");
     m_errorMessage.addColumn("value");
