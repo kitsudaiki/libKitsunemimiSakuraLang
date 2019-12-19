@@ -23,7 +23,7 @@
 #ifndef SAKURA_PARSER_TEST_H
 #define SAKURA_PARSER_TEST_H
 
-#include <test.h>
+#include <libKitsunemimiCommon/test.h>
 
 namespace Kitsunemimi
 {

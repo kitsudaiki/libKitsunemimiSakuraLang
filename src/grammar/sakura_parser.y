@@ -32,6 +32,7 @@
 %define api.namespace {Kitsunemimi::Sakura}
 %define api.token.constructor
 %define api.value.type variant
+%locations
 
 %define parse.assert
 
@@ -120,6 +121,7 @@ YY_DECL;
 %type  <std::string> compare_type
 %type  <DataMap*>  value_item
 %type  <DataArray*>  value_item_list
+%type  <std::string> regiterable_identifier;
 
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
@@ -157,7 +159,7 @@ subtree:
    "[" name_item "]" item_set blossom_group_set
    {
        $$ = new DataMap();
-       $$->insert("id", new DataValue($2));
+       $$->insert("b_id", new DataValue($2));
        $$->insert("b_type", new DataValue("subtree"));
        $$->insert("items", $4);
        $$->insert("parts", $5);
@@ -189,18 +191,33 @@ if_condition:
     }
 
 for_loop:
-    "for" "(" "identifier" ":" value_item ")" item_set "{" blossom_group_set "}"
+    "for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for_each"));
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
         $$->insert("items", $7);
-        $$->insert("content", $9);
+        $$->insert("parts", $9);
     }
 |
-    "for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
+    "for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
+        if($7 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $7 + "\"",
+                         true);
+            return 1;
+        }
+        if($11 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $11 + "\"",
+                         true);
+            return 1;
+        }
+
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("for"));
         $$->insert("variable1", new DataValue($3));
@@ -209,7 +226,7 @@ for_loop:
         $$->insert("start", $5);
         $$->insert("end", $9);
         $$->insert("items", $15);
-        $$->insert("content", $17);
+        $$->insert("parts", $17);
     }
 
 parallel:
@@ -217,22 +234,37 @@ parallel:
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel"));
-        $$->insert("content", $5);
+        $$->insert("parts", $5);
     }
 
 parallel_for_loop:
-    "parallel_for" "(" "identifier" ":" value_item ")" item_set "{" blossom_group_set "}"
+    "parallel_for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel_for_each"));
         $$->insert("variable", new DataValue($3));
         $$->insert("list", $5);
         $$->insert("items", $7);
-        $$->insert("content", $9);
+        $$->insert("parts", $9);
     }
 |
-    "parallel_for" "(" "identifier" "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
+    "parallel_for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
+        if($7 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $7 + "\"",
+                         true);
+            return 1;
+        }
+        if($11 != $3)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $11 + "\"",
+                         true);
+            return 1;
+        }
+
         $$ = new DataMap();
         $$->insert("b_type", new DataValue("parallel_for"));
         $$->insert("variable1", new DataValue($3));
@@ -241,7 +273,7 @@ parallel_for_loop:
         $$->insert("start", $5);
         $$->insert("end", $9);
         $$->insert("items", $15);
-        $$->insert("content", $17);
+        $$->insert("parts", $17);
     }
 
 blossom_group_set:
@@ -396,44 +428,65 @@ item_set:
        $$->append($1);
    }
 
+regiterable_identifier:
+   "identifier"
+   {
+       driver.m_registeredKeys.push_back($1);
+       $$ = $1;
+   }
+
 item:
-   "-" "identifier" "=" "{" "{" "}" "}"
+   "-" regiterable_identifier "=" "{" "{" "}" "}"
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        std::string empty = "{{}}";
        $$->insert("value", new DataValue(empty));
    }
 |
-   "-" "identifier" "=" value_item
+   "-" regiterable_identifier "=" value_item
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        $$->insert("value", $4);
    }
 |
-   "-" "identifier" "=" "[" string_array "]"
+   "-" regiterable_identifier "=" "[" string_array "]"
    {
        $$ = new DataMap();
-       $$->insert("type", new DataValue("assign"));
+       $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
        $$->insert("value", $5);
    }
 |
    "-" value_item ">>" "identifier"
    {
+       if(driver.isKeyRegistered($4) == false)
+       {
+           driver.error(yyla.location,
+                        "undefined identifier \"" + $4 + "\"",
+                        true);
+           return 1;
+       }
        $$ = new DataMap();
-       $$->insert("type", new DataValue("output"));
+       $$->insert("b_type", new DataValue("output"));
        $$->insert("key", new DataValue($4));
        $$->insert("value", $2);
    }
 |
    "-" "identifier" compare_type value_item
    {
+       if(driver.isKeyRegistered($2) == false)
+       {
+           driver.error(yyla.location,
+                        "undefined identifier \"" + $2 + "\"",
+                        true);
+           return 1;
+       }
        $$ = new DataMap();
-       $$->insert("type", new DataValue("compare"));
+       $$->insert("b_type", new DataValue("compare"));
        $$->insert("key", new DataValue($2));
        $$->insert("compare_type", new DataValue($3));
        $$->insert("value", $4);
@@ -462,7 +515,7 @@ tree_fork:
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("branch"));
-       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
@@ -471,7 +524,7 @@ tree_fork:
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
-       tempItem->insert("id", new DataValue($3));
+       tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("connection", $5);
        $$ = tempItem;
    }
@@ -494,7 +547,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -503,7 +556,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -512,7 +565,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(true));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -521,7 +574,7 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(false));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
@@ -530,34 +583,55 @@ value_item:
     {
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue(driver.removeQuotes($1)));
-        tempItem->insert("type", new DataValue("value"));
+        tempItem->insert("b_type", new DataValue("value"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
 |
     "identifier"
     {
+        if(driver.isKeyRegistered($1) == false)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $1 + "\"",
+                         true);
+            return 1;
+        }
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", new DataArray());
         $$ = tempItem;
     }
 |
     "identifier" function_list
     {
+        if(driver.isKeyRegistered($1) == false)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $1 + "\"",
+                         true);
+            return 1;
+        }
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
 |
     "identifier" access_list
     {
+        if(driver.isKeyRegistered($1) == false)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $1 + "\"",
+                         true);
+            return 1;
+        }
         DataMap* tempItem = new DataMap();
         tempItem->insert("item", new DataValue($1));
-        tempItem->insert("type", new DataValue("identifier"));
+        tempItem->insert("b_type", new DataValue("identifier"));
         tempItem->insert("functions", $2);
         $$ = tempItem;
     }
@@ -579,7 +653,7 @@ function:
     "." "identifier" "(" value_item_list ")"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("b_type", new DataValue($2));
         tempItem->insert("args", $4);
         $$ = tempItem;
     }
@@ -587,7 +661,7 @@ function:
     "." "identifier" "(" ")"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue($2));
+        tempItem->insert("b_type", new DataValue($2));
         tempItem->insert("args", new DataArray());
         $$ = tempItem;
     }
@@ -609,7 +683,7 @@ access:
     "[" "identifier" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue($2));
@@ -620,7 +694,7 @@ access:
     "[" "number" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue($2));
@@ -631,7 +705,7 @@ access:
     "[" "string" "]"
     {
         DataMap* tempItem = new DataMap();
-        tempItem->insert("m_type", new DataValue("get"));
+        tempItem->insert("b_type", new DataValue("get"));
 
         DataArray* args = new DataArray();
         args->append(new DataValue(driver.removeQuotes($2)));
@@ -684,7 +758,7 @@ compare_type:
 %%
 
 void Kitsunemimi::Sakura::SakuraParser::error(const Kitsunemimi::Sakura::location& location,
-                                          const std::string& message)
+                                              const std::string& message)
 {
-    driver.error(location, message);
+    driver.error(location, message, false);
 }

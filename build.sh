@@ -38,7 +38,7 @@ function get_required_kitsune_lib_repo () {
     NUMBER_OF_THREADS=$3
 
     # clone repo
-    git clone  git@gitlab.com:tobiasanker/$REPO_NAME.git "$PARENT_DIR/$REPO_NAME"
+    git clone  https://github.com/tobiasanker/$REPO_NAME.git "$PARENT_DIR/$REPO_NAME"
     cd "$PARENT_DIR/$REPO_NAME"
     git checkout $TAG_OR_BRANCH
 
@@ -48,6 +48,8 @@ function get_required_kitsune_lib_repo () {
 #-----------------------------------------------------------------------------------------------------------------
 
 get_required_kitsune_lib_repo "libKitsunemimiCommon" "master" 4
+
+get_required_kitsune_lib_repo "libKitsunemimiPersistence" "master" 4
 
 get_required_kitsune_lib_repo "libKitsunemimiJson" "master" 4
 

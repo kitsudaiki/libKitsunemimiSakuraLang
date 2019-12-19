@@ -10,6 +10,11 @@ LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
 LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
 INCLUDEPATH += ../../libKitsunemimiCommon/include
 
+LIBS += -L../../libKitsunemimiPersistence/src -lKitsunemimiPersistence
+LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
+LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
+INCLUDEPATH += ../../libKitsunemimiPersistence/include
+
 LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
 LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
 LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
@@ -22,13 +27,11 @@ INCLUDEPATH += $$PWD \
 
 SOURCES += \
     sakura_parsing/sakura_parser_interface.cpp \
-    sakura_parsing.cpp \
-    file_collector.cpp
+    sakura_parsing.cpp
 
 HEADERS += \
     sakura_parsing/sakura_parser_interface.h \
-    ../include/libKitsunemimiSakuraParser/sakura_parsing.h \
-    ../include/libKitsunemimiSakuraParser/file_collector.h
+    ../include/libKitsunemimiSakuraParser/sakura_parsing.h
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y

@@ -26,6 +26,7 @@
 #include <vector>
 #include <string>
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/common_items/table_item.h>
 
 #include <iostream>
 
@@ -40,6 +41,7 @@ class SakuraParserInterface
 
 public:
     SakuraParserInterface(const bool traceParsing);
+    ~SakuraParserInterface();
 
     // connection the the scanner and parser
     void scan_begin(const std::string &inputString);
@@ -52,17 +54,19 @@ public:
 
     // Error handling.
     void error(const Kitsunemimi::Sakura::location &location,
-               const std::string& message);
-    Common::DataItem* getErrorMessage() const;
+               const std::string& message,
+               const bool customError=false);
+    Common::TableItem getErrorMessage() const;
 
-    std::string removeQuotes(std::string input);
+    const std::string removeQuotes(const std::string &input);
+    std::vector<std::string> m_registeredKeys;
+    bool isKeyRegistered(const std::string &key);
 
 private:
     bool m_traceParsing = false;
-
     std::string m_inputString = "";
     Common::DataItem* m_output = nullptr;
-    Common::DataItem* m_errorMessage = nullptr;
+    Common::TableItem m_errorMessage;
 };
 
 }  // namespace Sakura

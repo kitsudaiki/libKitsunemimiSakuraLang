@@ -48,7 +48,16 @@ using Common::splitStringByDelimiter;
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_errorMessage = new DataMap();
+}
+
+/**
+ * @brief destructor
+ */
+SakuraParserInterface::~SakuraParserInterface()
+{
+    if(m_output != nullptr) {
+        delete m_output;
+    }
 }
 
 /**
@@ -61,7 +70,15 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
-    m_errorMessage = new DataMap();
+    m_registeredKeys.clear();
+    m_registeredKeys.push_back("blossom_output");
+    m_errorMessage.clearTable();
+    m_errorMessage.addColumn("key");
+    m_errorMessage.addColumn("value");
+    m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
+    if(m_output != nullptr) {
+        delete m_output;
+    }
     m_output = nullptr;
 
     // run parser-code
@@ -78,8 +95,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 }
 
 /**
- * @brief SakuraParserInterface::setOutput
- * @param output
+ * @brief setter for the output-variable
  */
 void
 SakuraParserInterface::setOutput(Common::DataItem* output)
@@ -88,8 +104,7 @@ SakuraParserInterface::setOutput(Common::DataItem* output)
 }
 
 /**
- * @brief SakuraParserInterface::getOutput
- * @return
+ * @brief getter for the output-variable
  */
 Common::DataItem* SakuraParserInterface::getOutput() const
 {
@@ -97,13 +112,16 @@ Common::DataItem* SakuraParserInterface::getOutput() const
 }
 
 /**
- * Is called from the parser in case of an error
- *
+ * @brief Is called from the parser in case of an error
+ * @param location locaion-information of the error-position in the parsed file
  * @param message error-specific message from the parser
+ * @param customError true to avoid a position-in line, because this would be missleading in
+ *                    a custom error. (Default=false)
  */
 void
 SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
-                             const std::string& message)
+                             const std::string& message,
+                             const bool customError)
 {
     // get the broken part of the parsed string
     const uint32_t errorStart = location.begin.column;
@@ -115,34 +133,65 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 
     // build error-message
     std::string errorString = "";
-    errorString += "error while parsing sakura-file \n";
-    errorString += "parser-message: " + message + " \n";
-    errorString += "line-number: " + std::to_string(linenumber) + " \n";
+    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
+    m_errorMessage.addRow(std::vector<std::string>{"source", "while parsing sakura-file"});
+    m_errorMessage.addRow(std::vector<std::string>{"message", message});
+    m_errorMessage.addRow(std::vector<std::string>{"line-number", std::to_string(linenumber)});
 
-    if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
+    if(customError == false)
     {
-        errorString += "position in line: " + std::to_string(location.begin.column) + " \n";
-        errorString += "broken part in string: \"";
-        // -1 because the number starts for user-readability at 1 instead of 0
-        errorString +=  splittedContent[linenumber - 1].substr(errorStart - 1, errorLength);
-        errorString +=  "\" \n";
+        if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
+        {
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "position in line",
+                std::to_string(location.begin.column)
+            });
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "broken part in string",
+                "\"" + splittedContent[linenumber - 1].substr(errorStart - 1, errorLength) + "\""
+            });
+        }
+        else
+        {
+            m_errorMessage.addRow(std::vector<std::string>
+            {
+                "position in line",
+                "UNKNOWN POSITION (maybe a string was not closed)"
+            });
+        }
     }
-    else
-    {
-        errorString += "UNKNOWN POSITION (maybe a string was not closed)";
-    }
-
-    m_errorMessage->toMap()->insert("error", new DataValue(errorString));
 }
 
 /**
- * getter fot the error-message in case of an error while parsing
+ * getter for the error-message in case of an error while parsing
  *
- * @return error-message
+ * @return error-message as table-item
  */
-Common::DataItem* SakuraParserInterface::getErrorMessage() const
+Common::TableItem SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
+}
+
+/**
+ * @brief check if a key is in the list of registerd key
+ * @param key key to check
+ * @return true if key in list, else false
+ */
+bool
+SakuraParserInterface::isKeyRegistered(const std::string &key)
+{
+    std::vector<std::string>::const_iterator it;
+    for(it = m_registeredKeys.begin();
+        it != m_registeredKeys.end();
+        it++)
+    {
+        if(*it == key) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -150,8 +199,8 @@ Common::DataItem* SakuraParserInterface::getErrorMessage() const
  * @param input
  * @return
  */
-std::string
-SakuraParserInterface::removeQuotes(std::string input)
+const std::string
+SakuraParserInterface::removeQuotes(const std::string &input)
 {
     if(input.length() == 0) {
         return input;
