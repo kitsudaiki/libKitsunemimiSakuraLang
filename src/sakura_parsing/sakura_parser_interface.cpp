@@ -70,6 +70,7 @@ SakuraParserInterface::parse(const std::string &inputString)
 {
     // init global values
     m_inputString = inputString;
+    m_registeredKeys.clear();
     m_errorMessage.clearTable();
     m_errorMessage.addColumn("key");
     m_errorMessage.addColumn("value");
@@ -170,6 +171,26 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 Common::TableItem SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
+}
+
+/**
+ * @brief check if a key is in the list of registerd key
+ * @param key key to check
+ * @return true if key in list, else false
+ */
+bool
+SakuraParserInterface::isKeyRegistered(const std::string &key)
+{
+    std::vector<std::string>::const_iterator it;
+    for(it = m_registeredKeys.begin();
+        it != m_registeredKeys.end();
+        it++)
+    {
+        if(*it == key) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**

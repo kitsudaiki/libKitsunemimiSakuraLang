@@ -58,6 +58,8 @@ void ParsingTest::parseBranchTest()
                                         true);
     const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
     TEST_EQUAL(result, true);
+    TableItem errorMessage = m_parser->getError();
+    //std::cout<<errorMessage.toString()<<std::endl;
 }
 
 void ParsingTest::cleanupTestCase()

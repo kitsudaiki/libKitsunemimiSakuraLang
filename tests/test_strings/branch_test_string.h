@@ -27,8 +27,9 @@
 
 std::string testBranchString = "[install_branch]\n"
                                "- packages = {{}}\n"
+                               "- as_output = \"\"\n"
                                "\n"
-                               "if(asdf == 42)\n"
+                               "if(packages == 42)\n"
                                "{\n"
                                "    apt (\"this is a test\")\n"
                                "    -> update \n"

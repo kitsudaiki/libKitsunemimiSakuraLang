@@ -59,10 +59,11 @@ public:
     Common::TableItem getErrorMessage() const;
 
     const std::string removeQuotes(const std::string &input);
+    std::vector<std::string> m_registeredKeys;
+    bool isKeyRegistered(const std::string &key);
 
 private:
     bool m_traceParsing = false;
-
     std::string m_inputString = "";
     Common::DataItem* m_output = nullptr;
     Common::TableItem m_errorMessage;
