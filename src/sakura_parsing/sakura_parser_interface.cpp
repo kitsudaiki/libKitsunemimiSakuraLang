@@ -113,6 +113,7 @@ Common::DataItem* SakuraParserInterface::getOutput() const
 
 /**
  * @brief Is called from the parser in case of an error
+ *
  * @param location locaion-information of the error-position in the parsed file
  * @param message error-specific message from the parser
  * @param customError true to avoid a position-in line, because this would be missleading in
@@ -176,7 +177,9 @@ Common::TableItem SakuraParserInterface::getErrorMessage() const
 
 /**
  * @brief check if a key is in the list of registerd key
+ *
  * @param key key to check
+ *
  * @return true if key in list, else false
  */
 bool
@@ -195,9 +198,11 @@ SakuraParserInterface::isKeyRegistered(const std::string &key)
 }
 
 /**
- * @brief SakuraParserInterface::removeQuotes
- * @param input
- * @return
+ * @brief remove \" at the start and the end of a string
+ *
+ * @param input input-string which should be modified
+ *
+ * @return input-string without \" at the start and the end
  */
 const std::string
 SakuraParserInterface::removeQuotes(const std::string &input)

@@ -56,7 +56,9 @@ SakuraParsing::~SakuraParsing()
 
 /**
  * @brief parse all tree-files at a specific location
+ *
  * @param rootPath path to file or directory with the file(s) to parse
+ *
  * @return true, if pasing all files was successful, else false
  */
 bool
@@ -81,6 +83,7 @@ SakuraParsing::parseFiles(const std::string &rootPath)
 
 /**
  * @brief request the error-message, in case that parseFiles had failed
+ *
  * @return error-message as table-item
  */
 TableItem
@@ -91,7 +94,9 @@ SakuraParsing::getError() const
 
 /**
  * @brief search and parse all files in a specific location
+ *
  * @param rootPath path to file or directory with the file(s) to parse
+ *
  * @return true, if all was successful, else false
  */
 bool
@@ -173,8 +178,10 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
 
 /**
  * @brief request the parsed content of a specific subtree
+ *
  * @param name Name of the requested file-content. If string is empty, the content of the first
  *             file in the list will be returned.
+ *
  * @return Subtree-content as json-item. This is an invalid item, when the requested name
  *         doesn't exist in the parsed file list.
  */
@@ -204,6 +211,7 @@ SakuraParsing::getParsedFileContent(const std::string &name)
 
 /**
  * @brief get all file-paths in a directory and its subdirectory
+ *
  * @param directory parent-directory for searching
  */
 void
