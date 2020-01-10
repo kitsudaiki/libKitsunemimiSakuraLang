@@ -114,6 +114,7 @@ YY_DECL;
 
 %token <std::string> IDENTIFIER "identifier"
 %token <std::string> STRING "string"
+%token <std::string> STRING_PLN "string_pln"
 %token <long> NUMBER "number"
 %token <double> FLOAT "float"
 
@@ -145,6 +146,13 @@ YY_DECL;
 
 %type  <DataMap*> subtree
 %type  <DataMap*> tree_fork
+
+%type  <DataItem*> json_abstract
+%type  <DataValue*> json_value
+%type  <DataArray*> json_array
+%type  <DataArray*> json_array_content
+%type  <DataMap*> json_object
+%type  <DataMap*> json_object_content
 
 %%
 %start startpoint;
@@ -453,12 +461,12 @@ item:
        $$->insert("value", $4);
    }
 |
-   "-" regiterable_identifier "=" "[" string_array "]"
+   "-" regiterable_identifier "=" json_abstract
    {
        $$ = new DataMap();
        $$->insert("b_type", new DataValue("assign"));
        $$->insert("key", new DataValue($2));
-       $$->insert("value", $5);
+       $$->insert("value", $4);
    }
 |
    "-" value_item ">>" "identifier"
@@ -753,6 +761,106 @@ compare_type:
    "!="
    {
        $$ = "!=";
+   }
+
+
+json_abstract:
+   json_object
+   {
+       $$ = (DataItem*)$1;
+   }
+|
+   json_array
+   {
+       $$ = (DataItem*)$1;
+   }
+
+json_object:
+   "{" json_object_content "}"
+   {
+       $$ = $2;
+   }
+
+json_object_content:
+   json_object_content "," "identifier" ":" json_abstract
+   {
+       $1->insert($3, $5);
+       $$ = $1;
+   }
+|
+   "identifier" ":" json_abstract
+   {
+       $$ = new DataMap();
+       $$->insert($1, $3);
+   }
+|
+   json_object_content "," "string_pln" ":" json_abstract
+   {
+       $1->insert(driver.removeQuotes($3), $5);
+       $$ = $1;
+   }
+|
+   "string_pln" ":" json_abstract
+   {
+       $$ = new DataMap();
+       $$->insert(driver.removeQuotes($1), $3);
+   }
+|
+   json_object_content "," "string" ":" json_abstract
+   {
+       $1->insert(driver.removeQuotes($3), $5);
+       $$ = $1;
+   }
+|
+   "string" ":" json_abstract
+   {
+       $$ = new DataMap();
+       $$->insert(driver.removeQuotes($1), $3);
+   }
+
+json_array:
+   "[" json_array_content "]"
+   {
+       $$ = $2;
+   }
+
+json_array_content:
+   json_array_content "," json_abstract
+   {
+       $1->append($3);
+       $$ = $1;
+   }
+|
+   json_abstract
+   {
+       $$ = new DataArray();
+       $$->append($1);
+   }
+
+json_value:
+   "number"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "float"
+   {
+       $$ = new DataValue($1);
+   }
+|
+   "string"
+   {
+       $$ = new DataValue(driver.removeQuotes($1));
+   }
+|
+   "true"
+   {
+       $$ = new DataValue(true);
+   }
+|
+   "false"
+   {
+       $$ = new DataValue(false);
    }
 
 %%
