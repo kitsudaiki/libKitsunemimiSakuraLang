@@ -113,6 +113,11 @@ blank [ \t]
 }
 
 {id}       return Kitsunemimi::Sakura::SakuraParser::make_IDENTIFIER(yytext, sakuraloc);
+
+[a-zA-Z_0-9]* {
+    return Kitsunemimi::Sakura::SakuraParser::make_STRING_PLN(yytext, sakuraloc);
+}
+
 .          driver.error(sakuraloc, "invalid character");
 <<EOF>>    return Kitsunemimi::Sakura::SakuraParser::make_END(sakuraloc);
 
