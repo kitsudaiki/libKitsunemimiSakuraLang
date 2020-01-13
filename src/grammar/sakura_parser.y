@@ -774,6 +774,11 @@ json_abstract:
    {
        $$ = (DataItem*)$1;
    }
+|
+   json_value
+   {
+       $$ = (DataItem*)$1;
+   }
 
 json_object:
    "{" json_object_content "}"
