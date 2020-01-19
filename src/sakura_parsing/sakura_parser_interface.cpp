@@ -30,16 +30,16 @@
     Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)
 YY_DECL;
 
-using Kitsunemimi::Common::DataItem;
-using Kitsunemimi::Common::DataArray;
-using Kitsunemimi::Common::DataValue;
-using Kitsunemimi::Common::DataMap;
+using Kitsunemimi::DataItem;
+using Kitsunemimi::DataArray;
+using Kitsunemimi::DataValue;
+using Kitsunemimi::DataMap;
 
 namespace Kitsunemimi
 {
 namespace Sakura
 {
-using Common::splitStringByDelimiter;
+using Kitsunemimi::splitStringByDelimiter;
 
 /**
  * The class is the interface for the bison-generated parser.
@@ -98,7 +98,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @brief setter for the output-variable
  */
 void
-SakuraParserInterface::setOutput(Common::DataItem* output)
+SakuraParserInterface::setOutput(DataItem* output)
 {
     m_output = output;
 }
@@ -106,7 +106,7 @@ SakuraParserInterface::setOutput(Common::DataItem* output)
 /**
  * @brief getter for the output-variable
  */
-Common::DataItem* SakuraParserInterface::getOutput() const
+DataItem* SakuraParserInterface::getOutput() const
 {
     return m_output;
 }
@@ -170,7 +170,7 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
  *
  * @return error-message as table-item
  */
-Common::TableItem SakuraParserInterface::getErrorMessage() const
+TableItem SakuraParserInterface::getErrorMessage() const
 {
     return m_errorMessage;
 }

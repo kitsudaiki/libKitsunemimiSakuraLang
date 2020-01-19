@@ -139,7 +139,8 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
         const std::string filePath = m_fileContents.at(i).first.string();
 
         // read file
-        std::pair<bool, std::string> result = readFile(filePath);
+        std::string errorMessage = "";
+        std::pair<bool, std::string> result = readFile(filePath, errorMessage);
         if(result.first == false)
         {
             m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
@@ -147,7 +148,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
                                                            "failed to read file-path: "
                                                            + filePath
                                                            + " with error: "
-                                                           + result.second});
+                                                           + errorMessage});
             return false;
         }
 

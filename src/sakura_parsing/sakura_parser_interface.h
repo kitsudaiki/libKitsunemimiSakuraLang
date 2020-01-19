@@ -49,14 +49,14 @@ public:
     bool parse(const std::string &inputString);
 
     // output-handling
-    void setOutput(Common::DataItem* output);
-    Common::DataItem* getOutput() const;
+    void setOutput(DataItem* output);
+    DataItem* getOutput() const;
 
     // Error handling.
     void error(const Kitsunemimi::Sakura::location &location,
                const std::string& message,
                const bool customError=false);
-    Common::TableItem getErrorMessage() const;
+    TableItem getErrorMessage() const;
 
     const std::string removeQuotes(const std::string &input);
     std::vector<std::string> m_registeredKeys;
@@ -65,8 +65,8 @@ public:
 private:
     bool m_traceParsing = false;
     std::string m_inputString = "";
-    Common::DataItem* m_output = nullptr;
-    Common::TableItem m_errorMessage;
+    DataItem* m_output = nullptr;
+    TableItem m_errorMessage;
 };
 
 }  // namespace Sakura

@@ -31,7 +31,7 @@ namespace Sakura
 {
 class SakuraParsing;
 
-class ParsingTest : public Kitsunemimi::Common::Test
+class ParsingTest : public Kitsunemimi::Test
 {
 public:
     ParsingTest();

@@ -28,10 +28,10 @@
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiPersistence/files/text_file.h>
 
-using Kitsunemimi::Common::DataItem;
-using Kitsunemimi::Common::DataArray;
-using Kitsunemimi::Common::DataValue;
-using Kitsunemimi::Common::DataMap;
+using Kitsunemimi::DataItem;
+using Kitsunemimi::DataArray;
+using Kitsunemimi::DataValue;
+using Kitsunemimi::DataMap;
 using Kitsunemimi::Json::JsonItem;
 
 namespace Kitsunemimi
@@ -39,7 +39,7 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-ParsingTest::ParsingTest() : Kitsunemimi::Common::Test("ParsingTest")
+ParsingTest::ParsingTest() : Kitsunemimi::Test("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
@@ -53,8 +53,10 @@ void ParsingTest::initTestCase()
 
 void ParsingTest::parseBranchTest()
 {
+    std::string errorMessage = "";
     Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.tree",
                                         testBranchString,
+                                        errorMessage,
                                         true);
     const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
     TEST_EQUAL(result, true);

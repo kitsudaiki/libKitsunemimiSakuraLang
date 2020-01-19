@@ -34,11 +34,11 @@
 #include <libKitsunemimiCommon/common_items/table_item.h>
 #include <libKitsunemimiJson/json_item.h>
 
-using Kitsunemimi::Common::DataItem;
-using Kitsunemimi::Common::DataValue;
-using Kitsunemimi::Common::DataMap;
+using Kitsunemimi::DataItem;
+using Kitsunemimi::DataValue;
+using Kitsunemimi::DataMap;
 using Kitsunemimi::Json::JsonItem;
-using Kitsunemimi::Common::TableItem;
+using Kitsunemimi::TableItem;
 using namespace boost::filesystem;
 
 namespace Kitsunemimi
