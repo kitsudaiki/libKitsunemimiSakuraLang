@@ -124,6 +124,9 @@ YY_DECL;
 %type  <DataArray*>  value_item_list
 %type  <std::string> regiterable_identifier;
 
+%type  <DataMap*> seed_fork
+%type  <DataMap*> subtree_fork
+
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
 %type  <DataMap*> blossom
@@ -315,6 +318,18 @@ blossom_group_set:
         $$ = $1;
     }
 |
+    blossom_group_set seed_fork
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set subtree_fork
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
     if_condition
     {
         $$ = new DataArray();
@@ -340,6 +355,18 @@ blossom_group_set:
     }
 |
     blossom_group
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    seed_fork
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    subtree_fork
     {
         $$ = new DataArray();
         $$->append($1);
@@ -518,22 +545,23 @@ string_array:
        $$ = new DataArray();
    }
 
-tree_fork:
-   "subtree" "(" "identifier" ")" item_set
+subtree_fork:
+   "subtree" "(" name_item ")" item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("b_type", new DataValue("branch"));
+       tempItem->insert("b_type", new DataValue("subtree"));
        tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
-|
-   "seed" "(" "identifier" ")" item_set "{"  "}"
+
+seed_fork:
+   "seed" "(" name_item ")" item_set
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
        tempItem->insert("b_id", new DataValue($3));
-       tempItem->insert("connection", $5);
+       tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
 
