@@ -137,7 +137,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
     // get and parse file-contents
     for(uint32_t i = 0; i < m_fileContents.size(); i++)
     {
-        const std::string filePath = m_fileContents.at(i).first.string();
+        const std::string filePath = m_fileContents.at(i).first;
 
         // read file
         std::string errorMessage = "";
@@ -163,10 +163,9 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
 
         // get the parsed result from the parser and get path of the file,
         // where the skript actually is and add it to the parsed content.
-        const std::string directoryPath = m_fileContents.at(i).first.parent_path().string();
         m_fileContents[i].second = m_parser->getOutput()->copy()->toMap();
         m_fileContents[i].second.insert("b_path",
-                                        new DataValue(directoryPath),
+                                        new DataValue(m_fileContents.at(i).first),
                                         true);
 
         // debug-output to print the parsed file-content as json-string
@@ -198,7 +197,7 @@ SakuraParsing::getParsedFileContent(const std::string &name)
     }
 
     // search
-    std::vector<std::pair<boost::filesystem::path, JsonItem>>::iterator it;
+    std::vector<std::pair<std::string, JsonItem>>::iterator it;
     for(it = m_fileContents.begin();
         it != m_fileContents.end();
         it++)
@@ -239,7 +238,7 @@ SakuraParsing::getFilesInDir(const boost::filesystem::path &directory)
             if(m_debug) {
                 std::cout<<"found file: "<<itr->path().string()<<std::endl;
             }
-            m_fileContents.push_back(std::make_pair(itr->path(), JsonItem()));
+            m_fileContents.push_back(std::make_pair(itr->path().string(), JsonItem()));
         }
     }
 }

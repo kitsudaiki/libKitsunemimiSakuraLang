@@ -58,8 +58,8 @@ public:
     TableItem getError() const;
     const JsonItem getParsedFileContent(const std::string &name="");
 
+    std::vector<std::pair<std::string, JsonItem>> m_fileContents;
 private:
-    std::vector<std::pair<boost::filesystem::path, JsonItem>> m_fileContents;
     SakuraParserInterface* m_parser = nullptr;
     TableItem m_errorMessage;
     bool m_debug = false;
