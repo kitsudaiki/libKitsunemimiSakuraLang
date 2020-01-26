@@ -56,7 +56,7 @@ public:
 
     bool parseFiles(const std::string &rootPath);
     TableItem getError() const;
-    JsonItem getParsedFileContent(const std::string &name="");
+    const JsonItem getParsedFileContent(const std::string &name="");
 
 private:
     std::vector<std::pair<boost::filesystem::path, JsonItem>> m_fileContents;

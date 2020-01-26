@@ -65,6 +65,7 @@ bool
 SakuraParsing::parseFiles(const std::string &rootPath)
 {
     JsonItem result;
+    m_fileContents.clear();
 
     // init error-message
     m_errorMessage.clearTable();
@@ -186,7 +187,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
  * @return Subtree-content as json-item. This is an invalid item, when the requested name
  *         doesn't exist in the parsed file list.
  */
-JsonItem
+const JsonItem
 SakuraParsing::getParsedFileContent(const std::string &name)
 {
     // precheck
