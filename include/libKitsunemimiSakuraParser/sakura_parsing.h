@@ -55,6 +55,11 @@ public:
     ~SakuraParsing();
 
     bool parseFiles(const std::string &rootPath);
+    bool parseSingleFile(std::pair<std::string, JsonItem> &result,
+                         const std::string &filePath);
+    bool parseString(JsonItem &result,
+                     const std::string &content);
+
     TableItem getError() const;
     const JsonItem getParsedFileContent(const std::string &name="");
 
