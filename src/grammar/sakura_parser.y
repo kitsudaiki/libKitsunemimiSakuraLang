@@ -124,9 +124,6 @@ YY_DECL;
 %type  <DataArray*>  value_item_list
 %type  <std::string> regiterable_identifier;
 
-%type  <DataMap*> seed_fork
-%type  <DataMap*> subtree_fork
-
 %type  <DataMap*> blossom_group
 %type  <DataArray*> blossom_group_set
 %type  <DataMap*> blossom
@@ -147,8 +144,10 @@ YY_DECL;
 %type  <DataMap*> parallel
 %type  <DataMap*> parallel_for_loop
 
-%type  <DataMap*> subtree
+%type  <DataMap*> tree
 %type  <DataMap*> tree_fork
+%type  <DataMap*> seed_fork
+%type  <DataMap*> subtree_fork
 
 %type  <DataItem*> json_abstract
 %type  <DataValue*> json_value
@@ -161,33 +160,33 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    subtree
+    tree
     {
         driver.setOutput($1);
     }
 
-subtree:
-   "[" name_item "]" item_set blossom_group_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_id", new DataValue($2));
-       $$->insert("b_type", new DataValue("subtree"));
-       $$->insert("items", $4);
-       $$->insert("parts", $5);
-   }
+tree:
+    "[" name_item "]" item_set blossom_group_set
+    {
+        $$ = new DataMap();
+        $$->insert("b_id", new DataValue($2));
+        $$->insert("b_type", new DataValue("tree"));
+        $$->insert("items", $4);
+        $$->insert("parts", $5);
+    }
 
 if_condition:
-   "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("if"));
-       $$->insert("if_type", new DataValue($4));
-       $$->insert("left", $3);
-       $$->insert("right", $5);
+    "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("if"));
+        $$->insert("if_type", new DataValue($4));
+        $$->insert("left", $3);
+        $$->insert("right", $5);
 
-       $$->insert("if_parts", $8);
-       $$->insert("else_parts", $12);
-   }
+        $$->insert("if_parts", $8);
+        $$->insert("else_parts", $12);
+    }
 |
     "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}"
     {
