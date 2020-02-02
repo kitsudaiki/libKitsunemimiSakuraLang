@@ -65,6 +65,7 @@ bool
 SakuraParsing::parseFiles(const std::string &rootPath)
 {
     JsonItem result;
+    m_fileContents.clear();
 
     // init error-message
     m_errorMessage.clearTable();
@@ -136,43 +137,80 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
     // get and parse file-contents
     for(uint32_t i = 0; i < m_fileContents.size(); i++)
     {
-        const std::string filePath = m_fileContents.at(i).first.string();
+        const std::string filePath = m_fileContents.at(i).first;
 
-        // read file
-        std::string errorMessage = "";
-        std::pair<bool, std::string> result = readFile(filePath, errorMessage);
-        if(result.first == false)
-        {
-            m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-            m_errorMessage.addRow(std::vector<std::string>{"message",
-                                                           "failed to read file-path: "
-                                                           + filePath
-                                                           + " with error: "
-                                                           + errorMessage});
+        if(parseSingleFile(m_fileContents[i], filePath) == false) {
             return false;
-        }
-
-        // parse file-content
-        const bool parserResult = m_parser->parse(result.second);
-        if(parserResult == false)
-        {
-            m_errorMessage = m_parser->getErrorMessage();
-            return false;
-        }
-
-        // get the parsed result from the parser and get path of the file,
-        // where the skript actually is and add it to the parsed content.
-        const std::string directoryPath = m_fileContents.at(i).first.parent_path().string();
-        m_fileContents[i].second = m_parser->getOutput()->copy()->toMap();
-        m_fileContents[i].second.insert("b_path",
-                                        new DataValue(directoryPath),
-                                        true);
-
-        // debug-output to print the parsed file-content as json-string
-        if(m_debug) {
-            std::cout<<m_fileContents[i].second.toString(true)<<std::endl;
         }
     }
+
+    return true;
+}
+
+/**
+ * @brief parse a single file
+ *
+ * @param result reference for the resulting string - json-item - pair
+ * @param filePath path to a single file
+ *
+ * @return true, if successful, else false
+ */
+bool
+SakuraParsing::parseSingleFile(std::pair<std::string, Json::JsonItem> &result,
+                               const std::string &filePath)
+{
+    // read file
+    std::string errorMessage = "";
+    std::pair<bool, std::string> readResult = readFile(filePath, errorMessage);
+    if(readResult.first == false)
+    {
+        m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        m_errorMessage.addRow(std::vector<std::string>{"message",
+                                                       "failed to read file-path: "
+                                                       + filePath
+                                                       + " with error: "
+                                                       + errorMessage});
+        return false;
+    }
+
+    if(parseString(result.second, readResult.second) == false) {
+        return false;
+    }
+
+    result.second.insert("b_path",
+                         new DataValue(result.first),
+                         true);
+
+    // debug-output to print the parsed file-content as json-string
+    if(m_debug) {
+        std::cout<<result.second.toString(true)<<std::endl;
+    }
+
+    return true;
+}
+
+/**
+ * @brief parse a string
+ *
+ * @param result reference for the resulting json-item
+ * @param content file-content to parse
+ *
+ * @return true, if successful, else false
+ */
+bool
+SakuraParsing::parseString(Json::JsonItem &result,
+                           const std::string &content)
+{
+    const bool parserResult = m_parser->parse(content);
+    if(parserResult == false)
+    {
+        m_errorMessage = m_parser->getErrorMessage();
+        return false;
+    }
+
+    // get the parsed result from the parser and get path of the file,
+    // where the skript actually is and add it to the parsed content.
+    result = Json::JsonItem(m_parser->getOutput()->copy()->toMap());
 
     return true;
 }
@@ -186,7 +224,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
  * @return Subtree-content as json-item. This is an invalid item, when the requested name
  *         doesn't exist in the parsed file list.
  */
-JsonItem
+const JsonItem
 SakuraParsing::getParsedFileContent(const std::string &name)
 {
     // precheck
@@ -197,7 +235,7 @@ SakuraParsing::getParsedFileContent(const std::string &name)
     }
 
     // search
-    std::vector<std::pair<boost::filesystem::path, JsonItem>>::iterator it;
+    std::vector<std::pair<std::string, JsonItem>>::iterator it;
     for(it = m_fileContents.begin();
         it != m_fileContents.end();
         it++)
@@ -238,7 +276,7 @@ SakuraParsing::getFilesInDir(const boost::filesystem::path &directory)
             if(m_debug) {
                 std::cout<<"found file: "<<itr->path().string()<<std::endl;
             }
-            m_fileContents.push_back(std::make_pair(itr->path(), JsonItem()));
+            m_fileContents.push_back(std::make_pair(itr->path().string(), JsonItem()));
         }
     }
 }

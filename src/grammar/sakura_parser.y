@@ -144,8 +144,10 @@ YY_DECL;
 %type  <DataMap*> parallel
 %type  <DataMap*> parallel_for_loop
 
-%type  <DataMap*> subtree
+%type  <DataMap*> tree
 %type  <DataMap*> tree_fork
+%type  <DataMap*> seed_fork
+%type  <DataMap*> subtree_fork
 
 %type  <DataItem*> json_abstract
 %type  <DataValue*> json_value
@@ -158,33 +160,33 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    subtree
+    tree
     {
         driver.setOutput($1);
     }
 
-subtree:
-   "[" name_item "]" item_set blossom_group_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_id", new DataValue($2));
-       $$->insert("b_type", new DataValue("subtree"));
-       $$->insert("items", $4);
-       $$->insert("parts", $5);
-   }
+tree:
+    "[" name_item "]" item_set blossom_group_set
+    {
+        $$ = new DataMap();
+        $$->insert("b_id", new DataValue($2));
+        $$->insert("b_type", new DataValue("tree"));
+        $$->insert("items", $4);
+        $$->insert("parts", $5);
+    }
 
 if_condition:
-   "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("if"));
-       $$->insert("if_type", new DataValue($4));
-       $$->insert("left", $3);
-       $$->insert("right", $5);
+    "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
+    {
+        $$ = new DataMap();
+        $$->insert("b_type", new DataValue("if"));
+        $$->insert("if_type", new DataValue($4));
+        $$->insert("left", $3);
+        $$->insert("right", $5);
 
-       $$->insert("if_parts", $8);
-       $$->insert("else_parts", $12);
-   }
+        $$->insert("if_parts", $8);
+        $$->insert("else_parts", $12);
+    }
 |
     "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}"
     {
@@ -315,6 +317,18 @@ blossom_group_set:
         $$ = $1;
     }
 |
+    blossom_group_set seed_fork
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set subtree_fork
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
     if_condition
     {
         $$ = new DataArray();
@@ -340,6 +354,18 @@ blossom_group_set:
     }
 |
     blossom_group
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    seed_fork
+    {
+        $$ = new DataArray();
+        $$->append($1);
+    }
+|
+    subtree_fork
     {
         $$ = new DataArray();
         $$->append($1);
@@ -518,22 +544,23 @@ string_array:
        $$ = new DataArray();
    }
 
-tree_fork:
-   "subtree" "(" "identifier" ")" item_set
+subtree_fork:
+   "subtree" "(" name_item ")" item_set
    {
        DataMap* tempItem = new DataMap();
-       tempItem->insert("b_type", new DataValue("branch"));
+       tempItem->insert("b_type", new DataValue("subtree"));
        tempItem->insert("b_id", new DataValue($3));
        tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
-|
-   "seed" "(" "identifier" ")" item_set "{"  "}"
+
+seed_fork:
+   "seed" "(" name_item ")" item_set
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
        tempItem->insert("b_id", new DataValue($3));
-       tempItem->insert("connection", $5);
+       tempItem->insert("items-input", $5);
        $$ = tempItem;
    }
 
