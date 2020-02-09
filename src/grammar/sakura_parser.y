@@ -555,12 +555,13 @@ subtree_fork:
    }
 
 seed_fork:
-   "seed" "(" name_item ")" item_set
+   "seed" "(" name_item "," name_item ")" item_set
    {
        DataMap* tempItem = new DataMap();
        tempItem->insert("b_type", new DataValue("seed"));
-       tempItem->insert("b_id", new DataValue($3));
-       tempItem->insert("items-input", $5);
+       tempItem->insert("tag", new DataValue($3));
+       tempItem->insert("treeId", new DataValue($5));
+       tempItem->insert("items-input", $7);
        $$ = tempItem;
    }
 
