@@ -23,7 +23,7 @@
 #ifndef SAKURA_PARSER_TEST_H
 #define SAKURA_PARSER_TEST_H
 
-#include <libKitsunemimiCommon/test.h>
+#include <libKitsunemimiCommon/test_helper/compare_test_helper.h>
 
 namespace Kitsunemimi
 {
@@ -31,7 +31,8 @@ namespace Sakura
 {
 class SakuraParsing;
 
-class ParsingTest : public Kitsunemimi::Test
+class ParsingTest
+        : public Kitsunemimi::CompareTestHelper
 {
 public:
     ParsingTest();

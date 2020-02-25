@@ -39,7 +39,8 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-ParsingTest::ParsingTest() : Kitsunemimi::Test("ParsingTest")
+ParsingTest::ParsingTest()
+    : Kitsunemimi::CompareTestHelper("ParsingTest")
 {
     initTestCase();
     parseBranchTest();
