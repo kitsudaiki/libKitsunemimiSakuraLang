@@ -55,7 +55,7 @@ public:
     ~SakuraParsing();
 
     bool parseFiles(const std::string &rootPath);
-    bool parseSingleFile(std::pair<std::string, JsonItem> &result,
+    bool parseSingleFile(const std::string &path,
                          const std::string &filePath);
     bool parseString(JsonItem &result,
                      const std::string &content);
@@ -64,6 +64,7 @@ public:
     const JsonItem getParsedFileContent(const std::string &name="");
 
     std::vector<std::pair<std::string, JsonItem>> m_fileContents;
+    std::vector<std::string> m_allFilePaths;
 private:
     SakuraParserInterface* m_parser = nullptr;
     TableItem m_errorMessage;

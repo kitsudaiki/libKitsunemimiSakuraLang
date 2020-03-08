@@ -61,7 +61,9 @@ void ParsingTest::parseBranchTest()
                                         true);
     const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
     TEST_EQUAL(result, true);
-    std::cout<<m_parser->getError().toString()<<std::endl;
+    if(result == false) {
+        std::cout<<m_parser->getError().toString()<<std::endl;
+    }
     std::cout<<m_parser->getParsedFileContent().toString(true)<<std::endl;
 }
 
