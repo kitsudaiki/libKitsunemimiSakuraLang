@@ -65,7 +65,7 @@ bool
 SakuraParsing::parseFiles(const std::string &rootPath)
 {
     JsonItem result;
-    m_fileContents.clear();
+    m_idContentMapping.clear();
 
     // init error-message
     m_errorMessage.clearTable();
@@ -181,7 +181,8 @@ SakuraParsing::parseSingleFile(const std::string &path,
     }
 
     resultItem.insert("b_path", new DataValue(path), true);
-    m_fileContents.push_back(std::make_pair(resultItem.get("b_id").toString(), resultItem));
+    m_idContentMapping.insert(std::make_pair(resultItem.get("b_id").toString(), resultItem));
+    m_pathIdMapping.insert(std::make_pair(path, resultItem.get("b_id").toString()));
 
     // debug-output to print the parsed file-content as json-string
     if(m_debug) {
@@ -231,15 +232,15 @@ SakuraParsing::getParsedFileContent(const std::string &name)
 {
     // precheck
     if(name == ""
-            && m_fileContents.size() > 0)
+            && m_idContentMapping.size() > 0)
     {
-        return m_fileContents.at(0).second;
+        return m_idContentMapping.begin()->second;
     }
 
     // search
-    std::vector<std::pair<std::string, JsonItem>>::iterator it;
-    for(it = m_fileContents.begin();
-        it != m_fileContents.end();
+    std::map<std::string, JsonItem>::iterator it;
+    for(it = m_idContentMapping.begin();
+        it != m_idContentMapping.end();
         it++)
     {
         if(it->second.get("b_id").toString() == name) {

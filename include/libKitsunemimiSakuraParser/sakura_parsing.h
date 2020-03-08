@@ -63,7 +63,8 @@ public:
     TableItem getError() const;
     const JsonItem getParsedFileContent(const std::string &name="");
 
-    std::vector<std::pair<std::string, JsonItem>> m_fileContents;
+    std::map<std::string, std::string> m_pathIdMapping;
+    std::map<std::string, JsonItem> m_idContentMapping;
     std::vector<std::string> m_allFilePaths;
 private:
     SakuraParserInterface* m_parser = nullptr;
