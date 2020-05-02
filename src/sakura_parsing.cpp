@@ -163,8 +163,9 @@ SakuraParsing::parseSingleFile(const std::string &path,
 {
     // read file
     std::string errorMessage = "";
-    std::pair<bool, std::string> readResult = readFile(filePath, errorMessage);
-    if(readResult.first == false)
+    std::string fileContent = "";
+    bool readResult = readFile(fileContent, filePath, errorMessage);
+    if(readResult == false)
     {
         m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
         m_errorMessage.addRow(std::vector<std::string>{"message",
@@ -176,7 +177,7 @@ SakuraParsing::parseSingleFile(const std::string &path,
     }
 
     JsonItem resultItem;
-    if(parseString(resultItem, readResult.second) == false) {
+    if(parseString(resultItem, fileContent) == false) {
         return false;
     }
 
