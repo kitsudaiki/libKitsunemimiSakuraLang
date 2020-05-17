@@ -81,7 +81,7 @@ YY_DECL;
     BOOL_FALSE "false"
     SEED  "seed"
     TREE  "tree"
-    SUBTREE  "sutbree"
+    SUBTREE  "subtree"
     PARALLEL_FOR "parallel_for"
     PARALLEL  "parallel"
     IF  "if"
@@ -311,6 +311,12 @@ blossom_group_set:
         $$ = $1;
     }
 |
+    blossom_group_set subtree_fork
+    {
+        $1->append($2);
+        $$ = $1;
+    }
+|
     blossom_group_set blossom_group
     {
         $1->append($2);
@@ -318,12 +324,6 @@ blossom_group_set:
     }
 |
     blossom_group_set seed_fork
-    {
-        $1->append($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set subtree_fork
     {
         $1->append($2);
         $$ = $1;
