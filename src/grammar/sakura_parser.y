@@ -42,6 +42,8 @@
 #include <iostream>
 #include <vector>
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiSakuraParser/sakura_items.h>
+#include <libKitsunemimiSakuraParser/value_items.h>
 
 using Kitsunemimi::DataItem;
 using Kitsunemimi::DataArray;
@@ -120,34 +122,31 @@ YY_DECL;
 
 %type  <std::string> name_item
 %type  <std::string> compare_type
-%type  <DataMap*>  value_item
-%type  <DataArray*>  value_item_list
+%type  <ValueItem>  value_item
+%type  <std::vector<ValueItem>*>  value_item_list
 %type  <std::string> regiterable_identifier;
 
-%type  <DataMap*> blossom_group
-%type  <DataArray*> blossom_group_set
-%type  <DataMap*> blossom
-%type  <DataArray*> blossom_set
+%type  <BlossomGroupItem*> blossom_group
+%type  <SequentiellPart*> blossom_group_set
+%type  <BlossomItem*> blossom
+%type  <std::vector<BlossomItem*>*> blossom_set
 
-%type  <DataMap*> item
-%type  <DataArray*> item_set
-%type  <DataArray*> string_array
+%type  <ValueItemMap*> item_set
 
-%type  <DataMap*> access
-%type  <DataArray*> access_list
-%type  <DataMap*> function
-%type  <DataArray*> function_list
+%type  <FunctionItem> access
+%type  <std::vector<FunctionItem>*> access_list
+%type  <FunctionItem> function
+%type  <std::vector<FunctionItem>*> function_list
 
-%type  <DataMap*> if_condition
-%type  <DataMap*> for_loop
+%type  <IfBranching*> if_condition
+%type  <ForEachBranching*> for_each_loop
+%type  <ForBranching*> for_loop
 
-%type  <DataMap*> parallel
-%type  <DataMap*> parallel_for_loop
+%type  <ParallelPart*> parallel
 
-%type  <DataMap*> tree
-%type  <DataMap*> tree_fork
-%type  <DataMap*> seed_fork
-%type  <DataMap*> subtree_fork
+%type  <TreeItem*> tree
+%type  <SeedItem*> seed_fork
+%type  <SubtreeItem*> subtree_fork
 
 %type  <DataItem*> json_abstract
 %type  <DataValue*> json_value
@@ -168,49 +167,71 @@ startpoint:
 tree:
     "[" name_item "]" item_set blossom_group_set
     {
-        $$ = new DataMap();
-        $$->insert("b_id", new DataValue($2));
-        $$->insert("b_type", new DataValue("tree"));
-        $$->insert("items", $4);
-        $$->insert("parts", $5);
+        $$ = new TreeItem();
+        $$->id = $2;
+        $$->values = *$4;
+        delete $4;
+        $$->childs = $5;
     }
 
 if_condition:
     "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
     {
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("if"));
-        $$->insert("if_type", new DataValue($4));
-        $$->insert("left", $3);
-        $$->insert("right", $5);
+        $$ = new IfBranching();
+        $$->leftSide = $3;
+        $$->rightSide = $5;
 
-        $$->insert("if_parts", $8);
-        $$->insert("else_parts", $12);
+        if($4 == "==") {
+            $$->ifType = IfBranching::EQUAL;
+        }
+        if($4 == "!=") {
+            $$->ifType = IfBranching::UNEQUAL;
+        }
+
+        $$->ifContent = $8;
+        $$->elseContent = $12;
     }
 |
     "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}"
     {
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("if"));
-        $$->insert("if_type", new DataValue($4));
-        $$->insert("left", $3);
-        $$->insert("right", $5);
+        $$ = new IfBranching();
+        $$->leftSide = $3;
+        $$->rightSide = $5;
 
-        $$->insert("if_parts", $8);
-        $$->insert("else_parts", new DataArray());
+        if($4 == "==") {
+            $$->ifType = IfBranching::EQUAL;
+        }
+        if($4 == "!=") {
+            $$->ifType = IfBranching::UNEQUAL;
+        }
+
+        $$->ifContent = $8;
+        $$->elseContent = nullptr;
+    }
+
+for_each_loop:
+    "for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
+    {
+        $$ = new ForEachBranching();
+        $$->tempVarName = "";
+        $$->iterateArray = $5;
+        $$->values = *$7;
+        delete $7;
+        $$->content = $9;
+    }
+|
+    "parallel_for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
+    {
+        $$ = new ForEachBranching();
+        $$->tempVarName = "";
+        $$->iterateArray = $5;
+        $$->values = *$7;
+        delete $7;
+        $$->content = $9;
+        $$->parallel = true;
     }
 
 for_loop:
-    "for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
-    {
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("for_each"));
-        $$->insert("variable", new DataValue($3));
-        $$->insert("list", $5);
-        $$->insert("items", $7);
-        $$->insert("parts", $9);
-    }
-|
     "for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
         if($7 != $3)
@@ -228,34 +249,13 @@ for_loop:
             return 1;
         }
 
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("for"));
-        $$->insert("variable1", new DataValue($3));
-        $$->insert("variable2", new DataValue($7));
-        $$->insert("variable3", new DataValue($11));
-        $$->insert("start", $5);
-        $$->insert("end", $9);
-        $$->insert("items", $15);
-        $$->insert("parts", $17);
-    }
-
-parallel:
-    "parallel" "(" ")" "{" blossom_group_set "}"
-    {
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("parallel"));
-        $$->insert("parts", $5);
-    }
-
-parallel_for_loop:
-    "parallel_for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
-    {
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("parallel_for_each"));
-        $$->insert("variable", new DataValue($3));
-        $$->insert("list", $5);
-        $$->insert("items", $7);
-        $$->insert("parts", $9);
+        $$ = new ForBranching();
+        $$->tempVarName = $3;
+        $$->start = $5;
+        $$->end = $9;
+        $$->values = *$15;
+        delete $15;
+        $$->content = $17;
     }
 |
     "parallel_for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
@@ -275,192 +275,175 @@ parallel_for_loop:
             return 1;
         }
 
-        $$ = new DataMap();
-        $$->insert("b_type", new DataValue("parallel_for"));
-        $$->insert("variable1", new DataValue($3));
-        $$->insert("variable2", new DataValue($7));
-        $$->insert("variable3", new DataValue($11));
-        $$->insert("start", $5);
-        $$->insert("end", $9);
-        $$->insert("items", $15);
-        $$->insert("parts", $17);
+        $$ = new ForBranching();
+        $$->tempVarName = $3;
+        $$->start = $5;
+        $$->end = $9;
+        $$->values = *$15;
+        delete $15;
+        $$->content = $17;
+        $$->parallel = true;
     }
+
+parallel:
+    "parallel" "(" ")" "{" blossom_group_set "}"
+    {
+        $$ = new ParallelPart();
+        $$->childs = dynamic_cast<SequentiellPart*>($5);
+    }
+
+
 
 blossom_group_set:
     blossom_group_set if_condition
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     blossom_group_set for_loop
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     blossom_group_set parallel
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
-    blossom_group_set parallel_for_loop
+    blossom_group_set for_each_loop
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     blossom_group_set subtree_fork
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     blossom_group_set blossom_group
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     blossom_group_set seed_fork
     {
-        $1->append($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
     if_condition
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
     for_loop
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
     parallel
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
-    parallel_for_loop
+    for_each_loop
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
     blossom_group
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
     seed_fork
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 |
     subtree_fork
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 
 blossom_group:
-   "identifier" "(" name_item ")" item_set blossom_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom_group"));
-       $$->insert("name", new DataValue($3));
-       $$->insert("blossom-group-type", new DataValue($1));
-       $$->insert("items-input", $5);
-       $$->insert("blossoms", $6);
-   }
+    "identifier" "(" name_item ")" item_set blossom_set
+    {
+        $$ = new BlossomGroupItem();
+        $$->blossomGroupType = $1;
+        $$->id = $3;
+        $$->values = *$5;
+        delete $5;
+        $$->blossoms = *$6;
+        delete $6;
+    }
 |
-   "identifier" "(" name_item ")" blossom_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom_group"));
-       $$->insert("name", new DataValue($3));
-       $$->insert("blossom-group-type", new DataValue($1));
-       $$->insert("items-input", new DataArray());
-       $$->insert("blossoms", $5);
-   }
+    "identifier" "(" name_item ")" blossom_set
+    {
+        $$ = new BlossomGroupItem();
+        $$->blossomGroupType = $1;
+        $$->id = $3;
+        $$->blossoms = *$5;
+        delete $5;
+    }
 |
-   "identifier" "(" name_item ")" item_set
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom_group"));
-       $$->insert("name", new DataValue($3));
-       $$->insert("blossom-group-type", new DataValue($1));
-       $$->insert("items-input", $5);
-       $$->insert("blossoms", new DataArray());
-   }
+    "identifier" "(" name_item ")" item_set
+    {
+        $$ = new BlossomGroupItem();
+        $$->blossomGroupType = $1;
+        $$->id = $3;
+        $$->values = *$5;
+        delete $5;
+    }
 |
-  "identifier" "(" name_item ")"
-  {
-      $$ = new DataMap();
-      $$->insert("b_type", new DataValue("blossom_group"));
-      $$->insert("name", new DataValue($3));
-      $$->insert("blossom-group-type", new DataValue($1));
-      $$->insert("items-input", new DataArray());
-      $$->insert("blossoms", new DataArray());
-  }
+    "identifier" "(" name_item ")"
+    {
+        $$ = new BlossomGroupItem();
+        $$->blossomGroupType = $1;
+        $$->id = $3;
+    }
 
 blossom_set:
    blossom_set blossom
    {
-       $1->append($2);
+       $1->push_back($2);
        $$ = $1;
    }
 |
    blossom
    {
-       $$ = new DataArray();
-       $$->append($1);
+       $$ = new std::vector<BlossomItem*>();
+       $$->push_back($1);
    }
 
 blossom:
    "->" "identifier"
    {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom"));
-       $$->insert("blossom-type", new DataValue($2));
-       $$->insert("output", new DataValue());
-       $$->insert("items-input", new DataArray());
+       $$ = new BlossomItem();
+       $$->blossomType = $2;
    }
 |
    "->" "identifier" ":" item_set
    {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("blossom"));
-       $$->insert("blossom-type", new DataValue($2));
-       $$->insert("output", new DataValue());
-       $$->insert("items-input", $4);
+       $$ = new BlossomItem();
+       $$->blossomType = $2;
+       $$->values = *$4;
+       delete $4;
    }
 
-item_set:
-   %empty
-   {
-       $$ = new DataArray();
-   }
-|
-   item_set  item
-   {
-       $1->append($2);
-       $$ = $1;
-   }
-|
-   item
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
 
 regiterable_identifier:
    "identifier"
@@ -469,159 +452,196 @@ regiterable_identifier:
        $$ = $1;
    }
 
-item:
-   "-" regiterable_identifier "=" "{" "{" "}" "}"
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("assign"));
-       $$->insert("key", new DataValue($2));
-       std::string empty = "{{}}";
-       $$->insert("value", new DataValue(empty));
-   }
+item_set:
+    %empty
+    {
+        $$ = new ValueItemMap();
+    }
 |
-   "-" regiterable_identifier "=" value_item
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("assign"));
-       $$->insert("key", new DataValue($2));
-       $$->insert("value", $4);
-   }
-|
-   "-" regiterable_identifier "=" json_abstract
-   {
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("assign"));
-       $$->insert("key", new DataValue($2));
-       $$->insert("value", $4);
-   }
-|
-   "-" value_item ">>" "identifier"
-   {
-       if(driver.isKeyRegistered($4) == false)
-       {
-           driver.error(yyla.location,
-                        "undefined identifier \"" + $4 + "\"",
-                        true);
-           return 1;
-       }
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("output"));
-       $$->insert("key", new DataValue($4));
-       $$->insert("value", $2);
-   }
-|
-   "-" "identifier" compare_type value_item
-   {
-       if(driver.isKeyRegistered($2) == false)
-       {
-           driver.error(yyla.location,
-                        "undefined identifier \"" + $2 + "\"",
-                        true);
-           return 1;
-       }
-       $$ = new DataMap();
-       $$->insert("b_type", new DataValue("compare"));
-       $$->insert("key", new DataValue($2));
-       $$->insert("compare_type", new DataValue($3));
-       $$->insert("value", $4);
-   }
+    item_set  "-" regiterable_identifier "=" "{" "{" "}" "}"
+    {
+        std::string empty = "{{}}";
+        ValueItem newItem;
+        newItem.item = new DataValue(empty);
 
-string_array:
-   string_array "," name_item
-   {
-       $1->append(new DataValue($3));
-       $$ = $1;
-   }
+        $1->insert($3, newItem);
+        $$ = $1;
+    }
 |
-   name_item
-   {
-       $$ = new DataArray();
-       $$->append(new DataValue($1));
-   }
+    item_set  "-" regiterable_identifier "=" value_item
+    {
+        $1->insert($3, $5);
+        $$ = $1;
+    }
 |
-   %empty
-   {
-       $$ = new DataArray();
-   }
+    item_set  "-" regiterable_identifier "=" json_abstract
+    {
+        ValueItem newItem;
+        newItem.item = $5;
+
+        $1->insert($3, newItem);
+        $$ = $1;
+    }
+|
+    item_set  "-" value_item ">>" "identifier"
+    {
+        if(driver.isKeyRegistered($5) == false)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $5 + "\"",
+                         true);
+            return 1;
+        }
+
+        ValueItem newItem = $3;
+        newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+
+        $1->insert($5, newItem);
+        $$ = $1;
+    }
+|
+    item_set  "-" "identifier" compare_type value_item
+    {
+        ValueItem newItem = $5;
+
+        if($4 == "==") {
+            newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
+        }
+        if($4 == "!=") {
+            newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
+        }
+
+        $1->insert($3, newItem);
+        $$ = $1;
+    }
+|
+    "-" regiterable_identifier "=" "{" "{" "}" "}"
+    {
+        $$ = new ValueItemMap();
+
+        std::string empty = "{{}}";
+        ValueItem newItem;
+        newItem.item = new DataValue(empty);
+
+        $$->insert($2, newItem);
+    }
+|
+    "-" regiterable_identifier "=" value_item
+    {
+        $$ = new ValueItemMap();
+        $$->insert($2, $4);
+    }
+|
+    "-" regiterable_identifier "=" json_abstract
+    {
+        $$ = new ValueItemMap();
+
+        ValueItem newItem;
+        newItem.item = $4;
+
+        $$->insert($2, newItem);
+    }
+|
+    "-" value_item ">>" "identifier"
+    {
+        if(driver.isKeyRegistered($4) == false)
+        {
+            driver.error(yyla.location,
+                         "undefined identifier \"" + $4 + "\"",
+                         true);
+            return 1;
+        }
+
+        $$ = new ValueItemMap();
+
+        ValueItem newItem = $2;
+        newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+
+        $$->insert($4, newItem);
+    }
+|
+    "-" "identifier" compare_type value_item
+    {
+        $$ = new ValueItemMap();
+
+        ValueItem newItem = $4;
+
+        if($3 == "==") {
+            newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
+        }
+        if($3 == "!=") {
+            newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
+        }
+
+        $$->insert($2, newItem);
+    }
 
 subtree_fork:
-   "subtree" "(" name_item ")" item_set
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("b_type", new DataValue("subtree"));
-       tempItem->insert("b_id", new DataValue($3));
-       tempItem->insert("items-input", $5);
-       $$ = tempItem;
-   }
+    "subtree" "(" name_item ")" item_set
+    {
+        $$ = new SubtreeItem();
+        $$->nameOrPath = $3;
+        $$->values = *$5;
+        delete $5;
+    }
 
 seed_fork:
-   "seed" "(" name_item "," name_item ")" item_set
-   {
-       DataMap* tempItem = new DataMap();
-       tempItem->insert("b_type", new DataValue("seed"));
-       tempItem->insert("tag", new DataValue($3));
-       tempItem->insert("treeId", new DataValue($5));
-       tempItem->insert("items-input", $7);
-       $$ = tempItem;
-   }
+    "seed" "(" name_item "," name_item ")" item_set
+    {
+        $$ = new SeedItem();
+        $$->tag = $3;
+        $$->treeId = $5;
+        $$->values = *$7;
+        delete $7;
+    }
 
 value_item_list:
-   value_item_list ","  value_item
-   {
-       $1->append($3);
-       $$ = $1;
-   }
+    value_item_list ","  value_item
+    {
+        $1->push_back($3);
+        $$ = $1;
+    }
 |
-   value_item
-   {
-       $$ = new DataArray();
-       $$->append($1);
-   }
+    value_item
+    {
+        $$ = new std::vector<ValueItem>();
+        $$->push_back($1);
+    }
 
 value_item:
     "float"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
-        tempItem->insert("b_type", new DataValue("value"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        $$ = newItem;
     }
 |
     "number"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
-        tempItem->insert("b_type", new DataValue("value"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        $$ = newItem;
     }
 |
     "true"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue(true));
-        tempItem->insert("b_type", new DataValue("value"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+        ValueItem newItem;
+        newItem.item = new DataValue(true);
+        $$ = newItem;
     }
 |
     "false"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue(false));
-        tempItem->insert("b_type", new DataValue("value"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+        ValueItem newItem;
+        newItem.item = new DataValue(false);
+        $$ = newItem;
     }
 |
     "string"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue(driver.removeQuotes($1)));
-        tempItem->insert("b_type", new DataValue("value"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        $$ = newItem;
     }
 |
     "identifier"
@@ -633,11 +653,11 @@ value_item:
                          true);
             return 1;
         }
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
-        tempItem->insert("b_type", new DataValue("identifier"));
-        tempItem->insert("functions", new DataArray());
-        $$ = tempItem;
+
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        newItem.isIdentifier = true;
+        $$ = newItem;
     }
 |
     "identifier" function_list
@@ -649,11 +669,13 @@ value_item:
                          true);
             return 1;
         }
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
-        tempItem->insert("b_type", new DataValue("identifier"));
-        tempItem->insert("functions", $2);
-        $$ = tempItem;
+
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        newItem.isIdentifier = true;
+        newItem.functions = *$2;
+        delete $2;
+        $$ = newItem;
     }
 |
     "identifier" access_list
@@ -665,88 +687,93 @@ value_item:
                          true);
             return 1;
         }
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("item", new DataValue($1));
-        tempItem->insert("b_type", new DataValue("identifier"));
-        tempItem->insert("functions", $2);
-        $$ = tempItem;
+
+        ValueItem newItem;
+        newItem.item = new DataValue($1);
+        newItem.isIdentifier = true;
+        newItem.functions = *$2;
+        delete $2;
+        $$ = newItem;
     }
 
 function_list:
     function_list function
     {
-        $1->append($2);
+        $1->push_back($2);
         $$ = $1;
     }
 |
     function
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new std::vector<FunctionItem>();
+        $$->push_back($1);
     }
 
 function:
-    "." "identifier" "(" value_item_list ")"
-    {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("b_type", new DataValue($2));
-        tempItem->insert("args", $4);
-        $$ = tempItem;
-    }
-|
     "." "identifier" "(" ")"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("b_type", new DataValue($2));
-        tempItem->insert("args", new DataArray());
-        $$ = tempItem;
+        FunctionItem newItem;
+        newItem.type = $2;
+        $$ = newItem;
+    }
+|
+    "." "identifier" "(" value_item_list ")"
+    {
+        FunctionItem newItem;
+        newItem.type = $2;
+        newItem.arguments = *$4;
+        delete $4;
+        $$ = newItem;
     }
 
 access_list:
     access_list access
     {
-        $1->append($2);
+        $1->push_back($2);
         $$ = $1;
     }
 |
     access
     {
-        $$ = new DataArray();
-        $$->append($1);
+        $$ = new std::vector<FunctionItem>();
+        $$->push_back($1);
     }
 
 access:
     "[" "identifier" "]"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("b_type", new DataValue("get"));
+        FunctionItem newItem;
+        newItem.type = "get";
 
-        DataArray* args = new DataArray();
-        args->append(new DataValue($2));
-        tempItem->insert("args", args);
-        $$ = tempItem;
+        ValueItem value;
+        value.item = new DataValue($2);
+        newItem.arguments.push_back(value);
+
+        $$ = newItem;
     }
 |
     "[" "number" "]"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("b_type", new DataValue("get"));
+        FunctionItem newItem;
+        newItem.type = "get";
 
-        DataArray* args = new DataArray();
-        args->append(new DataValue($2));
-        tempItem->insert("args", args);
-        $$ = tempItem;
+        ValueItem value;
+        value.item = new DataValue($2);
+        newItem.arguments.push_back(value);
+
+        $$ = newItem;
     }
 |
     "[" "string" "]"
     {
-        DataMap* tempItem = new DataMap();
-        tempItem->insert("b_type", new DataValue("get"));
+        FunctionItem newItem;
+        newItem.type = "get";
 
-        DataArray* args = new DataArray();
-        args->append(new DataValue(driver.removeQuotes($2)));
-        tempItem->insert("args", args);
-        $$ = tempItem;
+        ValueItem value;
+        value.item = new DataValue($2);
+        newItem.arguments.push_back(value);
+
+        $$ = newItem;
     }
 
 name_item:

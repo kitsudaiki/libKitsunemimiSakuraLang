@@ -23,6 +23,7 @@
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <sakura_parser.h>
 #include <libKitsunemimiSakuraParser/sakura_parsing.h>
+#include <libKitsunemimiSakuraParser/sakura_items.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
@@ -98,7 +99,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @brief setter for the output-variable
  */
 void
-SakuraParserInterface::setOutput(DataItem* output)
+SakuraParserInterface::setOutput(SakuraItem* output)
 {
     m_output = output;
 }
@@ -106,7 +107,7 @@ SakuraParserInterface::setOutput(DataItem* output)
 /**
  * @brief getter for the output-variable
  */
-DataItem* SakuraParserInterface::getOutput() const
+SakuraItem* SakuraParserInterface::getOutput() const
 {
     return m_output;
 }

@@ -28,7 +28,6 @@
 
 #include <libKitsunemimiSakuraParser/value_item_map.h>
 
-
 namespace Kitsunemimi
 {
 class DataItem;
@@ -81,9 +80,10 @@ public:
     ~BlossomItem();
     SakuraItem* copy();
 
+    std::string blossomType = "";
+
     std::string blossomName = "";
     std::string blossomGroupType = "";
-    std::string blossomType = "";
     std::string blossomPath = "";
 
     DataItem* blossomOutput = nullptr;
@@ -137,7 +137,7 @@ public:
     SakuraItem* copy();
 
     std::string id = "";
-    std::vector<SakuraItem*> childs;
+    SakuraItem* childs;
 };
 
 //===================================================================
@@ -182,8 +182,8 @@ public:
     compareTypes ifType = EQUAL;
     ValueItem rightSide;
 
-    SakuraItem* ifContent;
-    SakuraItem* elseContent;
+    SakuraItem* ifContent = nullptr;
+    SakuraItem* elseContent = nullptr;
 };
 
 //===================================================================
@@ -197,9 +197,10 @@ public:
     SakuraItem* copy();
 
     std::string tempVarName = "";
-    ValueItemMap iterateArray;
+    ValueItem iterateArray;
+    bool parallel = false;
 
-    SakuraItem* content;
+    SakuraItem* content = nullptr;
 };
 
 //===================================================================
@@ -215,8 +216,9 @@ public:
     std::string tempVarName = "";
     ValueItem start;
     ValueItem end;
+    bool parallel = false;
 
-    SakuraItem* content;
+    SakuraItem* content = nullptr;
 };
 
 //===================================================================
@@ -242,7 +244,7 @@ public:
     ~ParallelPart();
     SakuraItem* copy();
 
-    std::vector<SakuraItem*> childs;
+    SakuraItem* childs;
 };
 
 }

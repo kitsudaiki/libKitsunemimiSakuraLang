@@ -132,13 +132,7 @@ TreeItem::TreeItem()
 
 TreeItem::~TreeItem()
 {
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        SakuraItem* tempItem = childs.at(i);
-        if(tempItem != nullptr) {
-            delete tempItem;
-        }
-    }
+    delete childs;
 }
 
 SakuraItem*
@@ -150,10 +144,7 @@ TreeItem::copy()
     newItem->values = values;
 
     newItem->id = id;
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        newItem->childs.push_back(childs.at(i)->copy());
-    }
+    newItem->childs = childs->copy();
 
     return newItem;
 }
@@ -366,13 +357,7 @@ ParallelPart::ParallelPart()
 
 ParallelPart::~ParallelPart()
 {
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        SakuraItem* tempItem = childs.at(i);
-        if(tempItem != nullptr) {
-            delete tempItem;
-        }
-    }
+    delete childs;
 }
 
 SakuraItem*
@@ -382,11 +367,7 @@ ParallelPart::copy()
 
     newItem->type = type;
     newItem->values = values;
-
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        newItem->childs.push_back(childs.at(i)->copy());
-    }
+    newItem->childs = childs->copy();
 
     return newItem;
 }

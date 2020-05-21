@@ -64,6 +64,7 @@ struct ValueItem
     std::vector<FunctionItem> functions;
 
     ValueItem() {}
+
     ValueItem(const ValueItem &other)
     {
         if(item != nullptr) {
@@ -80,12 +81,14 @@ struct ValueItem
         isIdentifier = other.isIdentifier;
         functions = other.functions;
     }
+
     ~ValueItem()
     {
         if(item != nullptr) {
             delete item;
         }
     }
+
     ValueItem &operator=(const ValueItem &other)
     {
         if(this != &other)

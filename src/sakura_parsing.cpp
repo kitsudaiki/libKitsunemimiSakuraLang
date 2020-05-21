@@ -214,7 +214,7 @@ SakuraParsing::parseString(Json::JsonItem &result,
 
     // get the parsed result from the parser and get path of the file,
     // where the skript actually is and add it to the parsed content.
-    result = Json::JsonItem(m_parser->getOutput()->copy()->toMap());
+    //result = Json::JsonItem(m_parser->getOutput()->copy()->toMap());
 
     return true;
 }
