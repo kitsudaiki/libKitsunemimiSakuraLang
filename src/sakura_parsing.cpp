@@ -62,7 +62,8 @@ SakuraParsing::~SakuraParsing()
  * @return true, if pasing all files was successful, else false
  */
 bool
-SakuraParsing::parseFiles(const std::string &rootPath)
+SakuraParsing::parseFiles(const std::string &rootPath,
+                          std::string &errorMessage)
 {
     JsonItem result;
     m_idContentMapping.clear();
@@ -73,24 +74,14 @@ SakuraParsing::parseFiles(const std::string &rootPath)
     m_errorMessage.addColumn("value");
     m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
     m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
+    errorMessage = m_errorMessage.toString();
 
     // parse
-    if(parseAllFiles(rootPath) == false) {
+    if(parseAllFiles(rootPath, errorMessage) == false) {
         return false;
     }
 
     return true;
-}
-
-/**
- * @brief request the error-message, in case that parseFiles had failed
- *
- * @return error-message as table-item
- */
-TableItem
-SakuraParsing::getError() const
-{
-    return m_errorMessage;
 }
 
 /**
@@ -101,7 +92,8 @@ SakuraParsing::getError() const
  * @return true, if all was successful, else false
  */
 bool
-SakuraParsing::parseAllFiles(const std::string &rootPath)
+SakuraParsing::parseAllFiles(const std::string &rootPath,
+                             std::string &errorMessage)
 {
     boost::filesystem::path rootPathObj(rootPath);    
 
@@ -111,6 +103,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
         m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
         m_errorMessage.addRow(std::vector<std::string>{"message",
                                                        "path doesn't exist: " + rootPath});
+        errorMessage = m_errorMessage.toString();
         return false;
     }
 
@@ -125,6 +118,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
             m_errorMessage.addRow(std::vector<std::string>{"message",
                                                            "no files found in the directory: "
                                                            + rootPath});
+            errorMessage = m_errorMessage.toString();
             return false;
         }
     }
@@ -139,7 +133,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
     {
         const std::string filePath = m_allFilePaths.at(i);
 
-        if(parseSingleFile(m_allFilePaths.at(i), filePath) == false) {
+        if(parseSingleFile(m_allFilePaths.at(i), filePath, errorMessage) == false) {
             return false;
         }
     }
@@ -159,10 +153,10 @@ SakuraParsing::parseAllFiles(const std::string &rootPath)
  */
 bool
 SakuraParsing::parseSingleFile(const std::string &path,
-                               const std::string &filePath)
+                               const std::string &filePath,
+                               std::string &errorMessage)
 {
     // read file
-    std::string errorMessage = "";
     std::string fileContent = "";
     bool readResult = readFile(fileContent, filePath, errorMessage);
     if(readResult == false)
@@ -173,11 +167,12 @@ SakuraParsing::parseSingleFile(const std::string &path,
                                                        + filePath
                                                        + " with error: "
                                                        + errorMessage});
+        errorMessage = m_errorMessage.toString();
         return false;
     }
 
     JsonItem resultItem;
-    if(parseString(resultItem, fileContent) == false) {
+    if(parseString(resultItem, fileContent, errorMessage) == false) {
         return false;
     }
 
@@ -203,7 +198,8 @@ SakuraParsing::parseSingleFile(const std::string &path,
  */
 bool
 SakuraParsing::parseString(Json::JsonItem &result,
-                           const std::string &content)
+                           const std::string &content,
+                           std::string &errorMessage)
 {
     const bool parserResult = m_parser->parse(content);
     if(parserResult == false)

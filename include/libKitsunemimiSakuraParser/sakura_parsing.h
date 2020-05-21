@@ -54,13 +54,15 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
-    bool parseFiles(const std::string &rootPath);
+    bool parseFiles(const std::string &rootPath,
+                    std::string &errorMessage);
     bool parseSingleFile(const std::string &path,
-                         const std::string &filePath);
+                         const std::string &filePath,
+                         std::string &errorMessage);
     bool parseString(JsonItem &result,
-                     const std::string &content);
+                     const std::string &content,
+                     std::string &errorMessage);
 
-    TableItem getError() const;
     const JsonItem getParsedFileContent(const std::string &name="");
 
     std::map<std::string, std::string> m_pathIdMapping;
@@ -71,7 +73,8 @@ private:
     TableItem m_errorMessage;
     bool m_debug = false;
 
-    bool parseAllFiles(const std::string &rootPath);
+    bool parseAllFiles(const std::string &rootPath,
+                       std::string &errorMessage);
     void getFilesInDir(const path &directory);
 };
 

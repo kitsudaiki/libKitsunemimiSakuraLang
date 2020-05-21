@@ -59,10 +59,11 @@ void ParsingTest::parseBranchTest()
                                         testBranchString,
                                         errorMessage,
                                         true);
-    const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
+    const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree",
+                                             errorMessage);
     TEST_EQUAL(result, true);
     if(result == false) {
-        std::cout<<m_parser->getError().toString()<<std::endl;
+        std::cout<<errorMessage<<std::endl;
     }
     std::cout<<m_parser->getParsedFileContent().toString(true)<<std::endl;
 }
