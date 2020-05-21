@@ -29,6 +29,7 @@
 #include <assert.h>
 #include <fstream>
 #include <map>
+#include <boost/filesystem.hpp>
 
 namespace Kitsunemimi
 {
@@ -55,8 +56,6 @@ public:
     TreeItem* parseString(const std::string &content,
                           std::string &errorMessage);
 
-
-    std::vector<std::string> m_allFilePaths;
 private:
     SakuraParserInterface* m_parser = nullptr;
     bool m_debug = false;
@@ -64,13 +63,18 @@ private:
     bool parseAllFiles(SakuraGarden &result,
                        const std::string &rootPath,
                        std::string &errorMessage);
-    bool parseSingleFile(SakuraGarden &result,
-                         const std::string &filePath,
-                         const std::string &rootPath,
-                         std::string &errorMessage);
+    TreeItem* parseSingleFile(const std::string &relativePath,
+                              const std::string &rootPath,
+                              std::string &errorMessage);
     SakuraItem* getParsedFileContent(const std::string &name="");
 
     void initErrorOutput(TableItem &errorOutput);
+    void collectFiles(SakuraGarden &result,
+                      const std::string &path);
+    void getFilesInDir(SakuraGarden &result,
+                       const boost::filesystem::path &directory,
+                       const std::string &rootPath,
+                       const std::string &type);
 };
 
 }  // namespace Sakura

@@ -102,44 +102,117 @@ SakuraParsing::parseAllFiles(SakuraGarden &result,
     }
 
     // get all files
-    if(Kitsunemimi::Persistence::isDir(rootPath))
+    collectFiles(result, rootPath);
+
+    // check result
+    if(result.trees.size() == 0)
     {
-        Kitsunemimi::Persistence::listFiles(m_allFilePaths,
-                                            rootPath,
-                                            true,
-                                            {"files", "templates"});
-        // check result
-        if(m_allFilePaths.size() == 0)
-        {
-            TableItem errorOutput;
-            initErrorOutput(errorOutput);
-            errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-            errorOutput.addRow(std::vector<std::string>{"message",
-                                                        "no files found in the directory: "
-                                                        + rootPath});
-            errorMessage = errorOutput.toString();
+        TableItem errorOutput;
+        initErrorOutput(errorOutput);
+        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        errorOutput.addRow(std::vector<std::string>{"message",
+                                                    "no files found in the directory: "
+                                                    + rootPath});
+        errorMessage = errorOutput.toString();
+        return false;
+    }
+
+    // iterate over all file-paths and parse them
+    std::map<std::string, TreeItem*>::iterator it;
+    for(it = result.trees.begin();
+        it != result.trees.end();
+        it++)
+    {
+        TreeItem* parsed = parseSingleFile(it->first,
+                                           result.rootPath,
+                                           errorMessage);
+        if(parsed == nullptr) {
             return false;
         }
+
+        it->second = parsed;
+    }
+
+    return true;
+}
+
+/**
+ * @brief SakuraParsing::collectFiles
+ * @param result
+ * @param path
+ * @param rootPath
+ */
+void
+SakuraParsing::collectFiles(SakuraGarden &result,
+                            const std::string &path)
+{
+    boost::filesystem::path pathObj(path);
+
+    if(is_directory(pathObj))
+    {
+        getFilesInDir(result,
+                      pathObj,
+                      path,
+                      "trees");
     }
     else
     {
-        // store file-path with a placeholder in a list
-        m_allFilePaths.push_back(rootPath);
+        const std::string parent = Kitsunemimi::Persistence::getParent(path);
+        const std::string relPath = Kitsunemimi::Persistence::getRelativePath(path, parent);
+
+        result.rootPath = parent;
+        result.trees.insert(std::make_pair(relPath, nullptr));
     }
+}
 
-    // get and parse file-contents
-    for(uint32_t i = 0; i < m_allFilePaths.size(); i++)
+/**
+ * @brief SakuraParsing::getFilesInDir
+ * @param result
+ * @param directory
+ * @param rootPath
+ * @param type
+ */
+void
+SakuraParsing::getFilesInDir(SakuraGarden &result,
+                             const boost::filesystem::path &directory,
+                             const std::string &rootPath,
+                             const std::string &type)
+{
+    boost::filesystem::directory_iterator end_itr;
+    for(boost::filesystem::directory_iterator itr(directory);
+        itr != end_itr;
+        ++itr)
     {
-        const std::string filePath = m_allFilePaths.at(i);
+        if(is_directory(itr->path()))
+        {
+            if(itr->path().leaf().string() == "files")
+            {
+                getFilesInDir(result, itr->path(), rootPath, "files");
+            }
+            else if(itr->path().leaf().string() == "templats")
+            {
+                getFilesInDir(result, itr->path(), rootPath, "templats");
+            }
+            else {
+                getFilesInDir(result, itr->path(), rootPath, type);
+            }
+        }
+        else
+        {
+            std::string relPath = Kitsunemimi::Persistence::getRelativePath(itr->path().string(),
+                                                                            rootPath);
 
-        if(parseSingleFile(result, filePath, rootPath, errorMessage) == false) {
-            return false;
+            if(type == "trees") {
+                result.trees.insert(std::make_pair(relPath, nullptr));
+            }
+            if(type == "files") {
+                result.files.insert(std::make_pair(relPath, nullptr));
+            }
+            if(type == "templates") {
+                result.templates.insert(std::make_pair(relPath, std::string("")));
+            }
         }
     }
-
-    m_allFilePaths.clear();
-
-    return true;
 }
 
 /**
@@ -150,12 +223,13 @@ SakuraParsing::parseAllFiles(SakuraGarden &result,
  *
  * @return true, if successful, else false
  */
-bool
-SakuraParsing::parseSingleFile(SakuraGarden &result,
-                               const std::string &filePath,
+TreeItem*
+SakuraParsing::parseSingleFile(const std::string &relativePath,
                                const std::string &rootPath,
                                std::string &errorMessage)
 {
+    const std::string filePath = rootPath + "/" + relativePath;
+
     // read file
     std::string fileContent = "";
     bool readResult = readFile(fileContent, filePath, errorMessage);
@@ -170,22 +244,18 @@ SakuraParsing::parseSingleFile(SakuraGarden &result,
                                                     + " with error: "
                                                     + errorMessage});
         errorMessage = errorOutput.toString();
-        return false;
+        return nullptr;
     }
 
     TreeItem* resultItem = parseString(fileContent, errorMessage);
     if(resultItem == nullptr) {
-        return false;
+        return resultItem;
     }
-
-    const std::string relativePath = Kitsunemimi::Persistence::getRelativePath(filePath, rootPath);
 
     resultItem->unparedConent = fileContent;
     resultItem->path = relativePath;
 
-    result.trees.insert(std::make_pair(relativePath, resultItem));
-
-    return true;
+    return resultItem;
 }
 
 /**
