@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file        sakura_items.h
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
@@ -137,6 +137,10 @@ public:
     SakuraItem* copy();
 
     std::string id = "";
+
+    std::string unparedConent = "";
+    std::string path = "";
+
     SakuraItem* childs;
 };
 
@@ -245,6 +249,26 @@ public:
     SakuraItem* copy();
 
     SakuraItem* childs;
+};
+
+//===================================================================
+// SakuraGarden
+//===================================================================
+class SakuraGarden
+{
+public:
+    SakuraGarden();
+    ~SakuraGarden();
+
+    std::string rootPath = "";
+    std::map<std::string, TreeItem*> trees;
+    std::map<std::string, std::string> templates;
+    std::map<std::string, void*> files;
+
+    TreeItem* getTreeById(const std::string id);
+    TreeItem* getTreeByPath(const std::string relativePath);
+    const std::string getTemplate(const std::string relativePath);
+    const void* getFile(const std::string relativePath);
 };
 
 }

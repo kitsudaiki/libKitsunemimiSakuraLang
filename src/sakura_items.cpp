@@ -372,6 +372,100 @@ ParallelPart::copy()
     return newItem;
 }
 
+//===================================================================
+// SakuraGarden
+//===================================================================
+
+/**
+ * @brief SakuraGarden::SakuraGarden
+ */
+SakuraGarden::SakuraGarden()
+{
+}
+
+/**
+ * @brief SakuraGarden::~SakuraGarden
+ */
+SakuraGarden::~SakuraGarden()
+{
+    // TODO
+}
+
+/**
+ * @brief SakuraGarden::getTreeById
+ * @param id
+ * @return
+ */
+TreeItem*
+SakuraGarden::getTreeById(const std::string id)
+{
+    std::map<std::string, TreeItem*>::const_iterator it;
+    for(it = trees.begin();
+        it != trees.end();
+        it++)
+    {
+        if(it->second->id == id) {
+            return it->second;
+        }
+    }
+
+    return nullptr;
+}
+
+/**
+ * @brief SakuraGarden::getTreeByPath
+ * @param relativePath
+ * @return
+ */
+TreeItem*
+SakuraGarden::getTreeByPath(const std::string relativePath)
+{
+    std::map<std::string, TreeItem*>::const_iterator it;
+    it = trees.find(relativePath);
+
+    if(it != trees.end()) {
+        return it->second;
+    }
+
+    return nullptr;
+}
+
+/**
+ * @brief SakuraGarden::getTemplate
+ * @param relativePath
+ * @return
+ */
+const std::string
+SakuraGarden::getTemplate(const std::string relativePath)
+{
+    std::map<std::string, std::string>::const_iterator it;
+    it = templates.find(relativePath);
+
+    if(it != templates.end()) {
+        return it->second;
+    }
+
+    return "";
+}
+
+/**
+ * @brief SakuraGarden::getFile
+ * @param relativePath
+ * @return
+ */
+const void*
+SakuraGarden::getFile(const std::string relativePath)
+{
+    std::map<std::string, void*>::const_iterator it;
+    it = files.find(relativePath);
+
+    if(it != files.end()) {
+        return it->second;
+    }
+
+    return nullptr;
+}
+
 }
 }
 

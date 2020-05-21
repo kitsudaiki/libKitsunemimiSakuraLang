@@ -15,11 +15,6 @@ LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
 LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
 INCLUDEPATH += ../../libKitsunemimiPersistence/include
 
-LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
-LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
-LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
-INCLUDEPATH += ../../libKitsunemimiJson/include
-
 LIBS +=  -lboost_filesystem -lboost_system
 
 INCLUDEPATH += $$PWD \

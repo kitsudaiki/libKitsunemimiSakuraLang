@@ -22,13 +22,14 @@
 
 #include <libKitsunemimiSakuraParser/sakura_parsing.h>
 
+#include <libKitsunemimiSakuraParser/sakura_items.h>
 #include <sakura_parsing/sakura_parser_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
 
-#include <libKitsunemimiJson/json_item.h>
 #include <libKitsunemimiPersistence/files/text_file.h>
+#include <libKitsunemimiPersistence/files/file_methods.h>
 
 using Kitsunemimi::Persistence::readFile;
 
@@ -62,22 +63,14 @@ SakuraParsing::~SakuraParsing()
  * @return true, if pasing all files was successful, else false
  */
 bool
-SakuraParsing::parseFiles(const std::string &rootPath,
+SakuraParsing::parseFiles(SakuraGarden &result,
+                          const std::string &rootPath,
                           std::string &errorMessage)
 {
-    JsonItem result;
-    m_idContentMapping.clear();
-
-    // init error-message
-    m_errorMessage.clearTable();
-    m_errorMessage.addColumn("key");
-    m_errorMessage.addColumn("value");
-    m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
-    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
-    errorMessage = m_errorMessage.toString();
+    result.rootPath = rootPath;
 
     // parse
-    if(parseAllFiles(rootPath, errorMessage) == false) {
+    if(parseAllFiles(result, rootPath, errorMessage) == false) {
         return false;
     }
 
@@ -92,33 +85,39 @@ SakuraParsing::parseFiles(const std::string &rootPath,
  * @return true, if all was successful, else false
  */
 bool
-SakuraParsing::parseAllFiles(const std::string &rootPath,
+SakuraParsing::parseAllFiles(SakuraGarden &result,
+                             const std::string &rootPath,
                              std::string &errorMessage)
 {
-    boost::filesystem::path rootPathObj(rootPath);    
-
     // precheck
-    if(exists(rootPathObj) == false)
+    if(Kitsunemimi::Persistence::doesPathExist(rootPath) == false)
     {
-        m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-        m_errorMessage.addRow(std::vector<std::string>{"message",
-                                                       "path doesn't exist: " + rootPath});
-        errorMessage = m_errorMessage.toString();
+        TableItem errorOutput;
+        initErrorOutput(errorOutput);
+        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        errorOutput.addRow(std::vector<std::string>{"message",
+                                                    "path doesn't exist: " + rootPath});
+        errorMessage = errorOutput.toString();
         return false;
     }
 
     // get all files
-    if(is_directory(rootPathObj))
+    if(Kitsunemimi::Persistence::isDir(rootPath))
     {
-        getFilesInDir(rootPathObj);
+        Kitsunemimi::Persistence::listFiles(m_allFilePaths,
+                                            rootPath,
+                                            true,
+                                            {"files", "templates"});
         // check result
         if(m_allFilePaths.size() == 0)
         {
-            m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-            m_errorMessage.addRow(std::vector<std::string>{"message",
-                                                           "no files found in the directory: "
-                                                           + rootPath});
-            errorMessage = m_errorMessage.toString();
+            TableItem errorOutput;
+            initErrorOutput(errorOutput);
+            errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+            errorOutput.addRow(std::vector<std::string>{"message",
+                                                        "no files found in the directory: "
+                                                        + rootPath});
+            errorMessage = errorOutput.toString();
             return false;
         }
     }
@@ -133,7 +132,7 @@ SakuraParsing::parseAllFiles(const std::string &rootPath,
     {
         const std::string filePath = m_allFilePaths.at(i);
 
-        if(parseSingleFile(m_allFilePaths.at(i), filePath, errorMessage) == false) {
+        if(parseSingleFile(result, filePath, rootPath, errorMessage) == false) {
             return false;
         }
     }
@@ -152,8 +151,9 @@ SakuraParsing::parseAllFiles(const std::string &rootPath,
  * @return true, if successful, else false
  */
 bool
-SakuraParsing::parseSingleFile(const std::string &path,
+SakuraParsing::parseSingleFile(SakuraGarden &result,
                                const std::string &filePath,
+                               const std::string &rootPath,
                                std::string &errorMessage)
 {
     // read file
@@ -161,29 +161,29 @@ SakuraParsing::parseSingleFile(const std::string &path,
     bool readResult = readFile(fileContent, filePath, errorMessage);
     if(readResult == false)
     {
-        m_errorMessage.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-        m_errorMessage.addRow(std::vector<std::string>{"message",
-                                                       "failed to read file-path: "
-                                                       + filePath
-                                                       + " with error: "
-                                                       + errorMessage});
-        errorMessage = m_errorMessage.toString();
+        TableItem errorOutput;
+        initErrorOutput(errorOutput);
+        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        errorOutput.addRow(std::vector<std::string>{"message",
+                                                    "failed to read file-path: "
+                                                    + filePath
+                                                    + " with error: "
+                                                    + errorMessage});
+        errorMessage = errorOutput.toString();
         return false;
     }
 
-    JsonItem resultItem;
-    if(parseString(resultItem, fileContent, errorMessage) == false) {
+    TreeItem* resultItem = parseString(fileContent, errorMessage);
+    if(resultItem == nullptr) {
         return false;
     }
 
-    resultItem.insert("b_path", new DataValue(path), true);
-    m_idContentMapping.insert(std::make_pair(resultItem.get("b_id").toString(), resultItem));
-    m_pathIdMapping.insert(std::make_pair(path, resultItem.get("b_id").toString()));
+    const std::string relativePath = Kitsunemimi::Persistence::getRelativePath(filePath, rootPath);
 
-    // debug-output to print the parsed file-content as json-string
-    if(m_debug) {
-        std::cout<<resultItem.toString(true)<<std::endl;
-    }
+    resultItem->unparedConent = fileContent;
+    resultItem->path = relativePath;
+
+    result.trees.insert(std::make_pair(relativePath, resultItem));
 
     return true;
 }
@@ -194,91 +194,34 @@ SakuraParsing::parseSingleFile(const std::string &path,
  * @param result reference for the resulting json-item
  * @param content file-content to parse
  *
- * @return true, if successful, else false
+ * @return
  */
-bool
-SakuraParsing::parseString(Json::JsonItem &result,
-                           const std::string &content,
+TreeItem*
+SakuraParsing::parseString(const std::string &content,
                            std::string &errorMessage)
 {
     const bool parserResult = m_parser->parse(content);
     if(parserResult == false)
     {
-        m_errorMessage = m_parser->getErrorMessage();
-        return false;
+        TableItem errorOutput = m_parser->getErrorMessage();
+        errorMessage = errorOutput.toString();
+        return nullptr;
     }
 
-    // get the parsed result from the parser and get path of the file,
-    // where the skript actually is and add it to the parsed content.
-    //result = Json::JsonItem(m_parser->getOutput()->copy()->toMap());
-
-    return true;
+    return m_parser->getOutput();
 }
 
 /**
- * @brief request the parsed content of a specific subtree
- *
- * @param name Name of the requested file-content. If string is empty, the content of the first
- *             file in the list will be returned.
- *
- * @return Subtree-content as json-item. This is an invalid item, when the requested name
- *         doesn't exist in the parsed file list.
- */
-const JsonItem
-SakuraParsing::getParsedFileContent(const std::string &name)
-{
-    // precheck
-    if(name == ""
-            && m_idContentMapping.size() > 0)
-    {
-        return m_idContentMapping.begin()->second;
-    }
-
-    // search
-    std::map<std::string, JsonItem>::iterator it;
-    for(it = m_idContentMapping.begin();
-        it != m_idContentMapping.end();
-        it++)
-    {
-        if(it->second.get("b_id").toString() == name) {
-            return it->second;
-        }
-    }
-
-    return JsonItem();
-}
-
-/**
- * @brief get all file-paths in a directory and its subdirectory
- *
- * @param directory parent-directory for searching
+ * @brief SakuraParsing::initErrorOutput
+ * @param errorOutput
  */
 void
-SakuraParsing::getFilesInDir(const boost::filesystem::path &directory)
+SakuraParsing::initErrorOutput(TableItem &errorOutput)
 {
-    directory_iterator end_itr;
-    for(directory_iterator itr(directory);
-        itr != end_itr;
-        ++itr)
-    {
-        if(is_directory(itr->path()))
-        {
-            // process subdirectories, but no directories named tempales or files, because
-            // they shouldn't contain any tree-files
-            if(itr->path().leaf().string() != "templates"
-                    && itr->path().leaf().string() != "files")
-            {
-                getFilesInDir(itr->path());
-            }
-        }
-        else
-        {
-            if(m_debug) {
-                std::cout<<"found file: "<<itr->path().string()<<std::endl;
-            }
-            m_allFilePaths.push_back(itr->path().string());
-        }
-    }
+    errorOutput.addColumn("key");
+    errorOutput.addColumn("value");
+    errorOutput.addRow(std::vector<std::string>{"ERROR", " "});
+    errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
 }
 
 }  // namespace Sakura
