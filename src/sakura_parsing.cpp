@@ -78,6 +78,36 @@ SakuraParsing::parseFiles(SakuraGarden &result,
 }
 
 /**
+ * @brief parseString
+ * @param result
+ * @param content
+ * @param errorMessage
+ * @return
+ */
+bool
+SakuraParsing::parseString(SakuraGarden &result,
+                           const std::string &relativePath,
+                           const std::string &content,
+                           std::string &errorMessage)
+{
+    TreeItem* parsetTree = parseString(content, errorMessage);
+    if(parsetTree == nullptr)  {
+        return false;
+    }
+
+    TreeItem* check = result.getTreeById(parsetTree->id);
+    if(check == nullptr)
+    {
+        errorMessage = "tree-id already registered: " + parsetTree->id;
+        return false;
+    }
+
+    result.trees.insert(std::make_pair(relativePath, parsetTree));
+
+    return true;
+}
+
+/**
  * @brief search and parse all files in a specific location
  *
  * @param rootPath path to file or directory with the file(s) to parse
