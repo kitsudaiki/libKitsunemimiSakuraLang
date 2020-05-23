@@ -401,17 +401,25 @@ blossom_group:
     "identifier" "(" name_item ")" item_set
     {
         $$ = new BlossomGroupItem();
-        $$->blossomGroupType = $1;
+        $$->blossomGroupType = "special";
         $$->id = $3;
         $$->values = *$5;
         delete $5;
+
+        BlossomItem* tempBlossom = new BlossomItem();
+        tempBlossom->blossomType = $1;
+        $$->blossoms.push_back(tempBlossom);
     }
 |
     "identifier" "(" name_item ")"
     {
         $$ = new BlossomGroupItem();
-        $$->blossomGroupType = $1;
+        $$->blossomGroupType = "special";
         $$->id = $3;
+
+        BlossomItem* tempBlossom = new BlossomItem();
+        tempBlossom->blossomType = $1;
+        $$->blossoms.push_back(tempBlossom);
     }
 
 blossom_set:
