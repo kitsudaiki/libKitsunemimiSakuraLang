@@ -138,8 +138,9 @@ public:
 
     std::string id = "";
 
-    std::string unparedConent = "";
-    std::string path = "";
+    std::string unparsedConent = "";
+    std::string relativePath = "";
+    std::string rootPath = "";
 
     SakuraItem* childs;
 };

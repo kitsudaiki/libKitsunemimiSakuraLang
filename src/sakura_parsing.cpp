@@ -282,8 +282,9 @@ SakuraParsing::parseSingleFile(const std::string &relativePath,
         return resultItem;
     }
 
-    resultItem->unparedConent = fileContent;
-    resultItem->path = relativePath;
+    resultItem->unparsedConent = fileContent;
+    resultItem->relativePath = relativePath;
+    resultItem->rootPath = rootPath;
 
     return resultItem;
 }

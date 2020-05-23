@@ -640,7 +640,7 @@ value_item:
     "string"
     {
         ValueItem newItem;
-        newItem.item = new DataValue($1);
+        newItem.item = new DataValue(driver.removeQuotes($1));
         $$ = newItem;
     }
 |
@@ -770,7 +770,7 @@ access:
         newItem.type = "get";
 
         ValueItem value;
-        value.item = new DataValue($2);
+        value.item = new DataValue(driver.removeQuotes($2));
         newItem.arguments.push_back(value);
 
         $$ = newItem;

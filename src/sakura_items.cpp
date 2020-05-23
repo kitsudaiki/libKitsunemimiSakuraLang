@@ -143,6 +143,9 @@ TreeItem::copy()
     newItem->type = type;
     newItem->values = values;
 
+    newItem->unparsedConent = unparsedConent;
+    newItem->relativePath = relativePath;
+
     newItem->id = id;
     newItem->childs = childs->copy();
 
