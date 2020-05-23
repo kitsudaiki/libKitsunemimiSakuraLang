@@ -292,8 +292,6 @@ parallel:
         $$->childs = dynamic_cast<SequentiellPart*>($5);
     }
 
-
-
 blossom_group_set:
     blossom_group_set if_condition
     {

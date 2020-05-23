@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file        sakura_items.cpp
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
@@ -244,13 +244,9 @@ IfBranching::copy()
 //===================================================================
 // ForEachBranching
 //===================================================================
-ForEachBranching::ForEachBranching(const bool parallel)
+ForEachBranching::ForEachBranching()
 {
-    if(parallel) {
-        type = PARALLEL_FOR_EACH_ITEM;
-    } else {
-        type = FOR_EACH_ITEM;
-    }
+    type = FOR_EACH_ITEM;
 }
 
 ForEachBranching::~ForEachBranching()
@@ -280,13 +276,9 @@ ForEachBranching::copy()
 //===================================================================
 // ForBranching
 //===================================================================
-ForBranching::ForBranching(const bool parallel)
+ForBranching::ForBranching()
 {
-    if(parallel) {
-        type = PARALLEL_FOR_ITEM;
-    } else {
-        type = FOR_ITEM;
-    }
+    type = FOR_ITEM;
 }
 
 ForBranching::~ForBranching()

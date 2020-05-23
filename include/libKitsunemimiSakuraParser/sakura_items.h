@@ -54,9 +54,7 @@ public:
         PARALLEL_ITEM = 8,
         IF_ITEM = 9,
         FOR_EACH_ITEM = 10,
-        FOR_ITEM = 11,
-        PARALLEL_FOR_EACH_ITEM = 12,
-        PARALLEL_FOR_ITEM = 13
+        FOR_ITEM = 11
     };
 
     SakuraItem();
@@ -197,7 +195,7 @@ public:
 class ForEachBranching : public SakuraItem
 {
 public:
-    ForEachBranching(const bool parallel=false);
+    ForEachBranching();
     ~ForEachBranching();
     SakuraItem* copy();
 
@@ -214,7 +212,7 @@ public:
 class ForBranching : public SakuraItem
 {
 public:
-    ForBranching(const bool parallel=false);
+    ForBranching();
     ~ForBranching();
     SakuraItem* copy();
 
