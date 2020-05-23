@@ -201,7 +201,7 @@ public:
     SakuraItem* copy();
 
     std::string tempVarName = "";
-    ValueItem iterateArray;
+    ValueItemMap iterateArray;
     bool parallel = false;
 
     SakuraItem* content = nullptr;

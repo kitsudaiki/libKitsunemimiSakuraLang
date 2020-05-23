@@ -214,7 +214,7 @@ for_each_loop:
     {
         $$ = new ForEachBranching();
         $$->tempVarName = "";
-        $$->iterateArray = $5;
+        $$->iterateArray.insert("array", $5);
         $$->values = *$7;
         delete $7;
         $$->content = $9;
@@ -224,7 +224,7 @@ for_each_loop:
     {
         $$ = new ForEachBranching();
         $$->tempVarName = "";
-        $$->iterateArray = $5;
+        $$->iterateArray.insert("array", $5);
         $$->values = *$7;
         delete $7;
         $$->content = $9;
