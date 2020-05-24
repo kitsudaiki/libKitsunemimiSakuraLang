@@ -75,12 +75,14 @@ private:
     SakuraItem* getParsedFileContent(const std::string &name="");
 
     void initErrorOutput(TableItem &errorOutput);
-    void collectFiles(SakuraGarden &result,
-                      const std::string &path);
-    void getFilesInDir(SakuraGarden &result,
+    bool collectFiles(SakuraGarden &result,
+                      const std::string &path,
+                      std::string &errorMessage);
+    bool getFilesInDir(SakuraGarden &result,
                        const boost::filesystem::path &directory,
                        const std::string &rootPath,
-                       const std::string &type);
+                       const std::string &type,
+                       std::string &errorMessage);
 };
 
 }  // namespace Sakura

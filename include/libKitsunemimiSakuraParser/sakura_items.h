@@ -32,6 +32,7 @@ namespace Kitsunemimi
 {
 class DataItem;
 class DataMap;
+class DataBuffer;
 
 namespace Sakura
 {
@@ -262,12 +263,12 @@ public:
     std::string rootPath = "";
     std::map<std::string, TreeItem*> trees;
     std::map<std::string, std::string> templates;
-    std::map<std::string, void*> files;
+    std::map<std::string, Kitsunemimi::DataBuffer*> files;
 
     TreeItem* getTreeById(const std::string id);
     TreeItem* getTreeByPath(const std::string relativePath);
     const std::string getTemplate(const std::string relativePath);
-    const void* getFile(const std::string relativePath);
+    const Kitsunemimi::DataBuffer* getFile(const std::string relativePath);
 };
 
 }
