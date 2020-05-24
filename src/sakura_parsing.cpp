@@ -270,7 +270,7 @@ bool SakuraParsing::getFilesInDir(SakuraGarden &result,
             {
                 Kitsunemimi::DataBuffer* buffer = new DataBuffer();
                 Kitsunemimi::Persistence::BinaryFile binFile(itr->path().string());
-                bool ret = binFile.readCompleteFile(buffer);
+                bool ret = binFile.readCompleteFile(*buffer);
 
                 if(ret == false)
                 {
