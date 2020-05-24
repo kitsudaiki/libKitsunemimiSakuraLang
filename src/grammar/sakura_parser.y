@@ -213,7 +213,7 @@ for_each_loop:
     "for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new ForEachBranching();
-        $$->tempVarName = "";
+        $$->tempVarName = $3;
         $$->iterateArray.insert("array", $5);
         $$->values = *$7;
         delete $7;
@@ -223,7 +223,7 @@ for_each_loop:
     "parallel_for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new ForEachBranching();
-        $$->tempVarName = "";
+        $$->tempVarName = $3;
         $$->iterateArray.insert("array", $5);
         $$->values = *$7;
         delete $7;
