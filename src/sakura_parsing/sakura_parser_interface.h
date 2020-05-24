@@ -35,6 +35,7 @@ namespace Kitsunemimi
 namespace Sakura
 {
 class location;
+class TreeItem;
 
 class SakuraParserInterface
 {
@@ -49,8 +50,8 @@ public:
     bool parse(const std::string &inputString);
 
     // output-handling
-    void setOutput(DataItem* output);
-    DataItem* getOutput() const;
+    void setOutput(TreeItem* output);
+    TreeItem* getOutput() const;
 
     // Error handling.
     void error(const Kitsunemimi::Sakura::location &location,
@@ -65,7 +66,7 @@ public:
 private:
     bool m_traceParsing = false;
     std::string m_inputString = "";
-    DataItem* m_output = nullptr;
+    TreeItem* m_output = nullptr;
     TableItem m_errorMessage;
 };
 

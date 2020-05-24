@@ -22,17 +22,13 @@
 
 #include "sakura_parser_test.h"
 
-#include <sakura_parsing.h>
+#include <libKitsunemimiSakuraParser/sakura_items.h>
+#include <libKitsunemimiSakuraParser/sakura_parsing.h>
+
 #include <test_strings/branch_test_string.h>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiPersistence/files/text_file.h>
-
-using Kitsunemimi::DataItem;
-using Kitsunemimi::DataArray;
-using Kitsunemimi::DataValue;
-using Kitsunemimi::DataMap;
-using Kitsunemimi::Json::JsonItem;
 
 namespace Kitsunemimi
 {
@@ -59,12 +55,14 @@ void ParsingTest::parseBranchTest()
                                         testBranchString,
                                         errorMessage,
                                         true);
-    const bool result = m_parser->parseFiles("/tmp/sakura_parser_test.tree");
+    SakuraGarden garden;
+    const bool result = m_parser->parseFiles(garden,
+                                             "/tmp/sakura_parser_test.tree",
+                                             errorMessage);
     TEST_EQUAL(result, true);
     if(result == false) {
-        std::cout<<m_parser->getError().toString()<<std::endl;
+        std::cout<<errorMessage<<std::endl;
     }
-    std::cout<<m_parser->getParsedFileContent().toString(true)<<std::endl;
 }
 
 void ParsingTest::cleanupTestCase()

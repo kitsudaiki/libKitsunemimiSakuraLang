@@ -28,23 +28,18 @@
 #include <utility>
 #include <assert.h>
 #include <fstream>
-
+#include <map>
 #include <boost/filesystem.hpp>
-#include <libKitsunemimiCommon/common_items/data_items.h>
-#include <libKitsunemimiCommon/common_items/table_item.h>
-#include <libKitsunemimiJson/json_item.h>
-
-using Kitsunemimi::DataItem;
-using Kitsunemimi::DataValue;
-using Kitsunemimi::DataMap;
-using Kitsunemimi::Json::JsonItem;
-using Kitsunemimi::TableItem;
-using namespace boost::filesystem;
 
 namespace Kitsunemimi
 {
+class TableItem;
+
 namespace Sakura
 {
+class TreeItem;
+class SakuraItem;
+class SakuraGarden;
 
 class SakuraParserInterface;
 
@@ -54,25 +49,40 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
-    bool parseFiles(const std::string &rootPath);
-    bool parseSingleFile(const std::string &path,
-                         const std::string &filePath);
-    bool parseString(JsonItem &result,
-                     const std::string &content);
+    bool parseFiles(SakuraGarden &result,
+                    const std::string &rootPath,
+                    std::string &errorMessage);
 
-    TableItem getError() const;
-    const JsonItem getParsedFileContent(const std::string &name="");
+    TreeItem* parseSingleFile(const std::string &relativePath,
+                              const std::string &rootPath,
+                              std::string &errorMessage);
 
-    std::map<std::string, std::string> m_pathIdMapping;
-    std::map<std::string, JsonItem> m_idContentMapping;
-    std::vector<std::string> m_allFilePaths;
+    bool parseString(SakuraGarden &result,
+                     const std::string &relativePath,
+                     const std::string &content,
+                     std::string &errorMessage);
+
+    TreeItem* parseString(const std::string &content,
+                          std::string &errorMessage);
+
 private:
     SakuraParserInterface* m_parser = nullptr;
-    TableItem m_errorMessage;
     bool m_debug = false;
 
-    bool parseAllFiles(const std::string &rootPath);
-    void getFilesInDir(const path &directory);
+    bool parseAllFiles(SakuraGarden &result,
+                       const std::string &rootPath,
+                       std::string &errorMessage);
+    SakuraItem* getParsedFileContent(const std::string &name="");
+
+    void initErrorOutput(TableItem &errorOutput);
+    bool collectFiles(SakuraGarden &result,
+                      const std::string &path,
+                      std::string &errorMessage);
+    bool getFilesInDir(SakuraGarden &result,
+                       const boost::filesystem::path &directory,
+                       const std::string &rootPath,
+                       const std::string &type,
+                       std::string &errorMessage);
 };
 
 }  // namespace Sakura

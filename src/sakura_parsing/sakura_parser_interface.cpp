@@ -23,6 +23,7 @@
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <sakura_parser.h>
 #include <libKitsunemimiSakuraParser/sakura_parsing.h>
+#include <libKitsunemimiSakuraParser/sakura_items.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
@@ -76,9 +77,7 @@ SakuraParserInterface::parse(const std::string &inputString)
     m_errorMessage.addColumn("key");
     m_errorMessage.addColumn("value");
     m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
-    if(m_output != nullptr) {
-        delete m_output;
-    }
+
     m_output = nullptr;
 
     // run parser-code
@@ -98,7 +97,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @brief setter for the output-variable
  */
 void
-SakuraParserInterface::setOutput(DataItem* output)
+SakuraParserInterface::setOutput(TreeItem* output)
 {
     m_output = output;
 }
@@ -106,7 +105,8 @@ SakuraParserInterface::setOutput(DataItem* output)
 /**
  * @brief getter for the output-variable
  */
-DataItem* SakuraParserInterface::getOutput() const
+TreeItem*
+SakuraParserInterface::getOutput() const
 {
     return m_output;
 }
