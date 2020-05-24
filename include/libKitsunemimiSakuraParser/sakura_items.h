@@ -268,7 +268,7 @@ public:
     TreeItem* getTreeById(const std::string id);
     TreeItem* getTreeByPath(const std::string relativePath);
     const std::string getTemplate(const std::string relativePath);
-    const Kitsunemimi::DataBuffer* getFile(const std::string relativePath);
+    DataBuffer* getFile(const std::string relativePath);
 };
 
 }

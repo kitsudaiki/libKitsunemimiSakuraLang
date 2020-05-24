@@ -448,7 +448,7 @@ SakuraGarden::getTemplate(const std::string relativePath)
  * @param relativePath
  * @return
  */
-const Kitsunemimi::DataBuffer*
+Kitsunemimi::DataBuffer*
 SakuraGarden::getFile(const std::string relativePath)
 {
     std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
