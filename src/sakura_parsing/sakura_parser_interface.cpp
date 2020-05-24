@@ -77,9 +77,7 @@ SakuraParserInterface::parse(const std::string &inputString)
     m_errorMessage.addColumn("key");
     m_errorMessage.addColumn("value");
     m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
-    if(m_output != nullptr) {
-        delete m_output;
-    }
+
     m_output = nullptr;
 
     // run parser-code
