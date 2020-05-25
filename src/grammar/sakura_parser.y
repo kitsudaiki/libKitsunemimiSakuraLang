@@ -206,7 +206,7 @@ if_condition:
         }
 
         $$->ifContent = $8;
-        $$->elseContent = nullptr;
+        $$->elseContent = new SequentiellPart();
     }
 
 for_each_loop:
