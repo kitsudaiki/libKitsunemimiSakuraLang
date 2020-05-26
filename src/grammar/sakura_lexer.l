@@ -57,6 +57,7 @@ blank [ \t]
     sakuraloc.step();
 %}
 
+#.*$            sakuraloc.step();
 {blank}+        sakuraloc.step();
 [\n]            { sakuraloc.lines(1); sakuraloc.step(); }
 "true"          return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
