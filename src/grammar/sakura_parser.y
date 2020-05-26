@@ -121,6 +121,7 @@ YY_DECL;
 %token <double> FLOAT "float"
 
 %type  <std::string> name_item
+%type  <std::string> string_text
 %type  <std::string> compare_type
 %type  <ValueItem>  value_item
 %type  <std::vector<ValueItem>*>  value_item_list
@@ -643,10 +644,10 @@ value_item:
         $$ = newItem;
     }
 |
-    "string"
+    string_text
     {
         ValueItem newItem;
-        newItem.item = new DataValue(driver.removeQuotes($1));
+        newItem.item = new DataValue($1);
         $$ = newItem;
     }
 |
@@ -730,6 +731,19 @@ function:
         newItem.arguments = *$4;
         delete $4;
         $$ = newItem;
+    }
+
+string_text:
+    string_text "string"
+    {
+        std::cout<<"poi 2: "<<driver.removeQuotes($2)<<std::endl;
+        $$ = $1 + driver.removeQuotes($2);
+    }
+|
+    "string"
+    {
+        std::cout<<"poi 1: "<<driver.removeQuotes($1)<<std::endl;
+        $$ = driver.removeQuotes($1);
     }
 
 access_list:
@@ -877,16 +891,16 @@ json_object_content:
        $$->insert(driver.removeQuotes($1), $3);
    }
 |
-   json_object_content "," "string" ":" json_abstract
+   json_object_content "," string_text ":" json_abstract
    {
-       $1->insert(driver.removeQuotes($3), $5);
+       $1->insert($3, $5);
        $$ = $1;
    }
 |
-   "string" ":" json_abstract
+   string_text ":" json_abstract
    {
        $$ = new DataMap();
-       $$->insert(driver.removeQuotes($1), $3);
+       $$->insert($1, $3);
    }
 
 json_array:
@@ -924,9 +938,9 @@ json_value:
        $$ = new DataValue($1);
    }
 |
-   "string"
+   string_text
    {
-       $$ = new DataValue(driver.removeQuotes($1));
+       $$ = new DataValue($1);
    }
 |
    "true"
