@@ -736,13 +736,11 @@ function:
 string_text:
     string_text "string"
     {
-        std::cout<<"poi 2: "<<driver.removeQuotes($2)<<std::endl;
         $$ = $1 + driver.removeQuotes($2);
     }
 |
     "string"
     {
-        std::cout<<"poi 1: "<<driver.removeQuotes($1)<<std::endl;
         $$ = driver.removeQuotes($1);
     }
 
