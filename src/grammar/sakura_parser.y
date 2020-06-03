@@ -146,7 +146,7 @@ YY_DECL;
 %type  <ParallelPart*> parallel
 
 %type  <TreeItem*> tree
-%type  <SeedItem*> seed_fork
+%type  <SeedTrigger*> seed_fork
 %type  <SubtreeItem*> subtree_fork
 
 %type  <DataItem*> json_abstract
@@ -595,7 +595,7 @@ subtree_fork:
 seed_fork:
     "seed" "(" name_item "," name_item ")" item_set
     {
-        $$ = new SeedItem();
+        $$ = new SeedTrigger();
         $$->tag = $3;
         $$->treeId = $5;
         $$->values = *$7;

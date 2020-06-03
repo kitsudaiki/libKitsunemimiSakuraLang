@@ -177,19 +177,19 @@ SubtreeItem::copy()
 }
 
 //===================================================================
-// SeedItem
+// SeedTrigger
 //===================================================================
-SeedItem::SeedItem()
+SeedTrigger::SeedTrigger()
 {
     type = SEED_ITEM;
 }
 
-SeedItem::~SeedItem() {}
+SeedTrigger::~SeedTrigger() {}
 
 SakuraItem*
-SeedItem::copy()
+SeedTrigger::copy()
 {
-    SeedItem* newItem = new SeedItem();
+    SeedTrigger* newItem = new SeedTrigger();
 
     newItem->type = type;
     newItem->values = values;

@@ -112,13 +112,13 @@ public:
 };
 
 //===================================================================
-// SeedItem
+// SeedTrigger
 //===================================================================
-class SeedItem : public SakuraItem
+class SeedTrigger : public SakuraItem
 {
 public:
-    SeedItem();
-    ~SeedItem();
+    SeedTrigger();
+    ~SeedTrigger();
     SakuraItem* copy();
 
     std::string treeId = "";
