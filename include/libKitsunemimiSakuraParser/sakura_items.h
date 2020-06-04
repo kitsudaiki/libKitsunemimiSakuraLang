@@ -56,7 +56,8 @@ public:
         PARALLEL_ITEM = 9,
         IF_ITEM = 10,
         FOR_EACH_ITEM = 11,
-        FOR_ITEM = 12
+        FOR_ITEM = 12,
+        SEED_PART = 13
     };
 
     SakuraItem();
@@ -110,6 +111,19 @@ public:
     std::string blossomGroupType = "";
 
     std::vector<BlossomItem*> blossoms;
+};
+
+//===================================================================
+// SeedPart
+//===================================================================
+class SeedPart : public SakuraItem
+{
+public:
+    SeedPart();
+    ~SeedPart();
+    SakuraItem* copy();
+
+    std::string id = "";
 };
 
 //===================================================================

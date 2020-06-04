@@ -127,6 +127,9 @@ YY_DECL;
 %type  <std::vector<ValueItem>*>  value_item_list
 %type  <std::string> regiterable_identifier;
 
+%type  <SeedPart*> seed_part
+%type  <SequentiellPart*> seed_part_set
+
 %type  <BlossomGroupItem*> blossom_group
 %type  <SequentiellPart*> blossom_group_set
 %type  <BlossomItem*> blossom
@@ -146,6 +149,7 @@ YY_DECL;
 %type  <ParallelPart*> parallel
 
 %type  <TreeItem*> tree
+%type  <SeedItem*> seed
 %type  <SeedTrigger*> seed_fork
 %type  <SubtreeItem*> subtree_fork
 
@@ -160,19 +164,58 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    tree
+    "[" name_item "]" item_set tree
     {
-        driver.setOutput($1);
+        $5->id = $2;
+        $5->values = *$4;
+        delete $4;
+
+        driver.setOutput($5);
+    }
+|
+    "[" name_item "]" item_set seed
+    {
+        $5->id = $2;
+        $5->values = *$4;
+        delete $4;
+
+        driver.setOutput($5);
     }
 
 tree:
-    "[" name_item "]" item_set blossom_group_set
+    blossom_group_set
     {
         $$ = new TreeItem();
-        $$->id = $2;
-        $$->values = *$4;
-        delete $4;
-        $$->childs = $5;
+        $$->childs = $1;
+    }
+
+seed:
+    seed_part_set
+    {
+        $$ = new SeedItem();
+        $$->childs = $1;
+    }
+
+seed_part_set:
+    seed_part_set seed_part
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    seed_part
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+
+seed_part:
+    "identifier" ":" item_set
+    {
+        $$ = new SeedPart();
+        $$->id = $1;
+        $$->values = *$3;
+        delete $3;
     }
 
 if_condition:

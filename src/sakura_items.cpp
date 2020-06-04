@@ -122,6 +122,31 @@ BlossomGroupItem::copy()
 }
 
 //===================================================================
+// SeedPart
+//===================================================================
+SeedPart::SeedPart()
+{
+    type = SEED_PART;
+}
+
+SeedPart::~SeedPart()
+{
+}
+
+SakuraItem*
+SeedPart::copy()
+{
+    SeedPart* newItem = new SeedPart();
+
+    newItem->type = type;
+    newItem->values = values;
+
+    newItem->id = id;
+
+    return newItem;
+}
+
+//===================================================================
 // SeedItem
 //===================================================================
 SeedItem::SeedItem()
