@@ -121,6 +121,32 @@ BlossomGroupItem::copy()
     return newItem;
 }
 
+//===================================================================
+// SeedItem
+//===================================================================
+SeedItem::SeedItem()
+{
+    type = SEED_ITEM;
+}
+
+SeedItem::~SeedItem()
+{
+    delete childs;
+}
+
+SakuraItem*
+SeedItem::copy()
+{
+    SeedItem* newItem = new SeedItem();
+
+    newItem->type = type;
+    newItem->values = values;
+
+    newItem->id = id;
+    newItem->childs = childs->copy();
+
+    return newItem;
+}
 
 //===================================================================
 // TreeItem
@@ -181,7 +207,7 @@ SubtreeItem::copy()
 //===================================================================
 SeedTrigger::SeedTrigger()
 {
-    type = SEED_ITEM;
+    type = SEED_TRIGGER_ITEM;
 }
 
 SeedTrigger::~SeedTrigger() {}
