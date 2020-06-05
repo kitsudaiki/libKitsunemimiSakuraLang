@@ -128,7 +128,7 @@ YY_DECL;
 %type  <std::string> regiterable_identifier;
 
 %type  <SeedPart*> seed_part
-%type  <SequentiellPart*> seed_part_set
+%type  <std::vector<SeedPart*>*> seed_part_set
 
 %type  <BlossomGroupItem*> blossom_group
 %type  <SequentiellPart*> blossom_group_set
@@ -193,20 +193,21 @@ seed:
     seed_part_set
     {
         $$ = new SeedItem();
-        $$->childs = $1;
+        $$->childs = *$1;
+        delete $1;
     }
 
 seed_part_set:
     seed_part_set seed_part
     {
-        $1->childs.push_back($2);
+        $1->push_back($2);
         $$ = $1;
     }
 |
     seed_part
     {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
+        $$ = new std::vector<SeedPart*>();
+        $$->push_back($1);
     }
 
 seed_part:

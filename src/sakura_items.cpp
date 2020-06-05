@@ -156,7 +156,10 @@ SeedItem::SeedItem()
 
 SeedItem::~SeedItem()
 {
-    delete childs;
+    for(uint32_t i = 0; i < childs.size(); i++)
+    {
+        delete childs[i];
+    }
 }
 
 SakuraItem*
@@ -168,7 +171,10 @@ SeedItem::copy()
     newItem->values = values;
 
     newItem->id = id;
-    newItem->childs = childs->copy();
+    for(uint32_t i = 0; i < childs.size(); i++)
+    {
+        newItem->childs.push_back(dynamic_cast<SeedPart*>(childs.at(i)->copy()));
+    }
 
     return newItem;
 }

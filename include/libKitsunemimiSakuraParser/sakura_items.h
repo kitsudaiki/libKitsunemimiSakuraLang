@@ -151,7 +151,7 @@ public:
     SakuraItem* copy();
 
     std::string id = "";
-    SakuraItem* childs;
+    std::vector<SeedPart*> childs;
 };
 
 //===================================================================
