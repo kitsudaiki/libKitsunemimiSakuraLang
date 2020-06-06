@@ -25,6 +25,6 @@ SOURCES += \
     sakura_parser_test.cpp
 
 HEADERS += \
-    test_strings/branch_test_string.h \
-    sakura_parser_test.h
+    sakura_parser_test.h \
+    test_strings/test_strings.h
 

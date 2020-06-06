@@ -91,19 +91,22 @@ SakuraParsing::parseString(SakuraGarden &result,
                            const std::string &content,
                            std::string &errorMessage)
 {
-    TreeItem* parsetTree = parseString(content, errorMessage);
-    if(parsetTree == nullptr)  {
+    SakuraItem* parsetItem = parseString(content, errorMessage);
+    if(parsetItem == nullptr
+            || parsetItem->getType() != SakuraItem::TREE_ITEM)
+    {
         return false;
     }
 
-    TreeItem* check = result.getTreeById(parsetTree->id);
+    TreeItem* parsedTree = dynamic_cast<TreeItem*>(parsetItem);
+    TreeItem* check = result.getTreeById(parsedTree->id);
     if(check == nullptr)
     {
-        errorMessage = "tree-id already registered: " + parsetTree->id;
+        errorMessage = "tree-id already registered: " + parsedTree->id;
         return false;
     }
 
-    result.trees.insert(std::make_pair(relativePath, parsetTree));
+    result.trees.insert(std::make_pair(relativePath, parsedTree));
 
     return true;
 }
@@ -157,14 +160,16 @@ SakuraParsing::parseAllFiles(SakuraGarden &result,
         it != result.trees.end();
         it++)
     {
-        TreeItem* parsed = parseSingleFile(it->first,
-                                           result.rootPath,
-                                           errorMessage);
-        if(parsed == nullptr) {
+        SakuraItem* parsed = parseSingleFile(it->first,
+                                             result.rootPath,
+                                             errorMessage);
+        if(parsed == nullptr
+                || parsed->getType() != SakuraItem::TREE_ITEM)
+        {
             return false;
         }
 
-        it->second = parsed;
+        it->second = dynamic_cast<TreeItem*>(parsed);
     }
 
     return true;
@@ -316,7 +321,7 @@ bool SakuraParsing::getFilesInDir(SakuraGarden &result,
  *
  * @return true, if successful, else false
  */
-TreeItem*
+SakuraItem*
 SakuraParsing::parseSingleFile(const std::string &relativePath,
                                const std::string &rootPath,
                                std::string &errorMessage)
@@ -340,14 +345,18 @@ SakuraParsing::parseSingleFile(const std::string &relativePath,
         return nullptr;
     }
 
-    TreeItem* resultItem = parseString(fileContent, errorMessage);
+    SakuraItem* resultItem = parseString(fileContent, errorMessage);
     if(resultItem == nullptr) {
         return resultItem;
     }
 
-    resultItem->unparsedConent = fileContent;
-    resultItem->relativePath = relativePath;
-    resultItem->rootPath = rootPath;
+    if(resultItem->getType() == SakuraItem::TREE_ITEM)
+    {
+        TreeItem* tempTree = dynamic_cast<TreeItem*>(resultItem);
+        tempTree->unparsedConent = fileContent;
+        tempTree->relativePath = relativePath;
+        tempTree->rootPath = rootPath;
+    }
 
     return resultItem;
 }
@@ -360,7 +369,7 @@ SakuraParsing::parseSingleFile(const std::string &relativePath,
  *
  * @return
  */
-TreeItem*
+SakuraItem*
 SakuraParsing::parseString(const std::string &content,
                            std::string &errorMessage)
 {

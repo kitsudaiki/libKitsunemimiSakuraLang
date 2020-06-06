@@ -25,7 +25,7 @@
 #include <libKitsunemimiSakuraParser/sakura_items.h>
 #include <libKitsunemimiSakuraParser/sakura_parsing.h>
 
-#include <test_strings/branch_test_string.h>
+#include <test_strings/test_strings.h>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiPersistence/files/text_file.h>
@@ -39,33 +39,60 @@ ParsingTest::ParsingTest()
     : Kitsunemimi::CompareTestHelper("ParsingTest")
 {
     initTestCase();
-    parseBranchTest();
+    parseTree_Test();
+    parseSeed_Test();
     cleanupTestCase();
 }
 
-void ParsingTest::initTestCase()
+void
+ParsingTest::initTestCase()
 {
     m_parser = new SakuraParsing(true);
 }
 
-void ParsingTest::parseBranchTest()
+void
+ParsingTest::parseTree_Test()
 {
     std::string errorMessage = "";
     Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.tree",
-                                        testBranchString,
+                                        testTreeString,
                                         errorMessage,
                                         true);
-    SakuraGarden garden;
-    const bool result = m_parser->parseFiles(garden,
-                                             "/tmp/sakura_parser_test.tree",
-                                             errorMessage);
-    TEST_EQUAL(result, true);
-    if(result == false) {
+    SakuraItem* result = m_parser->parseSingleFile("sakura_parser_test.tree",
+                                                  "/tmp",
+                                                  errorMessage);
+
+    bool isNullptr = result == nullptr;
+    TEST_EQUAL(isNullptr, false);
+    if(isNullptr == true) {
         std::cout<<errorMessage<<std::endl;
     }
+    TEST_EQUAL(result->getType(), SakuraItem::TREE_ITEM);
 }
 
-void ParsingTest::cleanupTestCase()
+void
+ParsingTest::parseSeed_Test()
+{
+    std::string errorMessage = "";
+    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.seed",
+                                        testSeedString,
+                                        errorMessage,
+                                        true);
+
+    SakuraItem* result = m_parser->parseSingleFile("sakura_parser_test.seed",
+                                                  "/tmp",
+                                                  errorMessage);
+
+    bool isNullptr = result == nullptr;
+    TEST_EQUAL(isNullptr, false);
+    if(isNullptr == true) {
+        std::cout<<errorMessage<<std::endl;
+    }
+    TEST_EQUAL(result->getType(), SakuraItem::SEED_ITEM);
+}
+
+void
+ParsingTest::cleanupTestCase()
 {
     delete m_parser;
 }

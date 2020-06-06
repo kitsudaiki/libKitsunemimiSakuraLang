@@ -53,17 +53,17 @@ public:
                     const std::string &rootPath,
                     std::string &errorMessage);
 
-    TreeItem* parseSingleFile(const std::string &relativePath,
-                              const std::string &rootPath,
-                              std::string &errorMessage);
+    SakuraItem* parseSingleFile(const std::string &relativePath,
+                                const std::string &rootPath,
+                                std::string &errorMessage);
 
     bool parseString(SakuraGarden &result,
                      const std::string &relativePath,
                      const std::string &content,
                      std::string &errorMessage);
 
-    TreeItem* parseString(const std::string &content,
-                          std::string &errorMessage);
+    SakuraItem* parseString(const std::string &content,
+                            std::string &errorMessage);
 
 private:
     SakuraParserInterface* m_parser = nullptr;

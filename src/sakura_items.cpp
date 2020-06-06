@@ -121,6 +121,63 @@ BlossomGroupItem::copy()
     return newItem;
 }
 
+//===================================================================
+// SeedPart
+//===================================================================
+SeedPart::SeedPart()
+{
+    type = SEED_PART;
+}
+
+SeedPart::~SeedPart()
+{
+}
+
+SakuraItem*
+SeedPart::copy()
+{
+    SeedPart* newItem = new SeedPart();
+
+    newItem->type = type;
+    newItem->values = values;
+
+    newItem->id = id;
+
+    return newItem;
+}
+
+//===================================================================
+// SeedItem
+//===================================================================
+SeedItem::SeedItem()
+{
+    type = SEED_ITEM;
+}
+
+SeedItem::~SeedItem()
+{
+    for(uint32_t i = 0; i < childs.size(); i++)
+    {
+        delete childs[i];
+    }
+}
+
+SakuraItem*
+SeedItem::copy()
+{
+    SeedItem* newItem = new SeedItem();
+
+    newItem->type = type;
+    newItem->values = values;
+
+    newItem->id = id;
+    for(uint32_t i = 0; i < childs.size(); i++)
+    {
+        newItem->childs.push_back(dynamic_cast<SeedPart*>(childs.at(i)->copy()));
+    }
+
+    return newItem;
+}
 
 //===================================================================
 // TreeItem
@@ -177,19 +234,19 @@ SubtreeItem::copy()
 }
 
 //===================================================================
-// SeedItem
+// SeedTrigger
 //===================================================================
-SeedItem::SeedItem()
+SeedTrigger::SeedTrigger()
 {
-    type = SEED_ITEM;
+    type = SEED_TRIGGER_ITEM;
 }
 
-SeedItem::~SeedItem() {}
+SeedTrigger::~SeedTrigger() {}
 
 SakuraItem*
-SeedItem::copy()
+SeedTrigger::copy()
 {
-    SeedItem* newItem = new SeedItem();
+    SeedTrigger* newItem = new SeedTrigger();
 
     newItem->type = type;
     newItem->values = values;
