@@ -51,11 +51,13 @@ public:
         TREE_ITEM = 4,
         SUBTREE_ITEM = 5,
         SEED_ITEM = 6,
-        SEQUENTIELL_ITEM = 7,
-        PARALLEL_ITEM = 8,
-        IF_ITEM = 9,
-        FOR_EACH_ITEM = 10,
-        FOR_ITEM = 11
+        SEED_TRIGGER_ITEM = 7,
+        SEQUENTIELL_ITEM = 8,
+        PARALLEL_ITEM = 9,
+        IF_ITEM = 10,
+        FOR_EACH_ITEM = 11,
+        FOR_ITEM = 12,
+        SEED_PART = 13
     };
 
     SakuraItem();
@@ -112,6 +114,33 @@ public:
 };
 
 //===================================================================
+// SeedPart
+//===================================================================
+class SeedPart : public SakuraItem
+{
+public:
+    SeedPart();
+    ~SeedPart();
+    SakuraItem* copy();
+
+    std::string id = "";
+};
+
+//===================================================================
+// SeedTrigger
+//===================================================================
+class SeedTrigger : public SakuraItem
+{
+public:
+    SeedTrigger();
+    ~SeedTrigger();
+    SakuraItem* copy();
+
+    std::string treeId = "";
+    std::string tag = "";
+};
+
+//===================================================================
 // SeedItem
 //===================================================================
 class SeedItem : public SakuraItem
@@ -121,12 +150,12 @@ public:
     ~SeedItem();
     SakuraItem* copy();
 
-    std::string treeId = "";
-    std::string tag = "";
+    std::string id = "";
+    std::vector<SeedPart*> childs;
 };
 
 //===================================================================
-// BranchItem
+// TreeItem
 //===================================================================
 class TreeItem : public SakuraItem
 {

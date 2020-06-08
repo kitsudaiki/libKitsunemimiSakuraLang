@@ -97,7 +97,7 @@ SakuraParserInterface::parse(const std::string &inputString)
  * @brief setter for the output-variable
  */
 void
-SakuraParserInterface::setOutput(TreeItem* output)
+SakuraParserInterface::setOutput(SakuraItem* output)
 {
     m_output = output;
 }
@@ -105,7 +105,7 @@ SakuraParserInterface::setOutput(TreeItem* output)
 /**
  * @brief getter for the output-variable
  */
-TreeItem*
+SakuraItem*
 SakuraParserInterface::getOutput() const
 {
     return m_output;

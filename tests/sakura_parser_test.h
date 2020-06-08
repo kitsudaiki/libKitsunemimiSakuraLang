@@ -39,8 +39,8 @@ public:
 
 private:
     void initTestCase();
-    void parseBranchTest();
-    void parseTreeTest();
+    void parseTree_Test();
+    void parseSeed_Test();
     void cleanupTestCase();
 
     SakuraParsing* m_parser = nullptr;
