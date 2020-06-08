@@ -166,6 +166,7 @@ SakuraParsing::parseAllFiles(SakuraGarden &result,
         if(parsed == nullptr
                 || parsed->getType() != SakuraItem::TREE_ITEM)
         {
+            errorMessage = "file " + it->first + " is not a tree-file";
             return false;
         }
 
