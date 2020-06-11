@@ -112,6 +112,7 @@ BlossomGroupItem::copy()
 
     newItem->id = id;
     newItem->blossomGroupType = blossomGroupType;
+    newItem->nameHirarchie = nameHirarchie;
 
     for(uint32_t i = 0; i < blossoms.size(); i++)
     {

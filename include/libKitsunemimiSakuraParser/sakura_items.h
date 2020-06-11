@@ -109,6 +109,7 @@ public:
 
     std::string id = "";
     std::string blossomGroupType = "";
+    std::vector<std::string> nameHirarchie;
 
     std::vector<BlossomItem*> blossoms;
 };
