@@ -89,6 +89,7 @@ YY_DECL;
     IF  "if"
     ELSE  "else"
     FOR  "for"
+    SEED_INIT "seed_init"
     ASSIGN  ":"
     SEMICOLON  ";"
     DOT  "."
@@ -164,60 +165,118 @@ YY_DECL;
 %start startpoint;
 
 startpoint:
-    "[" name_item "]" item_set tree
+    tree
     {
-        $5->id = $2;
-        $5->values = *$4;
-        delete $4;
-
-        driver.setOutput($5);
-    }
-|
-    "[" name_item "]" item_set seed
-    {
-        $5->id = $2;
-        $5->values = *$4;
-        delete $4;
-
-        driver.setOutput($5);
+        driver.setOutput($1);
     }
 
 tree:
-    blossom_group_set
+    "[" name_item "]" item_set blossom_group_set
     {
         $$ = new TreeItem();
-        $$->childs = $1;
+        $$->id = $2;
+        $$->values = *$4;
+        delete $4;
+        $$->childs = $5;
     }
 
-seed:
-    seed_part_set
+blossom_group_set:
+    blossom_group_set if_condition
     {
-        $$ = new SeedItem();
-        $$->childs = *$1;
-        delete $1;
-    }
-
-seed_part_set:
-    seed_part_set seed_part
-    {
-        $1->push_back($2);
+        $1->childs.push_back($2);
         $$ = $1;
     }
 |
-    seed_part
+    blossom_group_set for_loop
     {
-        $$ = new std::vector<SeedPart*>();
-        $$->push_back($1);
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set parallel
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set for_each_loop
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set subtree_fork
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set blossom_group
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set seed_fork
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    blossom_group_set seed
+    {
+        $1->childs.push_back($2);
+        $$ = $1;
+    }
+|
+    if_condition
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    for_loop
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    parallel
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    for_each_loop
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    blossom_group
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    seed_fork
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    subtree_fork
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
+    }
+|
+    seed
+    {
+        $$ = new SequentiellPart();
+        $$->childs.push_back($1);
     }
 
-seed_part:
-    "identifier" ":" item_set
-    {
-        $$ = new SeedPart();
-        $$->id = $1;
-        $$->values = *$3;
-        delete $3;
-    }
 
 if_condition:
     "if" "(" value_item compare_type value_item ")" "{" blossom_group_set "}" "else" "{" blossom_group_set "}"
@@ -337,89 +396,34 @@ parallel:
         $$->childs = dynamic_cast<SequentiellPart*>($5);
     }
 
-blossom_group_set:
-    blossom_group_set if_condition
+seed:
+    "seed_init" "{" seed_part_set "}"
     {
-        $1->childs.push_back($2);
+        $$ = new SeedItem();
+        $$->childs = *$3;
+        delete $3;
+    }
+
+seed_part_set:
+    seed_part_set seed_part
+    {
+        $1->push_back($2);
         $$ = $1;
     }
 |
-    blossom_group_set for_loop
+    seed_part
     {
-        $1->childs.push_back($2);
-        $$ = $1;
+        $$ = new std::vector<SeedPart*>();
+        $$->push_back($1);
     }
-|
-    blossom_group_set parallel
+
+seed_part:
+    "identifier" ":" item_set
     {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set for_each_loop
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set subtree_fork
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set blossom_group
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set seed_fork
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    if_condition
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    for_loop
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    parallel
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    for_each_loop
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    blossom_group
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    seed_fork
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    subtree_fork
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
+        $$ = new SeedPart();
+        $$->id = $1;
+        $$->values = *$3;
+        delete $3;
     }
 
 blossom_group:
