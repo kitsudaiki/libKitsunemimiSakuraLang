@@ -148,14 +148,14 @@ SeedPart::copy()
 }
 
 //===================================================================
-// SeedItem
+// SeedInitItem
 //===================================================================
-SeedItem::SeedItem()
+SeedInitItem::SeedInitItem()
 {
     type = SEED_ITEM;
 }
 
-SeedItem::~SeedItem()
+SeedInitItem::~SeedInitItem()
 {
     for(uint32_t i = 0; i < childs.size(); i++)
     {
@@ -164,9 +164,9 @@ SeedItem::~SeedItem()
 }
 
 SakuraItem*
-SeedItem::copy()
+SeedInitItem::copy()
 {
-    SeedItem* newItem = new SeedItem();
+    SeedInitItem* newItem = new SeedInitItem();
 
     newItem->type = type;
     newItem->values = values;
@@ -235,19 +235,19 @@ SubtreeItem::copy()
 }
 
 //===================================================================
-// SeedTrigger
+// SeedTriggerItem
 //===================================================================
-SeedTrigger::SeedTrigger()
+SeedTriggerItem::SeedTriggerItem()
 {
     type = SEED_TRIGGER_ITEM;
 }
 
-SeedTrigger::~SeedTrigger() {}
+SeedTriggerItem::~SeedTriggerItem() {}
 
 SakuraItem*
-SeedTrigger::copy()
+SeedTriggerItem::copy()
 {
-    SeedTrigger* newItem = new SeedTrigger();
+    SeedTriggerItem* newItem = new SeedTriggerItem();
 
     newItem->type = type;
     newItem->values = values;
