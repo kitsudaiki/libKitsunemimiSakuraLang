@@ -281,26 +281,6 @@ public:
     SakuraItem* childs;
 };
 
-//===================================================================
-// SakuraGarden
-//===================================================================
-class SakuraGarden
-{
-public:
-    SakuraGarden();
-    ~SakuraGarden();
-
-    std::string rootPath = "";
-    std::map<std::string, TreeItem*> trees;
-    std::map<std::string, std::string> templates;
-    std::map<std::string, Kitsunemimi::DataBuffer*> files;
-
-    TreeItem* getTreeById(const std::string id);
-    TreeItem* getTreeByPath(const std::string relativePath);
-    const std::string getTemplate(const std::string relativePath);
-    DataBuffer* getFile(const std::string relativePath);
-};
-
 }
 }
 
