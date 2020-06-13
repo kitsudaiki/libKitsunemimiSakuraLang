@@ -37,6 +37,7 @@ class DataBuffer;
 namespace Sakura
 {
 class TreeItem;
+class SakuraParsing;
 
 class SakuraGarden
 {
@@ -44,15 +45,33 @@ public:
     SakuraGarden();
     ~SakuraGarden();
 
+    const std::string getRelativePath(const std::string &blossomFilePath,
+                                      const std::string &blossomInternalRelPath,
+                                      const std::string &addition = "");
+
+    bool addTree(const std::string &treePath,
+                 std::string &errorMessage);
+    bool addResource(const std::string &content,
+                     std::string &errorMessage);
+
+    TreeItem* getTreeById(const std::string &id);
+    TreeItem* getTree(const std::string &relativePath,
+                      const std::string &rootPath = "");
+    TreeItem* getTreeByPath(const std::string &relativePath);
+    TreeItem* getRessource(const std::string &id);
+    const std::string getTemplate(const std::string &relativePath);
+    DataBuffer* getFile(const std::string &relativePath);
+
+
+
     std::string rootPath = "";
     std::map<std::string, TreeItem*> trees;
+    std::map<std::string, TreeItem*> resources;
     std::map<std::string, std::string> templates;
     std::map<std::string, Kitsunemimi::DataBuffer*> files;
 
-    TreeItem* getTreeById(const std::string id);
-    TreeItem* getTreeByPath(const std::string relativePath);
-    const std::string getTemplate(const std::string relativePath);
-    DataBuffer* getFile(const std::string relativePath);
+private:
+    SakuraParsing* m_parser = nullptr;
 };
 
 }
