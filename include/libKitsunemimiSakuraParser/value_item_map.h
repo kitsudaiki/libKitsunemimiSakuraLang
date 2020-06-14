@@ -43,12 +43,14 @@ class ValueItemMap
 {
 public:
     ValueItemMap();
+    ~ValueItemMap();
     ValueItemMap(const ValueItemMap &other);
     ValueItemMap &operator=(const ValueItemMap &other);
 
     // add and remove
     bool insert(const std::string &key, DataItem* value, bool force=true);
     bool insert(const std::string &key, ValueItem &value, bool force=true);
+    bool insert(const std::string &key, ValueItemMap* value, bool force=true);
     bool remove(const std::string &key);
 
     // getter
@@ -59,15 +61,12 @@ public:
     uint64_t size();
     const std::string toString();
 
-    // iterator
-    std::map<std::string, ValueItem>::iterator begin();
-    std::map<std::string, ValueItem>::iterator end();
-    std::map<std::string, ValueItem>::const_iterator const_begin() const;
-    std::map<std::string, ValueItem>::const_iterator const_end() const;
-    std::map<std::string, ValueItem>::iterator find(const std::string key);
+    // internal value-maps
+    std::map<std::string, ValueItem> m_valueMap;
+    std::map<std::string, ValueItemMap*> m_childMaps;
 
 private:
-    std::map<std::string, ValueItem> m_valueMap;
+    void clearChildMap();
 };
 
 }

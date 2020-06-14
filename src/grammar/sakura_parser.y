@@ -529,6 +529,12 @@ item_set:
         $$ = $1;
     }
 |
+    item_set  "-" regiterable_identifier "=" "{" item_set "}"
+    {
+        $1->insert($3, $6);
+        $$ = $1;
+    }
+|
     item_set  "-" regiterable_identifier "=" json_abstract
     {
         ValueItem newItem;
@@ -585,6 +591,12 @@ item_set:
     {
         $$ = new ValueItemMap();
         $$->insert($2, $4);
+    }
+|
+    "-" regiterable_identifier "=" "{" item_set "}"
+    {
+        $$ = new ValueItemMap();
+        $$->insert($2, $5);
     }
 |
     "-" regiterable_identifier "=" json_abstract
