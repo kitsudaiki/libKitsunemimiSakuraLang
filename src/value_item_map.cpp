@@ -36,17 +36,36 @@ namespace Sakura
 ValueItemMap::ValueItemMap() {}
 
 /**
+ * @brief destructor
+ */
+ValueItemMap::~ValueItemMap()
+{
+    clearChildMap();
+}
+
+/**
  * @brief copy-constructor
  */
 ValueItemMap::ValueItemMap(const ValueItemMap &other)
 {
+    // copy items
     std::map<std::string, ValueItem>::const_iterator it;
-    for(it = other.const_begin();
-        it != other.const_end();
+    for(it = other.m_valueMap.begin();
+        it != other.m_valueMap.end();
         it++)
     {
         ValueItem value = it->second;
         m_valueMap.insert(std::make_pair(it->first, value));
+    }
+
+    // copy child-maps
+    std::map<std::string, ValueItemMap*>::const_iterator itChilds;
+    for(itChilds = other.m_childMaps.begin();
+        itChilds != other.m_childMaps.end();
+        itChilds++)
+    {
+        ValueItemMap* newValue = new ValueItemMap(*itChilds->second);
+        m_childMaps.insert(std::make_pair(itChilds->first, newValue));
     }
 }
 
@@ -58,15 +77,32 @@ ValueItemMap::operator=(const ValueItemMap &other)
 {
     if(this != &other)
     {
+        // delet old items
+        this->m_valueMap.clear();
+
+        // copy items
         std::map<std::string, ValueItem>::const_iterator it;
-        for(it = other.const_begin();
-            it != other.const_end();
+        for(it = other.m_valueMap.begin();
+            it != other.m_valueMap.end();
             it++)
         {
             ValueItem value = it->second;
             this->m_valueMap.insert(std::make_pair(it->first, value));
         }
+
+        clearChildMap();
+
+        // copy child-maps
+        std::map<std::string, ValueItemMap*>::const_iterator itChilds;
+        for(itChilds = other.m_childMaps.begin();
+            itChilds != other.m_childMaps.end();
+            itChilds++)
+        {
+            ValueItemMap* newValue = new ValueItemMap(*itChilds->second);
+            this->m_childMaps.insert(std::make_pair(itChilds->first, newValue));
+        }
     }
+
     return *this;
 }
 
@@ -117,6 +153,39 @@ ValueItemMap::insert(const std::string &key,
     } else {
         m_valueMap.insert(std::make_pair(key, value));
     }
+
+    return true;
+}
+
+/**
+ * @brief add a new key-value-pair to the map
+ *
+ * @param key key of the new entry
+ * @param value new child-map
+ * @param force true, to override, if key already exist.
+ *
+ * @return true, if new pair was inserted, false, if already exist and force-flag was false
+ */
+bool
+ValueItemMap::insert(const std::string &key,
+                     ValueItemMap* value,
+                     bool force)
+{
+    std::map<std::string, ValueItemMap*>::iterator it;
+    it = m_childMaps.find(key);
+
+    if(it != m_childMaps.end()
+            && force == false)
+    {
+        return false;
+    }
+
+    if(it != m_childMaps.end()) {
+        it->second = value;
+    } else {
+        m_childMaps.insert(std::make_pair(key, value));
+    }
+
     return true;
 }
 
@@ -137,6 +206,7 @@ ValueItemMap::contains(const std::string &key)
     {
         return true;
     }
+
     return false;
 }
 
@@ -256,48 +326,21 @@ ValueItemMap::toString()
 }
 
 /**
- * @brief iterator begin
+ * @brief ValueItemMap::clearChildMap
  */
-std::map<std::string, ValueItem>::iterator
-ValueItemMap::begin()
+void
+ValueItemMap::clearChildMap()
 {
-    return m_valueMap.begin();
-}
-
-/**
- * @brief iterator end
- */
-std::map<std::string, ValueItem>::iterator
-ValueItemMap::end()
-{
-    return m_valueMap.end();
-}
-
-/**
- * @brief const_iterator begin
- */
-std::map<std::string, ValueItem>::const_iterator
-ValueItemMap::const_begin() const
-{
-    return m_valueMap.begin();
-}
-
-/**
- * @brief const_iterator end
- */
-std::map<std::string, ValueItem>::const_iterator
-ValueItemMap::const_end() const
-{
-    return m_valueMap.end();
-}
-
-/**
- * @brief find
- */
-std::map<std::string, ValueItem>::iterator
-ValueItemMap::find(const std::string key)
-{
-    return m_valueMap.find(key);
+    // clear old child map
+    std::map<std::string, ValueItemMap*>::const_iterator itChilds;
+    for(itChilds = m_childMaps.begin();
+        itChilds != m_childMaps.end();
+        itChilds++)
+    {
+        ValueItemMap* oldMap = itChilds->second;
+        delete oldMap;
+    }
+    m_childMaps.clear();
 }
 
 }
