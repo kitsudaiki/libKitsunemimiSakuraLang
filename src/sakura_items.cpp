@@ -148,14 +148,14 @@ SeedPart::copy()
 }
 
 //===================================================================
-// SeedItem
+// SeedInitItem
 //===================================================================
-SeedItem::SeedItem()
+SeedInitItem::SeedInitItem()
 {
     type = SEED_ITEM;
 }
 
-SeedItem::~SeedItem()
+SeedInitItem::~SeedInitItem()
 {
     for(uint32_t i = 0; i < childs.size(); i++)
     {
@@ -164,9 +164,9 @@ SeedItem::~SeedItem()
 }
 
 SakuraItem*
-SeedItem::copy()
+SeedInitItem::copy()
 {
-    SeedItem* newItem = new SeedItem();
+    SeedInitItem* newItem = new SeedInitItem();
 
     newItem->type = type;
     newItem->values = values;
@@ -235,19 +235,19 @@ SubtreeItem::copy()
 }
 
 //===================================================================
-// SeedTrigger
+// SeedTriggerItem
 //===================================================================
-SeedTrigger::SeedTrigger()
+SeedTriggerItem::SeedTriggerItem()
 {
     type = SEED_TRIGGER_ITEM;
 }
 
-SeedTrigger::~SeedTrigger() {}
+SeedTriggerItem::~SeedTriggerItem() {}
 
 SakuraItem*
-SeedTrigger::copy()
+SeedTriggerItem::copy()
 {
-    SeedTrigger* newItem = new SeedTrigger();
+    SeedTriggerItem* newItem = new SeedTriggerItem();
 
     newItem->type = type;
     newItem->values = values;
@@ -423,100 +423,6 @@ ParallelPart::copy()
     newItem->childs = childs->copy();
 
     return newItem;
-}
-
-//===================================================================
-// SakuraGarden
-//===================================================================
-
-/**
- * @brief SakuraGarden::SakuraGarden
- */
-SakuraGarden::SakuraGarden()
-{
-}
-
-/**
- * @brief SakuraGarden::~SakuraGarden
- */
-SakuraGarden::~SakuraGarden()
-{
-    // TODO
-}
-
-/**
- * @brief SakuraGarden::getTreeById
- * @param id
- * @return
- */
-TreeItem*
-SakuraGarden::getTreeById(const std::string id)
-{
-    std::map<std::string, TreeItem*>::const_iterator it;
-    for(it = trees.begin();
-        it != trees.end();
-        it++)
-    {
-        if(it->second->id == id) {
-            return it->second;
-        }
-    }
-
-    return nullptr;
-}
-
-/**
- * @brief SakuraGarden::getTreeByPath
- * @param relativePath
- * @return
- */
-TreeItem*
-SakuraGarden::getTreeByPath(const std::string relativePath)
-{
-    std::map<std::string, TreeItem*>::const_iterator it;
-    it = trees.find(relativePath);
-
-    if(it != trees.end()) {
-        return it->second;
-    }
-
-    return nullptr;
-}
-
-/**
- * @brief SakuraGarden::getTemplate
- * @param relativePath
- * @return
- */
-const std::string
-SakuraGarden::getTemplate(const std::string relativePath)
-{
-    std::map<std::string, std::string>::const_iterator it;
-    it = templates.find(relativePath);
-
-    if(it != templates.end()) {
-        return it->second;
-    }
-
-    return "";
-}
-
-/**
- * @brief SakuraGarden::getFile
- * @param relativePath
- * @return
- */
-Kitsunemimi::DataBuffer*
-SakuraGarden::getFile(const std::string relativePath)
-{
-    std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
-    it = files.find(relativePath);
-
-    if(it != files.end()) {
-        return it->second;
-    }
-
-    return nullptr;
 }
 
 }

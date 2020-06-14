@@ -69,6 +69,7 @@ blank [ \t]
 "if"            return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
 "else"          return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
 "for"           return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
+"seed_init"     return Kitsunemimi::Sakura::SakuraParser::make_SEED_INIT (sakuraloc);
 "->"            return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "=="            return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
 "!="            return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);

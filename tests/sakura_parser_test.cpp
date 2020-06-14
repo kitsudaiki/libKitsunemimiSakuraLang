@@ -40,7 +40,6 @@ ParsingTest::ParsingTest()
 {
     initTestCase();
     parseTree_Test();
-    parseSeed_Test();
     cleanupTestCase();
 }
 
@@ -68,27 +67,6 @@ ParsingTest::parseTree_Test()
         std::cout<<errorMessage<<std::endl;
     }
     TEST_EQUAL(result->getType(), SakuraItem::TREE_ITEM);
-}
-
-void
-ParsingTest::parseSeed_Test()
-{
-    std::string errorMessage = "";
-    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.seed",
-                                        testSeedString,
-                                        errorMessage,
-                                        true);
-
-    SakuraItem* result = m_parser->parseSingleFile("sakura_parser_test.seed",
-                                                  "/tmp",
-                                                  errorMessage);
-
-    bool isNullptr = result == nullptr;
-    TEST_EQUAL(isNullptr, false);
-    if(isNullptr == true) {
-        std::cout<<errorMessage<<std::endl;
-    }
-    TEST_EQUAL(result->getType(), SakuraItem::SEED_ITEM);
 }
 
 void

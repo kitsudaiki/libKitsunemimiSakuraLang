@@ -128,13 +128,13 @@ public:
 };
 
 //===================================================================
-// SeedTrigger
+// SeedTriggerItem
 //===================================================================
-class SeedTrigger : public SakuraItem
+class SeedTriggerItem : public SakuraItem
 {
 public:
-    SeedTrigger();
-    ~SeedTrigger();
+    SeedTriggerItem();
+    ~SeedTriggerItem();
     SakuraItem* copy();
 
     std::string treeId = "";
@@ -142,13 +142,13 @@ public:
 };
 
 //===================================================================
-// SeedItem
+// SeedInitItem
 //===================================================================
-class SeedItem : public SakuraItem
+class SeedInitItem : public SakuraItem
 {
 public:
-    SeedItem();
-    ~SeedItem();
+    SeedInitItem();
+    ~SeedInitItem();
     SakuraItem* copy();
 
     std::string id = "";
@@ -279,26 +279,6 @@ public:
     SakuraItem* copy();
 
     SakuraItem* childs;
-};
-
-//===================================================================
-// SakuraGarden
-//===================================================================
-class SakuraGarden
-{
-public:
-    SakuraGarden();
-    ~SakuraGarden();
-
-    std::string rootPath = "";
-    std::map<std::string, TreeItem*> trees;
-    std::map<std::string, std::string> templates;
-    std::map<std::string, Kitsunemimi::DataBuffer*> files;
-
-    TreeItem* getTreeById(const std::string id);
-    TreeItem* getTreeByPath(const std::string relativePath);
-    const std::string getTemplate(const std::string relativePath);
-    DataBuffer* getFile(const std::string relativePath);
 };
 
 }

@@ -30,6 +30,15 @@ const std::string testTreeString =
         "- packages = {{}}\n"
         "- as_output = \"\"\n"
         "\n"
+        "seed_init\n"
+        "{\n"
+        "sakura:\n"
+        "- type = [\"test-node\"]\n"
+        "- source_path = source_path\n"
+        "- server_address = server_address\n"
+        "- server_port = server_port\n"
+        "}\n"
+        "\n"
         "if(packages == 42)\n"
         "{\n"
         "    apt (\"this is a test\")\n"
@@ -62,16 +71,5 @@ const std::string testTreeString =
         "   - names = \"{{packages}}\"\n"
         "\n";
 
-const std::string testSeedString =
-        "[\"test-remote installation\"]\n"
-        "- source_path = \"\"\n"
-        "- server_address = \"\"\n"
-        "- server_port = \"\"\n"
-        "\n"
-        "sakura:\n"
-        "- type = [\"test-node\"]\n"
-        "- source_path = source_path\n"
-        "- server_address = server_address\n"
-        "- server_port = server_port\n";
 
 #endif // BRANCH_TEST_STRING_H
