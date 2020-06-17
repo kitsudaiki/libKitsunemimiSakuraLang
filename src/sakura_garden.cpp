@@ -148,7 +148,7 @@ SakuraGarden::getTree(const std::string &relativePath,
 {
     // build complete file-path
     std::string completePath = relativePath;
-    if(rootPath == "") {
+    if(rootPath != "") {
         completePath = rootPath + "/" + relativePath;
     }
 
