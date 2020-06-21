@@ -24,6 +24,7 @@
 
 #include <libKitsunemimiSakuraParser/sakura_items.h>
 #include <libKitsunemimiSakuraParser/sakura_parsing.h>
+#include <libKitsunemimiSakuraParser/sakura_garden.h>
 
 #include <test_strings/test_strings.h>
 
@@ -57,16 +58,16 @@ ParsingTest::parseTree_Test()
                                         testTreeString,
                                         errorMessage,
                                         true);
-    SakuraItem* result = m_parser->parseSingleFile("sakura_parser_test.tree",
-                                                   "/tmp",
-                                                   errorMessage);
+    SakuraGarden garden;
+    bool success = m_parser->parseTreeString(garden,
+                                             "sakura_parser_test.tree",
+                                             testTreeString,
+                                             errorMessage);
 
-    bool isNullptr = result == nullptr;
-    TEST_EQUAL(isNullptr, false);
-    if(isNullptr == true) {
+    TEST_EQUAL(success, true);
+    if(success == false) {
         std::cout<<errorMessage<<std::endl;
     }
-    TEST_EQUAL(result->getType(), SakuraItem::TREE_ITEM);
 }
 
 void

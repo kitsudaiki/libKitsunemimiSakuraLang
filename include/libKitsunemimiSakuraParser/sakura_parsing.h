@@ -50,23 +50,21 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
-    bool parseFiles(SakuraGarden &result,
-                    const std::string &initialFilePath,
-                    std::string &errorMessage);
+    bool parseTreeFiles(SakuraGarden &result,
+                        const std::string &initialFilePath,
+                        std::string &errorMessage);
+
+    bool parseTreeString(SakuraGarden &result,
+                         const std::string &relativePath,
+                         const std::string &content,
+                         std::string &errorMessage);
+
+    bool parseRessourceString(SakuraGarden &result,
+                              const std::string &content,
+                              std::string &errorMessage);
 
     void addFileToQueue(std::string oldRelativePath);
 
-    TreeItem* parseSingleFile(const std::string &relativePath,
-                              const std::string &rootPath,
-                              std::string &errorMessage);
-
-    bool parseString(SakuraGarden &result,
-                     const std::string &relativePath,
-                     const std::string &content,
-                     std::string &errorMessage);
-
-    SakuraItem* parseString(const std::string &content,
-                            std::string &errorMessage);
 
 private:
     SakuraParserInterface* m_parser = nullptr;
@@ -75,6 +73,12 @@ private:
     std::vector<std::string> m_collectedDirectories;
     std::string m_rootPath = "";
     std::string m_currentFilePath = "";
+
+    TreeItem* parseSingleFile(const std::string &relativePath,
+                              const std::string &rootPath,
+                              std::string &errorMessage);
+    TreeItem* parseStringToTree(const std::string &content,
+                                std::string &errorMessage);
 
     void initErrorOutput(TableItem &errorOutput);
     bool collectFiles(SakuraGarden &result,

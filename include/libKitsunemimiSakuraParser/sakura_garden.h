@@ -55,7 +55,6 @@ public:
 
     TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath = "");
-    TreeItem* getTreeByPath(const std::string &relativePath);
     TreeItem* getRessource(const std::string &id);
     const std::string getTemplate(const std::string &relativePath);
     DataBuffer* getFile(const std::string &relativePath);
@@ -70,6 +69,8 @@ public:
 
 private:
     SakuraParsing* m_parser = nullptr;
+
+    TreeItem* getTreeByPath(const std::string &relativePath);
 };
 
 }

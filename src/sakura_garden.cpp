@@ -64,7 +64,7 @@ SakuraGarden::addTree(const std::string &treePath,
                       std::string &errorMessage)
 {
     // parse all files and convert the into
-    const bool treeParseResult = m_parser->parseFiles(*this, treePath, errorMessage);
+    const bool treeParseResult = m_parser->parseTreeFiles(*this, treePath, errorMessage);
     if(treeParseResult == false) {
         return false;
     }
@@ -82,15 +82,11 @@ bool
 SakuraGarden::addResource(const std::string &content,
                           std::string &errorMessage)
 {
-    SakuraItem* parsedItem = m_parser->parseString(content, errorMessage);
-    if(parsedItem == nullptr) {
+    // parse all files and convert the into
+    const bool treeParseResult = m_parser->parseRessourceString(*this, content, errorMessage);
+    if(treeParseResult == false) {
         return false;
     }
-
-    // add new item to the map
-    TreeItem* treeItem = static_cast<TreeItem*>(parsedItem);
-    treeItem->unparsedConent = content;
-    resources.insert(std::make_pair(treeItem->id, treeItem));
 
     return true;
 }
