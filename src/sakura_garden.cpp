@@ -101,14 +101,12 @@ SakuraGarden::addResource(const std::string &content,
  *
  * @param blossomFilePath absolut path of the file of the blossom
  * @param blossomInternalRelPath relative path, which is called inside of the blossom
- * @param addition directory addition ("templates" or "files")
  *
  * @return path, which is relative to the root-path.
  */
 const std::string
 SakuraGarden::getRelativePath(const std::string &blossomFilePath,
-                              const std::string &blossomInternalRelPath,
-                              const std::string &addition)
+                              const std::string &blossomInternalRelPath)
 {
     // create source-path
     const std::string parentPath = Kitsunemimi::Persistence::getParent(blossomFilePath);
@@ -116,21 +114,10 @@ SakuraGarden::getRelativePath(const std::string &blossomFilePath,
                                                                                rootPath);
 
     // build new relative path for the new file-request
-    if(relativePath == ".")
-    {
-        if(addition == "") {
-            return blossomInternalRelPath;
-        } else {
-            return addition + "/" + blossomInternalRelPath;
-        }
-    }
-    else
-    {
-        if(addition == "") {
-            return relativePath + "/" + blossomInternalRelPath;;
-        } else {
-            return relativePath + "/" + addition + "/" + blossomInternalRelPath;
-        }
+    if(relativePath == ".") {
+       return blossomInternalRelPath;
+    } else {
+        return relativePath + "/" + blossomInternalRelPath;;
     }
 }
 

@@ -36,12 +36,13 @@ namespace Sakura
 {
 class location;
 class SakuraItem;
+class SakuraParsing;
 
 class SakuraParserInterface
 {
 
 public:
-    SakuraParserInterface(const bool traceParsing);
+    SakuraParserInterface(const bool traceParsing, SakuraParsing* sakuraParsing);
     ~SakuraParserInterface();
 
     // connection the the scanner and parser
@@ -68,6 +69,7 @@ private:
     std::string m_inputString = "";
     SakuraItem* m_output = nullptr;
     TableItem m_errorMessage;
+    SakuraParsing* m_sakuraParsing = nullptr;
 };
 
 }  // namespace Sakura

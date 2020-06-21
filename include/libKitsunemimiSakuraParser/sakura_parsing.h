@@ -29,6 +29,7 @@
 #include <assert.h>
 #include <fstream>
 #include <map>
+#include <deque>
 #include <boost/filesystem.hpp>
 
 namespace Kitsunemimi
@@ -50,8 +51,11 @@ public:
     ~SakuraParsing();
 
     bool parseFiles(SakuraGarden &result,
-                    const std::string &rootPath,
+                    const std::string &initialFilePath,
                     std::string &errorMessage);
+
+    void addFileToQueue(const std::string oldRelativePath,
+                        const std::string oringinPath);
 
     SakuraItem* parseSingleFile(const std::string &relativePath,
                                 const std::string &rootPath,
@@ -68,21 +72,23 @@ public:
 private:
     SakuraParserInterface* m_parser = nullptr;
     bool m_debug = false;
-
-    bool parseAllFiles(SakuraGarden &result,
-                       const std::string &rootPath,
-                       std::string &errorMessage);
-    SakuraItem* getParsedFileContent(const std::string &name="");
+    std::deque<std::string> m_fileQueue;
+    std::vector<std::string> m_collectedDirectories;
+    std::string m_rootPath = "";
 
     void initErrorOutput(TableItem &errorOutput);
     bool collectFiles(SakuraGarden &result,
                       const std::string &path,
                       std::string &errorMessage);
+    bool collectTemplates(SakuraGarden &result,
+                          const std::string &path,
+                          std::string &errorMessage);
     bool getFilesInDir(SakuraGarden &result,
                        const boost::filesystem::path &directory,
                        const std::string &rootPath,
                        const std::string &type,
                        std::string &errorMessage);
+    bool alreadyCollected(const std::string &path);
 };
 
 }  // namespace Sakura
