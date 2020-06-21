@@ -64,12 +64,13 @@ public:
     std::vector<std::string> m_registeredKeys;
     bool isKeyRegistered(const std::string &key);
 
+    SakuraParsing* m_sakuraParsing = nullptr;
+
 private:
     bool m_traceParsing = false;
     std::string m_inputString = "";
     SakuraItem* m_output = nullptr;
     TableItem m_errorMessage;
-    SakuraParsing* m_sakuraParsing = nullptr;
 };
 
 }  // namespace Sakura

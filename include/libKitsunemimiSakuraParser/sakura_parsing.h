@@ -54,12 +54,11 @@ public:
                     const std::string &initialFilePath,
                     std::string &errorMessage);
 
-    void addFileToQueue(const std::string oldRelativePath,
-                        const std::string oringinPath);
+    void addFileToQueue(const std::string oldRelativePath);
 
-    SakuraItem* parseSingleFile(const std::string &relativePath,
-                                const std::string &rootPath,
-                                std::string &errorMessage);
+    TreeItem* parseSingleFile(const std::string &relativePath,
+                              const std::string &rootPath,
+                              std::string &errorMessage);
 
     bool parseString(SakuraGarden &result,
                      const std::string &relativePath,
@@ -75,17 +74,17 @@ private:
     std::deque<std::string> m_fileQueue;
     std::vector<std::string> m_collectedDirectories;
     std::string m_rootPath = "";
+    std::string m_currentFilePath = "";
 
     void initErrorOutput(TableItem &errorOutput);
     bool collectFiles(SakuraGarden &result,
-                      const std::string &path,
+                      const std::string &dirPath,
                       std::string &errorMessage);
     bool collectTemplates(SakuraGarden &result,
-                          const std::string &path,
+                          const std::string &dirPath,
                           std::string &errorMessage);
     bool getFilesInDir(SakuraGarden &result,
                        const boost::filesystem::path &directory,
-                       const std::string &rootPath,
                        const std::string &type,
                        std::string &errorMessage);
     bool alreadyCollected(const std::string &path);

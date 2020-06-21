@@ -44,6 +44,7 @@
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiSakuraParser/sakura_items.h>
 #include <libKitsunemimiSakuraParser/value_items.h>
+#include <libKitsunemimiSakuraParser/sakura_parsing.h>
 
 using Kitsunemimi::DataItem;
 using Kitsunemimi::DataArray;
@@ -649,6 +650,7 @@ subtree_fork:
         $$ = new SubtreeItem();
         $$->nameOrPath = $3;
         $$->values = *$5;
+        driver.m_sakuraParsing->addFileToQueue($3);
         delete $5;
     }
 
