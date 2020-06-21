@@ -65,32 +65,31 @@ SakuraParsing::~SakuraParsing()
  * @return true, if pasing all files was successful, else false
  */
 bool
-SakuraParsing::parseFiles(SakuraGarden &result,
-                          const std::string &initialFilePath,
-                          std::string &errorMessage)
+SakuraParsing::parseTreeFiles(SakuraGarden &result,
+                              const bfs::path &initialFilePath,
+                              std::string &errorMessage)
 {
     // precheck
-    if(Kitsunemimi::Persistence::isFile(initialFilePath) == false)
+    if(bfs::is_regular_file(initialFilePath) == false)
     {
         TableItem errorOutput;
         initErrorOutput(errorOutput);
         errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
         errorOutput.addRow(std::vector<std::string>{"message",
                                                     "path doesn't exist or is not a file: "
-                                                    + initialFilePath});
+                                                    + initialFilePath.string()});
         errorMessage = errorOutput.toString();
         return false;
     }
 
     // prepare path-values
-    const std::string rootPath = Kitsunemimi::Persistence::getParent(initialFilePath);
-    const std::string fileName = Kitsunemimi::Persistence::getRelativePath(initialFilePath,
-                                                                           rootPath);
+    const bfs::path rootPath = initialFilePath.parent_path();
+    const bfs::path fileName = initialFilePath.leaf();
 
     // set global stuff
-    result.rootPath = rootPath;
+    result.rootPath = rootPath.string();
     m_rootPath = rootPath;
-    m_fileQueue.push_back(fileName);
+    m_fileQueue.push_back(fileName.string());
 
     while(m_fileQueue.size() > 0)
     {
@@ -106,17 +105,18 @@ SakuraParsing::parseFiles(SakuraGarden &result,
         }
 
         // build absolute path
-        const std::string filePath = rootPath + "/" + currentRelPath;
+        const bfs::path filePath = rootPath / currentRelPath;
         m_currentFilePath = filePath;
 
         // precheck if file exist
-        if(Kitsunemimi::Persistence::doesPathExist(filePath) == false)
+        if(bfs::exists(filePath) == false)
         {
             TableItem errorOutput;
             initErrorOutput(errorOutput);
             errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
             errorOutput.addRow(std::vector<std::string>{"message",
-                                                        "path doesn't exist: " + filePath});
+                                                        "path doesn't exist: "
+                                                        + filePath.string()});
             errorMessage = errorOutput.toString();
             return false;
         }
@@ -133,10 +133,10 @@ SakuraParsing::parseFiles(SakuraGarden &result,
         result.trees.insert(std::make_pair(currentRelPath, dynamic_cast<TreeItem*>(parsed)));
 
         // get additional files
-        const std::string dirPath = Kitsunemimi::Persistence::getParent(filePath);
+        const bfs::path dirPath = filePath.parent_path();
         if(alreadyCollected(dirPath) == false)
         {
-            m_collectedDirectories.push_back(dirPath);
+            m_collectedDirectories.push_back(dirPath.string());
 
             if(collectFiles(result, dirPath, errorMessage) == false) {
                 return false;
@@ -157,17 +157,17 @@ SakuraParsing::parseFiles(SakuraGarden &result,
  * @return
  */
 void
-SakuraParsing::addFileToQueue(std::string oldRelativePath)
+SakuraParsing::addFileToQueue(bfs::path oldRelativePath)
 {
-    const std::string oldRootPath = Kitsunemimi::Persistence::getParent(m_currentFilePath);
-    if(Kitsunemimi::Persistence::isDir(oldRootPath + "/" + oldRelativePath)) {
-        oldRelativePath += "/root.tree";
+    const bfs::path oldRootPath = m_currentFilePath.parent_path();
+    if(bfs::is_directory(oldRootPath / oldRelativePath)) {
+        oldRelativePath /= bfs::path("root.tree");
     }
-    const std::string newRelativePath = Kitsunemimi::Persistence::getRelativePath(oldRootPath,
-                                                                                  oldRelativePath,
-                                                                                  m_rootPath);
 
-    m_fileQueue.push_back(newRelativePath);
+    const bfs::path oldAbsolutePath = oldRootPath / oldRelativePath;
+    const bfs::path newRelativePath = bfs::relative(oldAbsolutePath, m_rootPath);
+
+    m_fileQueue.push_back(newRelativePath.string());
 }
 
 /**
@@ -179,15 +179,15 @@ SakuraParsing::addFileToQueue(std::string oldRelativePath)
  * @return true, if successful, else false
  */
 TreeItem*
-SakuraParsing::parseSingleFile(const std::string &relativePath,
-                               const std::string &rootPath,
+SakuraParsing::parseSingleFile(const bfs::path &relativePath,
+                               const bfs::path &rootPath,
                                std::string &errorMessage)
 {
-    const std::string filePath = rootPath + "/" + relativePath;
+    const bfs::path filePath = rootPath / relativePath;
 
     // read file
     std::string fileContent = "";
-    bool readResult = readFile(fileContent, filePath, errorMessage);
+    bool readResult = readFile(fileContent, filePath.string(), errorMessage);
     if(readResult == false)
     {
         TableItem errorOutput;
@@ -195,22 +195,22 @@ SakuraParsing::parseSingleFile(const std::string &relativePath,
         errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
         errorOutput.addRow(std::vector<std::string>{"message",
                                                     "failed to read file-path: "
-                                                    + filePath
+                                                    + filePath.string()
                                                     + " with error: "
                                                     + errorMessage});
         errorMessage = errorOutput.toString();
         return nullptr;
     }
 
-    SakuraItem* resultItem = parseString(fileContent, errorMessage);
+    SakuraItem* resultItem = parseStringToTree(fileContent, errorMessage);
     if(resultItem == nullptr) {
         return nullptr;
     }
 
     TreeItem* tempTree = dynamic_cast<TreeItem*>(resultItem);
     tempTree->unparsedConent = fileContent;
-    tempTree->relativePath = relativePath;
-    tempTree->rootPath = rootPath;
+    tempTree->relativePath = relativePath.string();
+    tempTree->rootPath = rootPath.string();
 
     return tempTree;
 }
@@ -223,32 +223,51 @@ SakuraParsing::parseSingleFile(const std::string &relativePath,
  * @return
  */
 bool
-SakuraParsing::parseString(SakuraGarden &result,
-                           const std::string &relativePath,
-                           const std::string &content,
-                           std::string &errorMessage)
+SakuraParsing::parseTreeString(SakuraGarden &result,
+                               const bfs::path &relativePath,
+                               const std::string &content,
+                               std::string &errorMessage)
 {
-    SakuraItem* parsetItem = parseString(content, errorMessage);
-    if(parsetItem == nullptr
-            || parsetItem->getType() != SakuraItem::TREE_ITEM)
-    {
+    TreeItem* parsetItem = parseStringToTree(content, errorMessage);
+    if(parsetItem == nullptr) {
         return false;
     }
 
-    TreeItem* parsedTree = dynamic_cast<TreeItem*>(parsetItem);
-
-    TreeItem* check = result.getTreeByPath(relativePath);
+    TreeItem* check = result.getTree(relativePath);
     if(check == nullptr)
     {
-        errorMessage = "tree-id already registered: " + parsedTree->id;
+        errorMessage = "tree-id already registered: " + parsetItem->id;
         return false;
     }
 
-    parsedTree->unparsedConent = content;
-    parsedTree->relativePath = relativePath;
+    parsetItem->unparsedConent = content;
+    parsetItem->relativePath = relativePath.string();
     m_fileQueue.clear();
 
-    result.trees.insert(std::make_pair(relativePath, parsedTree));
+    result.trees.insert(std::make_pair(relativePath.string(), parsetItem));
+
+    return true;
+}
+
+/**
+ * @brief SakuraParsing::parseRessourceString
+ * @param result
+ * @param content
+ * @param errorMessage
+ * @return
+ */
+bool
+SakuraParsing::parseRessourceString(SakuraGarden &result,
+                                    const std::string &content,
+                                    std::string &errorMessage)
+{
+    TreeItem* parsetItem = parseStringToTree(content, errorMessage);
+    if(parsetItem == nullptr) {
+        return false;
+    }
+
+    result.resources.insert(std::make_pair(parsetItem->id, parsetItem));
+    m_fileQueue.clear();
 
     return true;
 }
@@ -261,14 +280,14 @@ SakuraParsing::parseString(SakuraGarden &result,
  */
 bool
 SakuraParsing::collectFiles(SakuraGarden &result,
-                            const std::string &dirPath,
+                            const bfs::path &dirPath,
                             std::string &errorMessage)
 {
-    const std::string parent = dirPath + "/files";
-    if(Kitsunemimi::Persistence::doesPathExist(parent))
+    const bfs::path parent = dirPath / bfs::path("files");
+    if(bfs::exists(parent))
     {
         return getFilesInDir(result,
-                             boost::filesystem::path(parent),
+                             bfs::path(parent),
                              "trees",
                              errorMessage);
     }
@@ -285,14 +304,14 @@ SakuraParsing::collectFiles(SakuraGarden &result,
  */
 bool
 SakuraParsing::collectTemplates(SakuraGarden &result,
-                                const std::string &dirPath,
+                                const bfs::path &dirPath,
                                 std::string &errorMessage)
 {
-    const std::string parent = dirPath + "/templates";
-    if(Kitsunemimi::Persistence::doesPathExist(parent))
+    const bfs::path parent = dirPath / bfs::path("templates");
+    if(bfs::exists(parent))
     {
         return getFilesInDir(result,
-                             boost::filesystem::path(parent),
+                             bfs::path(parent),
                              "templates",
                              errorMessage);
     }
@@ -310,7 +329,7 @@ SakuraParsing::collectTemplates(SakuraGarden &result,
  */
 bool
 SakuraParsing::getFilesInDir(SakuraGarden &result,
-                             const boost::filesystem::path &directory,
+                             const bfs::path &directory,
                              const std::string &type,
                              std::string &errorMessage)
 {
@@ -331,8 +350,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
         }
         else
         {
-            std::string relPath = Kitsunemimi::Persistence::getRelativePath(itr->path().string(),
-                                                                            m_rootPath);
+            bfs::path relPath = bfs::relative(itr->path(), m_rootPath);
             if(type == "files")
             {
                 Kitsunemimi::DataBuffer* buffer = new DataBuffer();
@@ -349,7 +367,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
                     return false;
                 }
 
-                result.files.insert(std::make_pair(relPath, buffer));
+                result.files.insert(std::make_pair(relPath.string(), buffer));
             }
             if(type == "templates")
             {
@@ -367,7 +385,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
                     return false;
                 }
 
-                result.templates.insert(std::make_pair(relPath, fileContent));
+                result.templates.insert(std::make_pair(relPath.string(), fileContent));
             }
         }
     }
@@ -380,12 +398,12 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
  * @return
  */
 bool
-SakuraParsing::alreadyCollected(const std::string &path)
+SakuraParsing::alreadyCollected(const bfs::path &path)
 {
     std::vector<std::string>::iterator it;
     it = std::find(m_collectedDirectories.begin(),
                    m_collectedDirectories.end(),
-                   path);
+                   path.string());
 
     if(it != m_collectedDirectories.end()) {
         return true;
@@ -402,9 +420,9 @@ SakuraParsing::alreadyCollected(const std::string &path)
  *
  * @return
  */
-SakuraItem*
-SakuraParsing::parseString(const std::string &content,
-                           std::string &errorMessage)
+TreeItem*
+SakuraParsing::parseStringToTree(const std::string &content,
+                                 std::string &errorMessage)
 {
     const bool parserResult = m_parser->parse(content);
     if(parserResult == false)
@@ -414,7 +432,7 @@ SakuraParsing::parseString(const std::string &content,
         return nullptr;
     }
 
-    return m_parser->getOutput();
+    return dynamic_cast<TreeItem*>(m_parser->getOutput());
 }
 
 /**

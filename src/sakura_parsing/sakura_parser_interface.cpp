@@ -110,7 +110,7 @@ SakuraParserInterface::setOutput(SakuraItem* output)
 SakuraItem*
 SakuraParserInterface::getOutput() const
 {
-    return m_output;
+    return m_output->copy();
 }
 
 /**

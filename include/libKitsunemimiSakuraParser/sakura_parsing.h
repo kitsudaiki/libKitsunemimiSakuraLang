@@ -32,6 +32,8 @@
 #include <deque>
 #include <boost/filesystem.hpp>
 
+namespace bfs = boost::filesystem;
+
 namespace Kitsunemimi
 {
 class TableItem;
@@ -50,44 +52,48 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
-    bool parseFiles(SakuraGarden &result,
-                    const std::string &initialFilePath,
-                    std::string &errorMessage);
+    bool parseTreeFiles(SakuraGarden &result,
+                        const bfs::path &initialFilePath,
+                        std::string &errorMessage);
 
-    void addFileToQueue(std::string oldRelativePath);
+    bool parseTreeString(SakuraGarden &result,
+                         const bfs::path &relativePath,
+                         const std::string &content,
+                         std::string &errorMessage);
 
-    TreeItem* parseSingleFile(const std::string &relativePath,
-                              const std::string &rootPath,
+    bool parseRessourceString(SakuraGarden &result,
+                              const std::string &content,
                               std::string &errorMessage);
 
-    bool parseString(SakuraGarden &result,
-                     const std::string &relativePath,
-                     const std::string &content,
-                     std::string &errorMessage);
+    void addFileToQueue(bfs::path oldRelativePath);
 
-    SakuraItem* parseString(const std::string &content,
-                            std::string &errorMessage);
 
 private:
     SakuraParserInterface* m_parser = nullptr;
     bool m_debug = false;
     std::deque<std::string> m_fileQueue;
     std::vector<std::string> m_collectedDirectories;
-    std::string m_rootPath = "";
-    std::string m_currentFilePath = "";
+    bfs::path m_rootPath;
+    bfs::path m_currentFilePath;
+
+    TreeItem* parseSingleFile(const bfs::path &relativePath,
+                              const bfs::path &rootPath,
+                              std::string &errorMessage);
+    TreeItem* parseStringToTree(const std::string &content,
+                                std::string &errorMessage);
 
     void initErrorOutput(TableItem &errorOutput);
     bool collectFiles(SakuraGarden &result,
-                      const std::string &dirPath,
+                      const bfs::path &dirPath,
                       std::string &errorMessage);
     bool collectTemplates(SakuraGarden &result,
-                          const std::string &dirPath,
+                          const bfs::path &dirPath,
                           std::string &errorMessage);
     bool getFilesInDir(SakuraGarden &result,
-                       const boost::filesystem::path &directory,
+                       const bfs::path &directory,
                        const std::string &type,
                        std::string &errorMessage);
-    bool alreadyCollected(const std::string &path);
+    bool alreadyCollected(const bfs::path &path);
 };
 
 }  // namespace Sakura
