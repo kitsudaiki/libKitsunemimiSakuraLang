@@ -53,7 +53,6 @@ public:
     bool addResource(const std::string &content,
                      std::string &errorMessage);
 
-    TreeItem* getTreeById(const std::string &id);
     TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getTreeByPath(const std::string &relativePath);

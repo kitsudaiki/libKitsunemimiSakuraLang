@@ -176,27 +176,6 @@ SakuraGarden::getRessource(const std::string &id)
 }
 
 /**
- * @brief SakuraGarden::getTreeById
- * @param id
- * @return
- */
-TreeItem*
-SakuraGarden::getTreeById(const std::string &id)
-{
-    std::map<std::string, TreeItem*>::const_iterator it;
-    for(it = trees.begin();
-        it != trees.end();
-        it++)
-    {
-        if(it->second->id == id) {
-            return it->second;
-        }
-    }
-
-    return nullptr;
-}
-
-/**
  * @brief SakuraGarden::getTreeByPath
  * @param relativePath
  * @return
