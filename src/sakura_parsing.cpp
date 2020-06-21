@@ -60,7 +60,7 @@ SakuraParsing::~SakuraParsing()
 /**
  * @brief parse all tree-files at a specific location
  *
- * @param rootPath path to file or directory with the file(s) to parse
+ * @param initialFilePath path to file initial file to parse
  *
  * @return true, if pasing all files was successful, else false
  */
@@ -69,9 +69,25 @@ SakuraParsing::parseFiles(SakuraGarden &result,
                           const std::string &initialFilePath,
                           std::string &errorMessage)
 {
+    // precheck
+    if(Kitsunemimi::Persistence::isFile(initialFilePath) == false)
+    {
+        TableItem errorOutput;
+        initErrorOutput(errorOutput);
+        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        errorOutput.addRow(std::vector<std::string>{"message",
+                                                    "path doesn't exist or is not a file: "
+                                                    + initialFilePath});
+        errorMessage = errorOutput.toString();
+        return false;
+    }
+
+    // prepare path-values
     const std::string rootPath = Kitsunemimi::Persistence::getParent(initialFilePath);
     const std::string fileName = Kitsunemimi::Persistence::getRelativePath(initialFilePath,
                                                                            rootPath);
+
+    // set global stuff
     result.rootPath = rootPath;
     m_rootPath = rootPath;
     m_fileQueue.push_back(fileName);
@@ -91,6 +107,7 @@ SakuraParsing::parseFiles(SakuraGarden &result,
 
         // build absolute path
         const std::string filePath = rootPath + "/" + currentRelPath;
+        m_currentFilePath = filePath;
 
         // precheck if file exist
         if(Kitsunemimi::Persistence::doesPathExist(filePath) == false)
@@ -140,9 +157,12 @@ SakuraParsing::parseFiles(SakuraGarden &result,
  * @return
  */
 void
-SakuraParsing::addFileToQueue(const std::string oldRelativePath)
+SakuraParsing::addFileToQueue(std::string oldRelativePath)
 {
     const std::string oldRootPath = Kitsunemimi::Persistence::getParent(m_currentFilePath);
+    if(Kitsunemimi::Persistence::isDir(oldRootPath + "/" + oldRelativePath)) {
+        oldRelativePath += "/root.tree";
+    }
     const std::string newRelativePath = Kitsunemimi::Persistence::getRelativePath(oldRootPath,
                                                                                   oldRelativePath,
                                                                                   m_rootPath);

@@ -54,7 +54,7 @@ public:
                     const std::string &initialFilePath,
                     std::string &errorMessage);
 
-    void addFileToQueue(const std::string oldRelativePath);
+    void addFileToQueue(std::string oldRelativePath);
 
     TreeItem* parseSingleFile(const std::string &relativePath,
                               const std::string &rootPath,
