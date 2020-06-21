@@ -25,8 +25,11 @@
 
 #include <vector>
 #include <string>
+#include <boost/filesystem.hpp>
 
 #include <libKitsunemimiSakuraParser/value_item_map.h>
+
+namespace bfs = boost::filesystem;
 
 namespace Kitsunemimi
 {
@@ -45,19 +48,19 @@ public:
     SakuraGarden();
     ~SakuraGarden();
 
-    const std::string getRelativePath(const std::string &blossomFilePath,
-                                      const std::string &blossomInternalRelPath);
+    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
+                                    const bfs::path &blossomInternalRelPath);
 
-    bool addTree(const std::string &treePath,
+    bool addTree(const bfs::path &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
                      std::string &errorMessage);
 
-    TreeItem* getTree(const std::string &relativePath,
+    TreeItem* getTree(const bfs::path &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getRessource(const std::string &id);
-    const std::string getTemplate(const std::string &relativePath);
-    DataBuffer* getFile(const std::string &relativePath);
+    const std::string getTemplate(const bfs::path &relativePath);
+    DataBuffer* getFile(const bfs::path &relativePath);
 
 
 
@@ -70,7 +73,7 @@ public:
 private:
     SakuraParsing* m_parser = nullptr;
 
-    TreeItem* getTreeByPath(const std::string &relativePath);
+    TreeItem* getTreeByPath(const bfs::path &relativePath);
 };
 
 }
