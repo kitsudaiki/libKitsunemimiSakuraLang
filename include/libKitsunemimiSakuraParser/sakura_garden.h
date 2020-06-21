@@ -46,15 +46,13 @@ public:
     ~SakuraGarden();
 
     const std::string getRelativePath(const std::string &blossomFilePath,
-                                      const std::string &blossomInternalRelPath,
-                                      const std::string &addition = "");
+                                      const std::string &blossomInternalRelPath);
 
     bool addTree(const std::string &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
                      std::string &errorMessage);
 
-    TreeItem* getTreeById(const std::string &id);
     TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getTreeByPath(const std::string &relativePath);

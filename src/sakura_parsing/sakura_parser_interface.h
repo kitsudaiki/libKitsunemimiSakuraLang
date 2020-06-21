@@ -36,12 +36,13 @@ namespace Sakura
 {
 class location;
 class SakuraItem;
+class SakuraParsing;
 
 class SakuraParserInterface
 {
 
 public:
-    SakuraParserInterface(const bool traceParsing);
+    SakuraParserInterface(const bool traceParsing, SakuraParsing* sakuraParsing);
     ~SakuraParserInterface();
 
     // connection the the scanner and parser
@@ -62,6 +63,8 @@ public:
     const std::string removeQuotes(const std::string &input);
     std::vector<std::string> m_registeredKeys;
     bool isKeyRegistered(const std::string &key);
+
+    SakuraParsing* m_sakuraParsing = nullptr;
 
 private:
     bool m_traceParsing = false;

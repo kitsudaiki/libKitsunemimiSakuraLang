@@ -58,8 +58,8 @@ ParsingTest::parseTree_Test()
                                         errorMessage,
                                         true);
     SakuraItem* result = m_parser->parseSingleFile("sakura_parser_test.tree",
-                                                  "/tmp",
-                                                  errorMessage);
+                                                   "/tmp",
+                                                   errorMessage);
 
     bool isNullptr = result == nullptr;
     TEST_EQUAL(isNullptr, false);

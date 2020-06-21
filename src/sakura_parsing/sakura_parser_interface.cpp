@@ -46,9 +46,11 @@ using Kitsunemimi::splitStringByDelimiter;
  * The class is the interface for the bison-generated parser.
  * It starts the parsing-process and store the returned values.
  */
-SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
+SakuraParserInterface::SakuraParserInterface(const bool traceParsing,
+                                             SakuraParsing* sakuraParsing)
 {
     m_traceParsing = traceParsing;
+    m_sakuraParsing = sakuraParsing;
 }
 
 /**
