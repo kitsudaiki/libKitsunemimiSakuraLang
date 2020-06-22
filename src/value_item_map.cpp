@@ -207,6 +207,14 @@ ValueItemMap::contains(const std::string &key)
         return true;
     }
 
+    std::map<std::string, ValueItemMap*>::const_iterator childIt;
+    childIt = m_childMaps.find(key);
+
+    if(childIt != m_childMaps.end())
+    {
+        return true;
+    }
+
     return false;
 }
 
@@ -226,6 +234,15 @@ ValueItemMap::remove(const std::string &key)
     if(it != m_valueMap.end())
     {
         m_valueMap.erase(it);
+        return true;
+    }
+
+    std::map<std::string, ValueItemMap*>::const_iterator childIt;
+    childIt = m_childMaps.find(key);
+
+    if(childIt != m_childMaps.end())
+    {
+        m_childMaps.erase(childIt);
         return true;
     }
 
