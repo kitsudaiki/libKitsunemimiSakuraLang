@@ -324,6 +324,8 @@ ForEachBranching::copy()
 
     newItem->tempVarName = tempVarName;
     newItem->iterateArray = iterateArray;
+    newItem->parallel = parallel;
+
     if(content != nullptr) {
         newItem->content = content->copy();
     }
@@ -357,6 +359,7 @@ ForBranching::copy()
     newItem->tempVarName = tempVarName;
     newItem->start = start;
     newItem->end = end;
+    newItem->parallel = parallel;
 
     if(content != nullptr) {
         newItem->content = content->copy();
