@@ -58,7 +58,7 @@ SakuraParsing::~SakuraParsing()
 }
 
 /**
- * @brief parse all tree-files at a specific location
+ * @brief parse all sakura-files at a specific location
  *
  * @param initialFilePath path to file initial file to parse
  *
@@ -129,7 +129,7 @@ SakuraParsing::parseTreeFiles(SakuraGarden &result,
             return false;
         }
 
-        // add parsed tree-file to results
+        // add parsed sakura-file to results
         result.trees.insert(std::make_pair(currentRelPath, dynamic_cast<TreeItem*>(parsed)));
 
         // get additional files
@@ -161,7 +161,7 @@ SakuraParsing::addFileToQueue(bfs::path oldRelativePath)
 {
     const bfs::path oldRootPath = m_currentFilePath.parent_path();
     if(bfs::is_directory(oldRootPath / oldRelativePath)) {
-        oldRelativePath /= bfs::path("root.tree");
+        oldRelativePath /= bfs::path("root.sakura");
     }
 
     const bfs::path oldAbsolutePath = oldRootPath / oldRelativePath;

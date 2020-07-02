@@ -92,7 +92,7 @@ SakuraGarden::addResource(const std::string &content,
 }
 
 /**
- * @brief convert path, which is relative to a tree-file, into a path, which is relative to the
+ * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
  *        root-path.
  *
  * @param blossomFilePath absolut path of the file of the blossom
@@ -138,9 +138,9 @@ SakuraGarden::getTree(const bfs::path &relativePath,
     if(bfs::is_directory(completePath))
     {
         if(relativePath == "") {
-            return getTreeByPath(bfs::path("root.tree"));
+            return getTreeByPath(bfs::path("root.sakura"));
         } else {
-            return getTreeByPath(relativePath / bfs::path("root.tree"));
+            return getTreeByPath(relativePath / bfs::path("root.sakura"));
         }
     }
     else
