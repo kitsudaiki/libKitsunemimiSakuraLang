@@ -288,7 +288,7 @@ SakuraParsing::collectFiles(SakuraGarden &result,
     {
         return getFilesInDir(result,
                              bfs::path(parent),
-                             "trees",
+                             "files",
                              errorMessage);
     }
 
