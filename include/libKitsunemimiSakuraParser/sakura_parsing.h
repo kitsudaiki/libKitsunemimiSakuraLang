@@ -86,6 +86,9 @@ private:
     bool collectFiles(SakuraGarden &result,
                       const bfs::path &dirPath,
                       std::string &errorMessage);
+    bool collectRessources(SakuraGarden &result,
+                           const bfs::path &dirPath,
+                           std::string &errorMessage);
     bool collectTemplates(SakuraGarden &result,
                           const bfs::path &dirPath,
                           std::string &errorMessage);
