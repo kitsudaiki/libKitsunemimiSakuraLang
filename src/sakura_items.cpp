@@ -229,7 +229,6 @@ SubtreeItem::copy()
     newItem->values = values;
 
     newItem->nameOrPath = nameOrPath;
-    newItem->internalSubtrees = internalSubtrees;
 
     return newItem;
 }

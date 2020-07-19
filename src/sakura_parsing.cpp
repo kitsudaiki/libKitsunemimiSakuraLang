@@ -141,6 +141,9 @@ SakuraParsing::parseTreeFiles(SakuraGarden &result,
             if(collectFiles(result, dirPath, errorMessage) == false) {
                 return false;
             }
+            if(collectRessources(result, dirPath, errorMessage) == false) {
+                return false;
+            }
             if(collectTemplates(result, dirPath, errorMessage) == false) {
                 return false;
             }
@@ -296,6 +299,30 @@ SakuraParsing::collectFiles(SakuraGarden &result,
 }
 
 /**
+ * @brief SakuraParsing::collectRessources
+ * @param result
+ * @param dirPath
+ * @param errorMessage
+ * @return
+ */
+bool
+SakuraParsing::collectRessources(SakuraGarden &result,
+                                 const bfs::path &dirPath,
+                                 std::string &errorMessage)
+{
+    const bfs::path parent = dirPath / bfs::path("ressources");
+    if(bfs::exists(parent))
+    {
+        return getFilesInDir(result,
+                             bfs::path(parent),
+                             "ressources",
+                             errorMessage);
+    }
+
+    return true;
+}
+
+/**
  * @brief SakuraParsing::collectTemplates
  * @param result
  * @param path
@@ -351,6 +378,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
         else
         {
             bfs::path relPath = bfs::relative(itr->path(), m_rootPath);
+            //--------------------------------------------------------------------------------------
             if(type == "files")
             {
                 Kitsunemimi::DataBuffer* buffer = new DataBuffer();
@@ -369,6 +397,38 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
 
                 result.files.insert(std::make_pair(relPath.string(), buffer));
             }
+            //--------------------------------------------------------------------------------------
+            if(type == "ressources")
+            {
+                std::string fileContent = "";
+                bool ret = Kitsunemimi::Persistence::readFile(fileContent,
+                                                              itr->path().string(),
+                                                              errorMessage);
+                if(ret == false)
+                {
+                    TableItem errorOutput;
+                    initErrorOutput(errorOutput);
+                    errorOutput.addRow({"source", "while reading ressource-files"});
+                    errorOutput.addRow({"message", errorMessage});
+                    errorMessage = errorOutput.toString();
+                    return false;
+                }
+
+                TreeItem* parsedTree = parseStringToTree(fileContent, errorMessage);
+
+                if(parsedTree == nullptr)
+                {
+                    TableItem errorOutput;
+                    initErrorOutput(errorOutput);
+                    errorOutput.addRow({"source", "while parsing ressource-files"});
+                    errorOutput.addRow({"message", errorMessage});
+                    errorMessage = errorOutput.toString();
+                    return false;
+                }
+
+                result.resources.insert(std::make_pair(parsedTree->id, parsedTree));
+            }
+            //--------------------------------------------------------------------------------------
             if(type == "templates")
             {
                 std::string fileContent = "";
@@ -387,6 +447,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
 
                 result.templates.insert(std::make_pair(relPath.string(), fileContent));
             }
+            //--------------------------------------------------------------------------------------
         }
     }
 
