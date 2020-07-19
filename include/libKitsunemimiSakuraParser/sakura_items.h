@@ -185,8 +185,6 @@ public:
     SakuraItem* copy();
 
     std::string nameOrPath = "";
-    std::map<std::string, ValueItemMap> internalSubtrees;
-
     DataMap* parentValues = nullptr;
 
     // result
