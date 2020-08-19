@@ -163,7 +163,7 @@ SakuraGarden::getRessource(const std::string &id)
         it++)
     {
         if(it->second->id == id) {
-            return it->second;
+            return dynamic_cast<TreeItem*>(it->second->copy());
         }
     }
 
@@ -182,7 +182,7 @@ SakuraGarden::getTreeByPath(const bfs::path &relativePath)
     it = trees.find(relativePath.string());
 
     if(it != trees.end()) {
-        return it->second;
+        return dynamic_cast<TreeItem*>(it->second->copy());
     }
 
     return nullptr;
