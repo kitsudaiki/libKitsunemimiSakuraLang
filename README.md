@@ -2,7 +2,7 @@
 
 ## Description
 
-This is the parser-library for SakuraTree (https://github.com/tobiasanker/SakuraTree) to parse all project-specific files and convert them into json format.
+This is the parser-library for SakuraTree (https://github.com/kitsudaiki/SakuraTree) to parse all project-specific files and convert them into json format.
 
 ## Contributing
 
