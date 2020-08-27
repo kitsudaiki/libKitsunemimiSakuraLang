@@ -310,12 +310,12 @@ SakuraParsing::collectRessources(SakuraGarden &result,
                                  const bfs::path &dirPath,
                                  std::string &errorMessage)
 {
-    const bfs::path parent = dirPath / bfs::path("ressources");
+    const bfs::path parent = dirPath / bfs::path("resources");
     if(bfs::exists(parent))
     {
         return getFilesInDir(result,
                              bfs::path(parent),
-                             "ressources",
+                             "resources",
                              errorMessage);
     }
 
@@ -398,7 +398,7 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
                 result.files.insert(std::make_pair(relPath.string(), buffer));
             }
             //--------------------------------------------------------------------------------------
-            if(type == "ressources")
+            if(type == "resources")
             {
                 std::string fileContent = "";
                 bool ret = Kitsunemimi::Persistence::readFile(fileContent,
