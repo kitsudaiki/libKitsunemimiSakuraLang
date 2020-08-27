@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraParser/sakura_items.h>
+#include <libKitsunemimiSakuraLang/sakura_items.h>
 
 namespace Kitsunemimi
 {

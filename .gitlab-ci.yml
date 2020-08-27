@@ -7,7 +7,7 @@ build:
     - apt-get update
     - apt-get install -y libboost-filesystem-dev libsqlite3-dev
 
-    - cd /builds/tobiasanker/libKitsunemimiSakuraParser
+    - cd /builds/tobiasanker/libKitsunemimiSakuraLang
     - ./build.sh
 
 

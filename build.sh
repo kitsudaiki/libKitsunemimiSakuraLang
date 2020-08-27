@@ -53,7 +53,7 @@ get_required_kitsune_lib_repo "libKitsunemimiPersistence" "master" 4
 
 #-----------------------------------------------------------------------------------------------------------------
 
-build_kitsune_lib_repo "libKitsunemimiSakuraParser" 1
+build_kitsune_lib_repo "libKitsunemimiSakuraLang" 1
 
 #-----------------------------------------------------------------------------------------------------------------
 

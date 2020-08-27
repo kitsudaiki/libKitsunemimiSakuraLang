@@ -20,10 +20,10 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraParser/sakura_parsing.h>
+#include <libKitsunemimiSakuraLang/sakura_parsing.h>
 
-#include <libKitsunemimiSakuraParser/sakura_items.h>
-#include <libKitsunemimiSakuraParser/sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_items.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 #include <sakura_parsing/sakura_parser_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
@@ -506,7 +506,7 @@ SakuraParsing::initErrorOutput(TableItem &errorOutput)
     errorOutput.addColumn("key");
     errorOutput.addColumn("value");
     errorOutput.addRow(std::vector<std::string>{"ERROR", " "});
-    errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
+    errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
 }
 
 }  // namespace Sakura

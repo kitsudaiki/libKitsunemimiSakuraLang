@@ -27,7 +27,7 @@
 #include <string>
 #include <boost/filesystem.hpp>
 
-#include <libKitsunemimiSakuraParser/value_item_map.h>
+#include <libKitsunemimiSakuraLang/value_item_map.h>
 
 namespace bfs = boost::filesystem;
 

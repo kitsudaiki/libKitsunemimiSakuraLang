@@ -1,4 +1,4 @@
-# libKitsunemimiSakuraParser
+# libKitsunemimiSakuraLang
 
 ## Description
 

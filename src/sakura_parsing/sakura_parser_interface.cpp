@@ -22,8 +22,8 @@
 
 #include <sakura_parsing/sakura_parser_interface.h>
 #include <sakura_parser.h>
-#include <libKitsunemimiSakuraParser/sakura_parsing.h>
-#include <libKitsunemimiSakuraParser/sakura_items.h>
+#include <libKitsunemimiSakuraLang/sakura_parsing.h>
+#include <libKitsunemimiSakuraLang/sakura_items.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
@@ -136,7 +136,7 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 
     // build error-message
     std::string errorString = "";
-    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraParser"});
+    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
     m_errorMessage.addRow(std::vector<std::string>{"source", "while parsing sakura-file"});
     m_errorMessage.addRow(std::vector<std::string>{"message", message});
     m_errorMessage.addRow(std::vector<std::string>{"line-number", std::to_string(linenumber)});

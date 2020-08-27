@@ -20,10 +20,10 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraParser/sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 
-#include <libKitsunemimiSakuraParser/sakura_items.h>
-#include <libKitsunemimiSakuraParser/sakura_parsing.h>
+#include <libKitsunemimiSakuraLang/sakura_items.h>
+#include <libKitsunemimiSakuraLang/sakura_parsing.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
