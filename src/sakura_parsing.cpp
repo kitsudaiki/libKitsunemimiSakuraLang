@@ -237,7 +237,7 @@ SakuraParsing::parseTreeString(SakuraGarden &result,
     }
 
     TreeItem* check = result.getTree(relativePath);
-    if(check == nullptr)
+    if(check != nullptr)
     {
         errorMessage = "tree-id already registered: " + parsetItem->id;
         return false;

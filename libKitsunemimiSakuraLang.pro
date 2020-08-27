@@ -1,8 +1,13 @@
 TEMPLATE = subdirs
 CONFIG += ordered
+QT -= qt core gui
+CONFIG += c++14
 
-SUBDIRS = \
-   src \
-   tests
+SUBDIRS = src
 
-tests.depends = src
+run_tests {
+    SUBDIRS += tests
+
+    tests.depends = src
+}
+
