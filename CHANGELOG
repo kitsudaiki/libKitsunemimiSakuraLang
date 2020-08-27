@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0] - 2020-08-27
+
+### Added
+- new seed-type
+- resources
+- data-structures, which were originally part of SakuraTree
+- comments in sakura-files
+- multi-line strings
+
+### Fixed
+- json-parsing
+- parsing of empty maps and array
+- if-conditions without else-branch
+- diffent other little fixes
+
+### Changed
+- generate data-structures direct without the json intermediate step
+- file-path in blossom-items
+- split parser-interface in multiple methods
+- renamed subtrees to trees
+
+
+
 ## [0.2.0] - 2019-12-30
 
 ### Changed
