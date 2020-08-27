@@ -28,7 +28,7 @@
 #include <vector>
 #include <utility>
 
-#include <libKitsunemimiSakuraParser/value_items.h>
+#include <libKitsunemimiSakuraLang/value_items.h>
 
 namespace Kitsunemimi
 {

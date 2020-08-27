@@ -22,9 +22,9 @@
 
 #include "sakura_parser_test.h"
 
-#include <libKitsunemimiSakuraParser/sakura_items.h>
-#include <libKitsunemimiSakuraParser/sakura_parsing.h>
-#include <libKitsunemimiSakuraParser/sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_items.h>
+#include <libKitsunemimiSakuraLang/sakura_parsing.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 
 #include <test_strings/test_strings.h>
 

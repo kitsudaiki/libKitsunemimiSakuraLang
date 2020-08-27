@@ -5,7 +5,7 @@ QT -= qt core gui
 CONFIG -= app_bundle
 CONFIG += c++14 console
 
-LIBS += -L../src -lKitsunemimiSakuraParser
+LIBS += -L../src -lKitsunemimiSakuraLang
 INCLUDEPATH += $$PWD
 
 LIBS += -L../../libKitsunemimiCommon/src -lKitsunemimiCommon

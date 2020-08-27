@@ -1,6 +1,6 @@
 QT -= qt core gui
 
-TARGET = KitsunemimiSakuraParser
+TARGET = KitsunemimiSakuraLang
 CONFIG += c++14
 TEMPLATE = lib
 VERSION = 0.2.0
@@ -29,11 +29,11 @@ SOURCES += \
 
 HEADERS += \
     sakura_parsing/sakura_parser_interface.h \
-    ../include/libKitsunemimiSakuraParser/sakura_parsing.h \
-    ../include/libKitsunemimiSakuraParser/sakura_items.h \
-    ../include/libKitsunemimiSakuraParser/value_items.h \
-    ../include/libKitsunemimiSakuraParser/value_item_map.h \
-    ../include/libKitsunemimiSakuraParser/sakura_garden.h
+    ../include/libKitsunemimiSakuraLang/sakura_parsing.h \
+    ../include/libKitsunemimiSakuraLang/sakura_items.h \
+    ../include/libKitsunemimiSakuraLang/value_items.h \
+    ../include/libKitsunemimiSakuraLang/value_item_map.h \
+    ../include/libKitsunemimiSakuraLang/sakura_garden.h
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y
