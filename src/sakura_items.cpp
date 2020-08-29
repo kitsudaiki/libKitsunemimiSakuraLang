@@ -203,6 +203,7 @@ TreeItem::copy()
 
     newItem->unparsedConent = unparsedConent;
     newItem->relativePath = relativePath;
+    newItem->rootPath = rootPath;
 
     newItem->id = id;
     newItem->childs = childs->copy();
