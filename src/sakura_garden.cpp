@@ -158,13 +158,13 @@ TreeItem*
 SakuraGarden::getRessource(const std::string &id)
 {
     std::map<std::string, TreeItem*>::const_iterator it;
-    for(it = resources.begin();
-        it != resources.end();
-        it++)
+    it = resources.find(id);
+
+    if(it != resources.end())
     {
-        if(it->second->id == id) {
-            return dynamic_cast<TreeItem*>(it->second->copy());
-        }
+        TreeItem* result = dynamic_cast<TreeItem*>(it->second->copy());
+        assert(result != nullptr);
+        return result;
     }
 
     return nullptr;
@@ -181,8 +181,11 @@ SakuraGarden::getTreeByPath(const bfs::path &relativePath)
     std::map<std::string, TreeItem*>::const_iterator it;
     it = trees.find(relativePath.string());
 
-    if(it != trees.end()) {
-        return dynamic_cast<TreeItem*>(it->second->copy());
+    if(it != trees.end())
+    {
+        TreeItem* result = dynamic_cast<TreeItem*>(it->second->copy());
+        assert(result != nullptr);
+        return result;
     }
 
     return nullptr;
