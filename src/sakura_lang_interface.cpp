@@ -23,10 +23,15 @@
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
 #include <sakura_garden.h>
+#include <validator.h>
+
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
 
+#include <items/item_methods.h>
+
 #include <libKitsunemimiJinja2/jinja2_converter.h>
+#include <libKitsunemimiPersistence/logger/logger.h>
 
 namespace Kitsunemimi
 {
@@ -48,6 +53,91 @@ SakuraLangInterface::~SakuraLangInterface()
     delete m_queue;
     delete m_threadPoos;
     delete m_jinja2Converter;
+}
+
+/**
+ * @brief SakuraLangInterface::processFiles
+ * @param inputPath
+ * @param initialValues
+ * @param dryRun
+ * @return
+ */
+bool
+SakuraLangInterface::processFiles(const std::string &inputPath,
+                                  const DataMap &initialValues,
+                                  const bool dryRun)
+{
+    std::string errorMessage = "";
+
+    // set default-file in case that a directory instead of a file was selected
+    std::string treeFile = inputPath;
+    if(bfs::is_directory(treeFile)) {
+        treeFile = treeFile + "/root.sakura";
+    }
+
+    // parse all files
+    if(m_garden->addTree(treeFile, errorMessage) == false)
+    {
+        LOG_ERROR("failed to add trees\n    " + errorMessage);
+        return false;
+    }
+
+    SakuraItem* tree = nullptr;
+
+    // get initial sakura-file
+    if(bfs::is_regular_file(treeFile))
+    {
+        const bfs::path parent = bfs::path(treeFile).parent_path();
+        const std::string relPath = bfs::relative(treeFile, parent).string();
+
+        tree = m_garden->getTree(relPath, parent.string());
+    }
+
+    if(tree == nullptr)
+    {
+        LOG_ERROR("No tree found for the input-path " + treeFile);
+        return false;
+    }
+
+    // check if input-values match with the first tree
+    const std::vector<std::string> failedInput = checkInput(tree->values, initialValues);
+    if(failedInput.size() > 0)
+    {
+        std::string errorMessage = "Following input-values are not valid for the initial tress:\n";
+        for(const std::string& item : failedInput)
+        {
+            errorMessage += "    " + item + "\n";
+        }
+        LOG_ERROR(errorMessage);
+        return false;
+    }
+
+    // validate parsed blossoms
+    errorMessage = "";
+    if(checkAllItems(this, *m_garden, errorMessage) == false)
+    {
+        LOG_ERROR("\n" + errorMessage);
+        return false;
+    }
+
+    // in case of a dry-run, cancel here before executing the scripts
+    if(dryRun)
+    {
+        LOG_INFO("dry-run successfully finished", GREEN_COLOR);
+        return true;
+    }
+
+    // process sakura-file with initial values
+    errorMessage = "";
+    if(runProcess(tree, initialValues, errorMessage) == false)
+    {
+        LOG_ERROR("\n" + errorMessage);
+        return false;
+    }
+
+    LOG_INFO("finish", GREEN_COLOR);
+
+    return true;
 }
 
 /**
@@ -89,6 +179,31 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
                                 const std::string &itemName)
 {
 
+}
+
+
+
+/**
+ * @brief SakuraRoot::runProcess
+ * @return
+ */
+bool
+SakuraLangInterface::runProcess(SakuraItem* item,
+                                const DataMap &initialValues,
+                                std::string &errorMessage)
+{
+    std::vector<SakuraItem*> childs;
+    childs.push_back(item);
+    std::vector<std::string> hierarchy;
+
+    const bool result = m_queue->spawnParallelSubtrees(childs,
+                                                       0,
+                                                       1,
+                                                       "",
+                                                       hierarchy,
+                                                       initialValues,
+                                                       errorMessage);
+    return result;
 }
 
 }

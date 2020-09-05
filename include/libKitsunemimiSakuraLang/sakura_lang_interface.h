@@ -26,6 +26,8 @@
 #include <string>
 #include <map>
 
+#include <libKitsunemimiCommon/common_items/data_items.h>
+
 namespace Kitsunemimi
 {
 namespace Jinja2 {
@@ -34,8 +36,10 @@ class Jinja2Converter;
 namespace Sakura
 {
 class SakuraGarden;
+class SakuraItem;
 class ThreadPool;
 class SubtreeQueue;
+class SakuraThread;
 class Blossom;
 
 class SakuraLangInterface
@@ -43,6 +47,10 @@ class SakuraLangInterface
 public:
     SakuraLangInterface();
     ~SakuraLangInterface();
+
+    bool processFiles(const std::string &inputPath,
+                      const DataMap &initialValues,
+                      const bool dryRun);
 
     bool doesBlossomExist(const std::string &groupName,
                           const std::string &itemName);
@@ -53,12 +61,19 @@ public:
                         const std::string &itemName);
 
     SakuraGarden* m_garden = nullptr;
+
+private:
+    friend SakuraThread;
+
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
     Kitsunemimi::Jinja2::Jinja2Converter* m_jinja2Converter = nullptr;
 
-private:
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
+
+    bool runProcess(SakuraItem* item,
+                    const DataMap &initialValues,
+                    std::string &errorMessage);
 };
 
 }
