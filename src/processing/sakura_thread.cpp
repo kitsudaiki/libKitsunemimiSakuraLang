@@ -73,10 +73,6 @@ SakuraThread::run()
         {
             if(m_currentSubtree->subtree != nullptr)
             {
-                if(m_currentSubtree->session != nullptr) {
-                    LOG_DEBUG("start Subcall");
-                }
-
                 // process input-values
                 m_hierarchy = m_currentSubtree->hirarchy;
                 overrideItems(m_parentValues, m_currentSubtree->subtree->values, ALL);
@@ -97,16 +93,6 @@ SakuraThread::run()
                 // increase active-counter as last step, so the source subtree can check, if all
                 // spawned subtrees are finished
                 m_currentSubtree->activeCounter->increaseCounter();
-
-                // handle the case, that this thread was spawned remotely ba a seed-trigger
-                if(m_currentSubtree->session != nullptr)
-                {
-                    char response[50];
-                    LOG_DEBUG("FINISH Subcall");
-                    m_currentSubtree->session->sendResponse(response,
-                                                            50,
-                                                            m_currentSubtree->blockerId);
-                }
             }
         }
         else

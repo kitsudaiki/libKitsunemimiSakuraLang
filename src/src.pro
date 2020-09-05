@@ -15,16 +15,6 @@ LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
 LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
 INCLUDEPATH += ../../libKitsunemimiPersistence/include
 
-LIBS += -L../../libKitsunemimiProjectNetwork/src -lKitsunemimiProjectNetwork
-LIBS += -L../../libKitsunemimiProjectNetwork/src/debug -lKitsunemimiProjectNetwork
-LIBS += -L../../libKitsunemimiProjectNetwork/src/release -lKitsunemimiProjectNetwork
-INCLUDEPATH += ../../libKitsunemimiProjectNetwork/include
-
-LIBS += -L../../libKitsunemimiNetwork/src -lKitsunemimiNetwork
-LIBS += -L../../libKitsunemimiNetwork/src/debug -lKitsunemimiNetwork
-LIBS += -L../../libKitsunemimiNetwork/src/release -lKitsunemimiNetwork
-INCLUDEPATH += ../../libKitsunemimiNetwork/include
-
 LIBS += -L../../libKitsunemimiJinja2/src -lKitsunemimiJinja2
 LIBS += -L../../libKitsunemimiJinja2/src/debug -lKitsunemimiJinja2
 LIBS += -L../../libKitsunemimiJinja2/src/release -lKitsunemimiJinja2

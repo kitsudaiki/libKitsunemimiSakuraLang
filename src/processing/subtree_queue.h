@@ -25,8 +25,9 @@
 
 #include <thread>
 #include <chrono>
+#include <mutex>
+#include <queue>
 
-#include <libKitsunemimiProjectNetwork/session.h>
 #include <libKitsunemimiSakuraLang/items/sakura_items.h>
 
 namespace Kitsunemimi
@@ -119,9 +120,6 @@ public:
         std::vector<std::string> hirarchy;
 
         std::string filePath = "";
-
-        Kitsunemimi::Project::Session* session = nullptr;
-        uint64_t blockerId = 0;
     };
 
     void addSubtreeObject(SubtreeObject* newObject);
@@ -132,9 +130,7 @@ public:
                                const std::string &filePath,
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,
-                               std::string &errorMessage,
-                               Kitsunemimi::Project::Session* session = nullptr,
-                               const uint64_t blockerId = 0);
+                               std::string &errorMessage);
     bool spawnParallelSubtreesLoop(SakuraItem* subtree,
                                    const uint64_t startPos,
                                    const uint64_t endPos,

@@ -140,9 +140,7 @@ SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
                                     const std::string &filePath,
                                     const std::vector<std::string> &hierarchy,
                                     const DataMap &parentValues,
-                                    std::string &errorMessage,
-                                    Kitsunemimi::Project::Session* session,
-                                    const uint64_t blockerId)
+                                    std::string &errorMessage)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
@@ -163,8 +161,6 @@ SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
         object->items = parentValues;
         object->activeCounter = activeCounter;
         object->filePath = filePath;
-        object->session = session;
-        object->blockerId = blockerId;
 
         addSubtreeObject(object);
         spawnedObjects.push_back(object);
