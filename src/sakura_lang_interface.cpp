@@ -246,5 +246,69 @@ SakuraLangInterface::runProcess(SakuraItem* item,
     return result;
 }
 
+
+/**
+ * @brief SakuraRoot::printOutput
+ * @param blossomItem
+ */
+void
+SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
+{
+    std::string output = "";
+
+    // print call-hierarchy
+    for(uint32_t i = 0; i < blossomGroupItem.nameHirarchie.size(); i++)
+    {
+        for(uint32_t j = 0; j < i; j++)
+        {
+            output += "   ";
+        }
+        output += blossomGroupItem.nameHirarchie.at(i) + "\n";
+    }
+
+    printOutput(output);
+}
+
+/**
+ * @brief SakuraRoot::printOutput
+ * @param blossomItem
+ */
+void
+SakuraLangInterface::printOutput(const BlossomItem &blossomItem)
+{
+    const std::string output = convertBlossomOutput(blossomItem);
+
+    // only for prototyping hardcoded
+    //m_networking->sendBlossomOuput("127.0.0.1", "", output);
+    printOutput(output);
+}
+
+/**
+ * @brief print output-string
+ *
+ * @param output string, which should be printed
+ */
+void
+SakuraLangInterface::printOutput(const std::string &output)
+{
+    // TODO: use logger instead
+    m_mutex.lock();
+
+    // get width of the termial to draw the separator-line
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+    uint32_t terminalWidth = size.ws_col;
+    if(terminalWidth > 500) {
+        terminalWidth = 500;
+    }
+
+    // draw separator line
+    std::string line(terminalWidth, '=');
+
+    LOG_INFO(line + "\n\n" + output + "\n");
+
+    m_mutex.unlock();
+}
+
 }
 }

@@ -262,7 +262,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     }
 
     // send result to root
-    //SakuraRoot::m_root->printOutput(blossomItem);
+    m_interface->printOutput(blossomItem);
 
     // write processing result back to parent
     fillBlossomOutputValueItemMap(blossomItem.values, blossomItem.blossomOutput);
@@ -303,7 +303,7 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
     blossomGroupItem.id = convertResult;
     blossomGroupItem.nameHirarchie = m_hierarchy;
     blossomGroupItem.nameHirarchie.push_back("BLOSSOM-GROUP: " + blossomGroupItem.id);
-    //SakuraRoot::m_root->printOutput(blossomGroupItem);
+    m_interface->printOutput(blossomGroupItem);
 
     // iterate over all blossoms of the group and process one after another
     for(BlossomItem* blossomItem : blossomGroupItem.blossoms)
