@@ -22,7 +22,7 @@
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
-#include <sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 #include <validator.h>
 
 #include <processing/subtree_queue.h>
@@ -65,6 +65,7 @@ SakuraLangInterface::~SakuraLangInterface()
 bool
 SakuraLangInterface::processFiles(const std::string &inputPath,
                                   const DataMap &initialValues,
+                                  const bool enableDebug,
                                   const bool dryRun)
 {
     std::string errorMessage = "";

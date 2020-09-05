@@ -56,6 +56,7 @@ public:
     // processing
     bool processFiles(const std::string &inputPath,
                       const DataMap &initialValues,
+                      const bool enableDebug,
                       const bool dryRun);
 
     // blossom getter and setter
@@ -74,13 +75,13 @@ public:
 
 
     SakuraGarden* m_garden = nullptr;
+    Kitsunemimi::Jinja2::Jinja2Converter* m_jinja2Converter = nullptr;
 
 private:
     friend SakuraThread;
 
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
-    Kitsunemimi::Jinja2::Jinja2Converter* m_jinja2Converter = nullptr;
     std::mutex m_mutex;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;

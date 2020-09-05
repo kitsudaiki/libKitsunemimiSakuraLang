@@ -23,7 +23,7 @@
 #include "sakura_thread.h"
 
 #include <libKitsunemimiSakuraLang/items/item_methods.h>
-#include <sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
@@ -189,19 +189,6 @@ SakuraThread::processSakuraItem(SakuraItem* sakuraItem,
         ParallelPart* parallel = dynamic_cast<ParallelPart*>(sakuraItem);
         return processParallelPart(parallel, filePath, errorMessage);
     }
-    //----------------------------------------------------------------------------------------------
-    if(sakuraItem->getType() == SakuraItem::SEED_ITEM)
-    {
-        SeedInitItem* seedItem = dynamic_cast<SeedInitItem*>(sakuraItem);
-        return processSeedInit(seedItem, filePath, errorMessage);
-    }
-    //----------------------------------------------------------------------------------------------
-    if(sakuraItem->getType() == SakuraItem::SEED_TRIGGER_ITEM)
-    {
-        SeedTriggerItem* seedItem = dynamic_cast<SeedTriggerItem*>(sakuraItem);
-        return processSeedTrigger(seedItem, errorMessage);
-    }
-    //----------------------------------------------------------------------------------------------
     // TODO: error-message
 
     return false;
@@ -255,7 +242,6 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     blossomItem.blossomPath = filePath;
 
     blossom->growBlossom(blossomItem, errorMessage);
-    delete blossom;
 
     if(blossomItem.success == false) {
         return false;

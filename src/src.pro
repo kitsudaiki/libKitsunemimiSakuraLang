@@ -43,7 +43,7 @@ INCLUDEPATH += $$PWD \
 
 HEADERS += \
     ../include/libKitsunemimiSakuraLang/items/item_methods.h \
-    sakura_garden.h \
+    ../include/libKitsunemimiSakuraLang/sakura_garden.h \
     ../include/libKitsunemimiSakuraLang/items/sakura_items.h \
     ../include/libKitsunemimiSakuraLang/items/value_item_functions.h \
     ../include/libKitsunemimiSakuraLang/items/value_item_map.h \

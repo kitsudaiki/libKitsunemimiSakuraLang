@@ -50,19 +50,18 @@ checkBlossomItem(SakuraLangInterface* interface,
         return true;
     }
 
-    Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType, blossomItem.blossomType);
+    Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType,
+                                             blossomItem.blossomType);
     if(blossom == nullptr)
     {
         errorMessage = createError(blossomItem, "validator", "unknow blossom-type");
         return false;
     }
 
-    /*result = checkBlossomItem(blossomItem, blossom->m_requiredKeys, errorMessage);
+    result = checkBlossomItem(interface, blossomItem, blossom->m_requiredKeys, errorMessage);
     if(result) {
-        result = checkOutput(blossomItem, blossom->m_hasOutput, errorMessage);
-    }*/
-
-    delete blossom;
+        result = checkOutput(interface, blossomItem, blossom->m_hasOutput, errorMessage);
+    }
 
     return result;
 }

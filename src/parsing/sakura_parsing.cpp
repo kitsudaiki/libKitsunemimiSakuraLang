@@ -23,7 +23,7 @@
 #include "sakura_parsing.h"
 
 #include <libKitsunemimiSakuraLang/items/sakura_items.h>
-#include <sakura_garden.h>
+#include <libKitsunemimiSakuraLang/sakura_garden.h>
 #include <parsing/sakura_parser_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>

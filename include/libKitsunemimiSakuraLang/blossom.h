@@ -42,6 +42,9 @@ public:
     void growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage);
 
+    bool m_hasOutput = false;
+    DataMap m_requiredKeys;
+
 protected:
     virtual void initBlossom(BlossomItem &blossomItem) = 0;
     virtual void preCheck(BlossomItem &blossomItem) = 0;
