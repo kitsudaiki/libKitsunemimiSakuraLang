@@ -15,25 +15,53 @@ LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
 LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
 INCLUDEPATH += ../../libKitsunemimiPersistence/include
 
+LIBS += -L../../libKitsunemimiJinja2/src -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/debug -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/release -lKitsunemimiJinja2
+INCLUDEPATH += ../../libKitsunemimiJinja2/include
+
+LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
+INCLUDEPATH += ../../libKitsunemimiJson/include
+
 LIBS +=  -lboost_filesystem -lboost_system
 
 INCLUDEPATH += $$PWD \
             $$PWD/../include
 
-SOURCES += \
-    sakura_parsing/sakura_parser_interface.cpp \
-    sakura_parsing.cpp \
-    sakura_items.cpp \
-    value_item_map.cpp \
-    sakura_garden.cpp
 
 HEADERS += \
-    sakura_parsing/sakura_parser_interface.h \
-    ../include/libKitsunemimiSakuraLang/sakura_parsing.h \
-    ../include/libKitsunemimiSakuraLang/sakura_items.h \
-    ../include/libKitsunemimiSakuraLang/value_items.h \
-    ../include/libKitsunemimiSakuraLang/value_item_map.h \
-    ../include/libKitsunemimiSakuraLang/sakura_garden.h
+    ../include/libKitsunemimiSakuraLang/items/item_methods.h \
+    ../include/libKitsunemimiSakuraLang/sakura_garden.h \
+    ../include/libKitsunemimiSakuraLang/items/sakura_items.h \
+    ../include/libKitsunemimiSakuraLang/items/value_item_functions.h \
+    ../include/libKitsunemimiSakuraLang/items/value_item_map.h \
+    ../include/libKitsunemimiSakuraLang/items/value_items.h \
+    parsing/sakura_parser_interface.h \
+    parsing/sakura_parsing.h \
+    processing/sakura_thread.h \
+    processing/subtree_queue.h \
+    processing/thread_pool.h \
+    validator.h \
+    ../include/libKitsunemimiSakuraLang/blossom.h \
+    ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h
+
+SOURCES += \
+    items/item_methods.cpp \
+    sakura_garden.cpp \
+    items/sakura_items.cpp \
+    items/value_item_functions.cpp \
+    items/value_item_map.cpp \
+    parsing/sakura_parser_interface.cpp \
+    parsing/sakura_parsing.cpp \
+    blossom.cpp \
+    processing/sakura_thread.cpp \
+    processing/subtree_queue.cpp \
+    processing/thread_pool.cpp \
+    validator.cpp \
+    sakura_lang_interface.cpp
+
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y

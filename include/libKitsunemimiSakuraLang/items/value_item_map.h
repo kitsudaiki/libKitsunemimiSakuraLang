@@ -20,15 +20,15 @@
  *      limitations under the License.
  */
 
-#ifndef VALUE_ITEM_MAP_H
-#define VALUE_ITEM_MAP_H
+#ifndef SAKURA_VALUE_ITEM_MAP_H
+#define SAKURA_VALUE_ITEM_MAP_H
 
 #include <string>
 #include <map>
 #include <vector>
 #include <utility>
 
-#include <libKitsunemimiSakuraLang/value_items.h>
+#include <libKitsunemimiSakuraLang/items/value_items.h>
 
 namespace Kitsunemimi
 {
@@ -37,7 +37,6 @@ class DataMap;
 
 namespace Sakura
 {
-
 
 class ValueItemMap
 {
@@ -72,4 +71,4 @@ private:
 }
 }
 
-#endif // VALUE_ITEM_MAP_H
+#endif // SAKURA_VALUE_ITEM_MAP_H
