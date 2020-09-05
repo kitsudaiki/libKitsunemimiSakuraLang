@@ -28,7 +28,7 @@
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
 
-#include <items/item_methods.h>
+#include <libKitsunemimiSakuraLang/items/item_methods.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
 #include <libKitsunemimiPersistence/logger/logger.h>

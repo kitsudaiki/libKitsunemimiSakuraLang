@@ -24,8 +24,7 @@
 #define SAKURA_BLOSSOM_H
 
 #include <string>
-#include <items/sakura_items.h>
-#include <items/item_methods.h>
+#include <libKitsunemimiSakuraLang/items/sakura_items.h>
 
 #include <libKitsunemimiPersistence/logger/logger.h>
 

@@ -27,7 +27,7 @@
 #include <chrono>
 
 #include <libKitsunemimiProjectNetwork/session.h>
-#include <items/sakura_items.h>
+#include <libKitsunemimiSakuraLang/items/sakura_items.h>
 
 namespace Kitsunemimi
 {

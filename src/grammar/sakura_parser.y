@@ -42,7 +42,7 @@
 #include <iostream>
 #include <vector>
 #include <libKitsunemimiCommon/common_items/data_items.h>
-#include <items/sakura_items.h>
+#include <libKitsunemimiSakuraLang/items/sakura_items.h>
 #include <parsing/sakura_parsing.h>
 
 using Kitsunemimi::DataItem;

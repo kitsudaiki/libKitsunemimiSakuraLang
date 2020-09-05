@@ -20,14 +20,14 @@
  *      limitations under the License.
  */
 
-#include "item_methods.h"
+#include <libKitsunemimiSakuraLang/items/item_methods.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/common_items/table_item.h>
 #include <libKitsunemimiSakuraLang/blossom.h>
 
-#include <items/value_item_functions.h>
+#include <libKitsunemimiSakuraLang/items/value_item_functions.h>
 
 namespace Kitsunemimi
 {

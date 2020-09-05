@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <items/value_item_functions.h>
+#include <libKitsunemimiSakuraLang/items/value_item_functions.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>

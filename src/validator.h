@@ -26,7 +26,7 @@
 #include <string>
 #include <map>
 
-#include <items/sakura_items.h>
+#include <libKitsunemimiSakuraLang/items/sakura_items.h>
 #include <sakura_garden.h>
 
 namespace Kitsunemimi

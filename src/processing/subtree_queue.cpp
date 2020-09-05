@@ -22,7 +22,7 @@
 
 #include "subtree_queue.h"
 
-#include <items/item_methods.h>
+#include <libKitsunemimiSakuraLang/items/item_methods.h>
 
 #include <libKitsunemimiPersistence/logger/logger.h>
 
