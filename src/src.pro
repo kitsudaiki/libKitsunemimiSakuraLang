@@ -51,7 +51,6 @@ HEADERS += \
     parsing/sakura_parser_interface.h \
     parsing/sakura_parsing.h \
     processing/sakura_thread.h \
-    sakura_tree_callbacks.h \
     processing/subtree_queue.h \
     processing/thread_pool.h \
     validator.h \
