@@ -27,7 +27,7 @@
 #include <map>
 
 #include <items/sakura_items.h>
-#include <items/sakura_garden.h>
+#include <sakura_garden.h>
 
 namespace Kitsunemimi
 {

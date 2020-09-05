@@ -22,7 +22,7 @@
 
 #include "thread_pool.h"
 
-#include <sakura_thread.h>
+#include <processing/sakura_thread.h>
 
 namespace Kitsunemimi
 {

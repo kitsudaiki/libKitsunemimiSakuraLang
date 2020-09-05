@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 
-#include <subtree_queue.h>
+#include <processing/subtree_queue.h>
 #include <items/sakura_items.h>
 
 #include <libKitsunemimiCommon/threading/thread.h>

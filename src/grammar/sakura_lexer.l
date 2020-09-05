@@ -25,7 +25,7 @@
 # include <climits>
 # include <cstdlib>
 # include <string>
-# include <sakura_parsing/sakura_parser_interface.h>
+# include <parsing/sakura_parser_interface.h>
 # include <sakura_parser.h>
 
 # undef yywrap

@@ -43,33 +43,33 @@ INCLUDEPATH += $$PWD \
 
 HEADERS += \
     items/item_methods.h \
-    items/sakura_garden.h \
+    sakura_garden.h \
     items/sakura_items.h \
     items/value_item_functions.h \
     items/value_item_map.h \
     items/value_items.h \
-    sakura_parsing/sakura_parser_interface.h \
-    sakura_parsing/sakura_parsing.h \
-    sakura_thread.h \
+    parsing/sakura_parser_interface.h \
+    parsing/sakura_parsing.h \
+    processing/sakura_thread.h \
     sakura_tree_callbacks.h \
-    subtree_queue.h \
-    thread_pool.h \
+    processing/subtree_queue.h \
+    processing/thread_pool.h \
     validator.h \
     ../include/libKitsunemimiSakuraLang/blossom.h \
     ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h
 
 SOURCES += \
     items/item_methods.cpp \
-    items/sakura_garden.cpp \
+    sakura_garden.cpp \
     items/sakura_items.cpp \
     items/value_item_functions.cpp \
     items/value_item_map.cpp \
-    sakura_parsing/sakura_parser_interface.cpp \
-    sakura_parsing/sakura_parsing.cpp \
+    parsing/sakura_parser_interface.cpp \
+    parsing/sakura_parsing.cpp \
     blossom.cpp \
-    sakura_thread.cpp \
-    subtree_queue.cpp \
-    thread_pool.cpp \
+    processing/sakura_thread.cpp \
+    processing/subtree_queue.cpp \
+    processing/thread_pool.cpp \
     validator.cpp \
     sakura_lang_interface.cpp
 

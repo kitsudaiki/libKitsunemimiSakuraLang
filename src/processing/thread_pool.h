@@ -25,7 +25,7 @@
 
 #include <vector>
 #include <libKitsunemimiCommon/threading/thread.h>
-#include <subtree_queue.h>
+#include <processing/subtree_queue.h>
 
 namespace Kitsunemimi
 {

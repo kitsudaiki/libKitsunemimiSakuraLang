@@ -22,9 +22,9 @@
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
-#include <items/sakura_garden.h>
-#include <subtree_queue.h>
-#include <thread_pool.h>
+#include <sakura_garden.h>
+#include <processing/subtree_queue.h>
+#include <processing/thread_pool.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
 

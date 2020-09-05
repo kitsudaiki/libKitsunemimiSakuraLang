@@ -43,7 +43,7 @@
 #include <vector>
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <items/sakura_items.h>
-#include <sakura_parsing/sakura_parsing.h>
+#include <parsing/sakura_parsing.h>
 
 using Kitsunemimi::DataItem;
 using Kitsunemimi::DataArray;
@@ -68,7 +68,7 @@ class SakuraParserInterface;
 
 %code
 {
-#include <sakura_parsing/sakura_parser_interface.h>
+#include <parsing/sakura_parser_interface.h>
 # undef YY_DECL
 # define YY_DECL \
     Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)
