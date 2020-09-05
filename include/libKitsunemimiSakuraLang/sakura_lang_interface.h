@@ -56,7 +56,7 @@ public:
                           const std::string &itemName);
     bool addBlossom(const std::string &groupName,
                     const std::string &itemName,
-                    const Blossom* newBlossom);
+                    Blossom *newBlossom);
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
 

@@ -150,7 +150,20 @@ bool
 SakuraLangInterface::doesBlossomExist(const std::string &groupName,
                                       const std::string &itemName)
 {
+    std::map<std::string, std::map<std::string, Blossom*>>::const_iterator groupIt;
+    groupIt = m_registeredBlossoms.find(groupName);
 
+    if(groupIt != m_registeredBlossoms.end())
+    {
+        std::map<std::string, Blossom*>::const_iterator itemIt;
+        itemIt = groupIt->second.find(itemName);
+
+        if(itemIt != groupIt->second.end()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -163,9 +176,25 @@ SakuraLangInterface::doesBlossomExist(const std::string &groupName,
 bool
 SakuraLangInterface::addBlossom(const std::string &groupName,
                                 const std::string &itemName,
-                                const Blossom* newBlossom)
+                                Blossom* newBlossom)
 {
+    if(doesBlossomExist(groupName, itemName) == true) {
+        return false;
+    }
 
+    std::map<std::string, std::map<std::string, Blossom*>>::iterator groupIt;
+    groupIt = m_registeredBlossoms.find(groupName);
+
+    if(groupIt == m_registeredBlossoms.end())
+    {
+        std::map<std::string, Blossom*> newMap;
+        m_registeredBlossoms.insert(std::make_pair(groupName, newMap));
+    }
+
+    groupIt = m_registeredBlossoms.find(groupName);
+    groupIt->second.insert(std::make_pair(itemName, newBlossom));
+
+    return false;
 }
 
 /**
@@ -178,10 +207,21 @@ Blossom*
 SakuraLangInterface::getBlossom(const std::string &groupName,
                                 const std::string &itemName)
 {
+    std::map<std::string, std::map<std::string, Blossom*>>::const_iterator groupIt;
+    groupIt = m_registeredBlossoms.find(groupName);
 
+    if(groupIt != m_registeredBlossoms.end())
+    {
+        std::map<std::string, Blossom*>::const_iterator itemIt;
+        itemIt = groupIt->second.find(itemName);
+
+        if(itemIt != groupIt->second.end()) {
+            return itemIt->second;
+        }
+    }
+
+    return nullptr;
 }
-
-
 
 /**
  * @brief SakuraRoot::runProcess
