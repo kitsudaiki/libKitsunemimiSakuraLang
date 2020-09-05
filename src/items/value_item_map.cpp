@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraLang/value_item_map.h>
+#include "value_item_map.h"
 
 #include <libKitsunemimiCommon/common_items/table_item.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>

@@ -42,9 +42,8 @@
 #include <iostream>
 #include <vector>
 #include <libKitsunemimiCommon/common_items/data_items.h>
-#include <libKitsunemimiSakuraLang/sakura_items.h>
-#include <libKitsunemimiSakuraLang/value_items.h>
-#include <libKitsunemimiSakuraLang/sakura_parsing.h>
+#include <items/sakura_items.h>
+#include <sakura_parsing/sakura_parsing.h>
 
 using Kitsunemimi::DataItem;
 using Kitsunemimi::DataArray;

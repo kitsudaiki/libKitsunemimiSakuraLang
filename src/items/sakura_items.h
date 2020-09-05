@@ -26,7 +26,7 @@
 #include <vector>
 #include <string>
 
-#include <libKitsunemimiSakuraLang/value_item_map.h>
+#include <items/value_item_map.h>
 
 namespace Kitsunemimi
 {

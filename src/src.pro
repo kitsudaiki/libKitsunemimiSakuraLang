@@ -15,25 +15,64 @@ LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
 LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
 INCLUDEPATH += ../../libKitsunemimiPersistence/include
 
+LIBS += -L../../libKitsunemimiProjectNetwork/src -lKitsunemimiProjectNetwork
+LIBS += -L../../libKitsunemimiProjectNetwork/src/debug -lKitsunemimiProjectNetwork
+LIBS += -L../../libKitsunemimiProjectNetwork/src/release -lKitsunemimiProjectNetwork
+INCLUDEPATH += ../../libKitsunemimiProjectNetwork/include
+
+LIBS += -L../../libKitsunemimiNetwork/src -lKitsunemimiNetwork
+LIBS += -L../../libKitsunemimiNetwork/src/debug -lKitsunemimiNetwork
+LIBS += -L../../libKitsunemimiNetwork/src/release -lKitsunemimiNetwork
+INCLUDEPATH += ../../libKitsunemimiNetwork/include
+
+LIBS += -L../../libKitsunemimiJinja2/src -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/debug -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/release -lKitsunemimiJinja2
+INCLUDEPATH += ../../libKitsunemimiJinja2/include
+
+LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
+INCLUDEPATH += ../../libKitsunemimiJson/include
+
 LIBS +=  -lboost_filesystem -lboost_system
 
 INCLUDEPATH += $$PWD \
             $$PWD/../include
 
-SOURCES += \
-    sakura_parsing/sakura_parser_interface.cpp \
-    sakura_parsing.cpp \
-    sakura_items.cpp \
-    value_item_map.cpp \
-    sakura_garden.cpp
 
 HEADERS += \
+    items/item_methods.h \
+    items/sakura_garden.h \
+    items/sakura_items.h \
+    items/value_item_functions.h \
+    items/value_item_map.h \
+    items/value_items.h \
     sakura_parsing/sakura_parser_interface.h \
-    ../include/libKitsunemimiSakuraLang/sakura_parsing.h \
-    ../include/libKitsunemimiSakuraLang/sakura_items.h \
-    ../include/libKitsunemimiSakuraLang/value_items.h \
-    ../include/libKitsunemimiSakuraLang/value_item_map.h \
-    ../include/libKitsunemimiSakuraLang/sakura_garden.h
+    sakura_parsing/sakura_parsing.h \
+    sakura_thread.h \
+    sakura_tree_callbacks.h \
+    subtree_queue.h \
+    thread_pool.h \
+    validator.h \
+    ../include/libKitsunemimiSakuraLang/blossom.h \
+    ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h
+
+SOURCES += \
+    items/item_methods.cpp \
+    items/sakura_garden.cpp \
+    items/sakura_items.cpp \
+    items/value_item_functions.cpp \
+    items/value_item_map.cpp \
+    sakura_parsing/sakura_parser_interface.cpp \
+    sakura_parsing/sakura_parsing.cpp \
+    blossom.cpp \
+    sakura_thread.cpp \
+    subtree_queue.cpp \
+    thread_pool.cpp \
+    validator.cpp \
+    sakura_lang_interface.cpp
+
 
 FLEXSOURCES = grammar/sakura_lexer.l
 BISONSOURCES = grammar/sakura_parser.y
