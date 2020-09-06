@@ -42,6 +42,8 @@ public:
     void growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage);
 
+    virtual Blossom* createNewInstance() = 0;
+
     bool m_hasOutput = false;
     DataMap m_requiredKeys;
 

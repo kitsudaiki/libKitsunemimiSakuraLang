@@ -216,7 +216,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
 
     // get and prcess the requested blossom
     Blossom* blossom = m_interface->getBlossom(blossomItem.blossomGroupType,
-                                               blossomItem.blossomType);
+                                               blossomItem.blossomType)->createNewInstance();
     if(blossom == nullptr)
     {
         errorMessage = createError(blossomItem, "processing", "unknow blossom-type");
@@ -228,6 +228,8 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     blossomItem.blossomPath = filePath;
 
     blossom->growBlossom(blossomItem, errorMessage);
+
+    delete blossom;
 
     if(blossomItem.success == false) {
         return false;
