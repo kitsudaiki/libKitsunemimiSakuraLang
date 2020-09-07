@@ -81,7 +81,6 @@ YY_DECL;
     END  0  "end of file"
     BOOL_TRUE  "true"
     BOOL_FALSE "false"
-    SEED  "seed"
     TREE  "tree"
     SUBTREE  "subtree"
     PARALLEL_FOR "parallel_for"
@@ -89,7 +88,6 @@ YY_DECL;
     IF  "if"
     ELSE  "else"
     FOR  "for"
-    SEED_INIT "seed_init"
     ASSIGN  ":"
     SEMICOLON  ";"
     DOT  "."
@@ -128,9 +126,6 @@ YY_DECL;
 %type  <std::vector<ValueItem>*>  value_item_list
 %type  <std::string> regiterable_identifier;
 
-%type  <SeedPart*> seed_part
-%type  <std::vector<SeedPart*>*> seed_part_set
-
 %type  <BlossomGroupItem*> blossom_group
 %type  <SequentiellPart*> blossom_group_set
 %type  <BlossomItem*> blossom
@@ -150,8 +145,6 @@ YY_DECL;
 %type  <ParallelPart*> parallel
 
 %type  <TreeItem*> tree
-%type  <SeedInitItem*> seed
-%type  <SeedTriggerItem*> seed_fork
 %type  <SubtreeItem*> subtree_fork
 
 %type  <DataItem*> json_abstract
@@ -217,18 +210,6 @@ blossom_group_set:
         $$ = $1;
     }
 |
-    blossom_group_set seed_fork
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
-    blossom_group_set seed
-    {
-        $1->childs.push_back($2);
-        $$ = $1;
-    }
-|
     if_condition
     {
         $$ = new SequentiellPart();
@@ -259,19 +240,7 @@ blossom_group_set:
         $$->childs.push_back($1);
     }
 |
-    seed_fork
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
     subtree_fork
-    {
-        $$ = new SequentiellPart();
-        $$->childs.push_back($1);
-    }
-|
-    seed
     {
         $$ = new SequentiellPart();
         $$->childs.push_back($1);
@@ -394,36 +363,6 @@ parallel:
     {
         $$ = new ParallelPart();
         $$->childs = dynamic_cast<SequentiellPart*>($5);
-    }
-
-seed:
-    "seed_init" "{" seed_part_set "}"
-    {
-        $$ = new SeedInitItem();
-        $$->childs = *$3;
-        delete $3;
-    }
-
-seed_part_set:
-    seed_part_set seed_part
-    {
-        $1->push_back($2);
-        $$ = $1;
-    }
-|
-    seed_part
-    {
-        $$ = new std::vector<SeedPart*>();
-        $$->push_back($1);
-    }
-
-seed_part:
-    "identifier" ":" item_set
-    {
-        $$ = new SeedPart();
-        $$->id = $1;
-        $$->values = *$3;
-        delete $3;
     }
 
 blossom_group:
@@ -651,16 +590,6 @@ subtree_fork:
         $$->values = *$5;
         driver.m_sakuraParsing->addFileToQueue($3);
         delete $5;
-    }
-
-seed_fork:
-    "seed" "(" name_item "," name_item ")" item_set
-    {
-        $$ = new SeedTriggerItem();
-        $$->tag = $3;
-        $$->treeId = $5;
-        $$->values = *$7;
-        delete $7;
     }
 
 value_item_list:

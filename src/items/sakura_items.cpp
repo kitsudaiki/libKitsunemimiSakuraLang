@@ -123,64 +123,6 @@ BlossomGroupItem::copy()
 }
 
 //===================================================================
-// SeedPart
-//===================================================================
-SeedPart::SeedPart()
-{
-    type = SEED_PART;
-}
-
-SeedPart::~SeedPart()
-{
-}
-
-SakuraItem*
-SeedPart::copy()
-{
-    SeedPart* newItem = new SeedPart();
-
-    newItem->type = type;
-    newItem->values = values;
-
-    newItem->id = id;
-
-    return newItem;
-}
-
-//===================================================================
-// SeedInitItem
-//===================================================================
-SeedInitItem::SeedInitItem()
-{
-    type = SEED_ITEM;
-}
-
-SeedInitItem::~SeedInitItem()
-{
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        delete childs[i];
-    }
-}
-
-SakuraItem*
-SeedInitItem::copy()
-{
-    SeedInitItem* newItem = new SeedInitItem();
-
-    newItem->type = type;
-    newItem->values = values;
-
-    newItem->id = id;
-    for(uint32_t i = 0; i < childs.size(); i++)
-    {
-        newItem->childs.push_back(dynamic_cast<SeedPart*>(childs.at(i)->copy()));
-    }
-
-    return newItem;
-}
-
-//===================================================================
 // TreeItem
 //===================================================================
 TreeItem::TreeItem()
@@ -230,30 +172,6 @@ SubtreeItem::copy()
     newItem->values = values;
 
     newItem->nameOrPath = nameOrPath;
-
-    return newItem;
-}
-
-//===================================================================
-// SeedTriggerItem
-//===================================================================
-SeedTriggerItem::SeedTriggerItem()
-{
-    type = SEED_TRIGGER_ITEM;
-}
-
-SeedTriggerItem::~SeedTriggerItem() {}
-
-SakuraItem*
-SeedTriggerItem::copy()
-{
-    SeedTriggerItem* newItem = new SeedTriggerItem();
-
-    newItem->type = type;
-    newItem->values = values;
-
-    newItem->treeId = treeId;
-    newItem->tag = tag;
 
     return newItem;
 }

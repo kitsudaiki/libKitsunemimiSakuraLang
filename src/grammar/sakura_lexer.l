@@ -62,14 +62,12 @@ blank [ \t]
 [\n]            { sakuraloc.lines(1); sakuraloc.step(); }
 "true"          return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TRUE (sakuraloc);
 "false"         return Kitsunemimi::Sakura::SakuraParser::make_BOOL_FALSE (sakuraloc);
-"seed"          return Kitsunemimi::Sakura::SakuraParser::make_SEED (sakuraloc);
 "subtree"       return Kitsunemimi::Sakura::SakuraParser::make_SUBTREE (sakuraloc);
 "parallel_for"  return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL_FOR (sakuraloc);
 "parallel"      return Kitsunemimi::Sakura::SakuraParser::make_PARALLEL (sakuraloc);
 "if"            return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
 "else"          return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
 "for"           return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
-"seed_init"     return Kitsunemimi::Sakura::SakuraParser::make_SEED_INIT (sakuraloc);
 "->"            return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "=="            return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
 "!="            return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);

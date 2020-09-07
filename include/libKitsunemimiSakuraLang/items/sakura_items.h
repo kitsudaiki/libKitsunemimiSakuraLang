@@ -50,8 +50,6 @@ public:
         BLOSSOM_GROUP_ITEM = 2,
         TREE_ITEM = 4,
         SUBTREE_ITEM = 5,
-        SEED_ITEM = 6,
-        SEED_TRIGGER_ITEM = 7,
         SEQUENTIELL_ITEM = 8,
         PARALLEL_ITEM = 9,
         IF_ITEM = 10,
@@ -112,47 +110,6 @@ public:
     std::vector<std::string> nameHirarchie;
 
     std::vector<BlossomItem*> blossoms;
-};
-
-//===================================================================
-// SeedPart
-//===================================================================
-class SeedPart : public SakuraItem
-{
-public:
-    SeedPart();
-    ~SeedPart();
-    SakuraItem* copy();
-
-    std::string id = "";
-};
-
-//===================================================================
-// SeedTriggerItem
-//===================================================================
-class SeedTriggerItem : public SakuraItem
-{
-public:
-    SeedTriggerItem();
-    ~SeedTriggerItem();
-    SakuraItem* copy();
-
-    std::string treeId = "";
-    std::string tag = "";
-};
-
-//===================================================================
-// SeedInitItem
-//===================================================================
-class SeedInitItem : public SakuraItem
-{
-public:
-    SeedInitItem();
-    ~SeedInitItem();
-    SakuraItem* copy();
-
-    std::string id = "";
-    std::vector<SeedPart*> childs;
 };
 
 //===================================================================

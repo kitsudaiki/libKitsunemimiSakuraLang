@@ -161,16 +161,6 @@ checkSakuraItem(SakuraLangInterface* interface,
         return checkSakuraItem(interface, parallel->childs, filePath, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
-    if(sakuraItem->getType() == SakuraItem::SEED_ITEM)
-    {
-        return true;
-    }
-    //----------------------------------------------------------------------------------------------
-    if(sakuraItem->getType() == SakuraItem::SEED_TRIGGER_ITEM)
-    {
-        return true;
-    }
-    //----------------------------------------------------------------------------------------------
     // TODO: error-message
 
     return false;
