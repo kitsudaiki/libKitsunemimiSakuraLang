@@ -127,7 +127,9 @@ SakuraThread::processSakuraItem(SakuraItem* sakuraItem,
     {
         TreeItem* subtreeItem = dynamic_cast<TreeItem*>(sakuraItem);
         m_hierarchy.push_back("TREE: " + subtreeItem->id);
-        return processTree(subtreeItem, errorMessage);
+        const bool result = processTree(subtreeItem, errorMessage);
+        m_hierarchy.pop_back();
+        return result;
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::SUBTREE_ITEM)
