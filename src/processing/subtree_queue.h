@@ -125,21 +125,21 @@ public:
     void addSubtreeObject(SubtreeObject* newObject);
 
     bool spawnParallelSubtrees(const std::vector<SakuraItem *> &childs,
-                               const uint64_t startPos,
-                               const uint64_t endPos,
                                const std::string &filePath,
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,
-                               std::string &errorMessage);
+                               std::string &errorMessage,
+                               const uint64_t endPos = 1,
+                               const uint64_t startPos = 0);
     bool spawnParallelSubtreesLoop(SakuraItem* subtree,
-                                   const uint64_t startPos,
-                                   const uint64_t endPos,
                                    const std::string &filePath,
                                    const std::vector<std::string> &hierarchy,
                                    DataMap &parentValues,
                                    const std::string &tempVarName,
                                    DataArray* array,
-                                   std::string &errorMessage);
+                                   std::string &errorMessage,
+                                   uint64_t endPos,
+                                   const uint64_t startPos = 0);
 
 
 

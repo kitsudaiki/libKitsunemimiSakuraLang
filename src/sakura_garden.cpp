@@ -37,9 +37,9 @@ namespace Sakura
 /**
  * @brief SakuraGarden::SakuraGarden
  */
-SakuraGarden::SakuraGarden()
+SakuraGarden::SakuraGarden(const bool enableDebug)
 {
-    m_parser = new SakuraParsing(false);
+    m_parser = new SakuraParsing(enableDebug);
 }
 
 /**
@@ -47,7 +47,7 @@ SakuraGarden::SakuraGarden()
  */
 SakuraGarden::~SakuraGarden()
 {
-    // TODO
+    delete m_parser;
 }
 
 /**

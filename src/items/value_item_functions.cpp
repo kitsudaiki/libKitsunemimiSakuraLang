@@ -39,6 +39,7 @@ namespace Sakura
  *
  * @param item map- or array-item
  * @param key key in map or position in array of the requested object
+ * @param errorMessage error-message for output
  *
  * @return requested value, if found, else nullptr
  */

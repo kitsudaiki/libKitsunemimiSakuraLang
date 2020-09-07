@@ -309,8 +309,6 @@ fillInputValueItemMap(ValueItemMap &items,
                       DataMap &insertValues,
                       std::string &errorMessage)
 {
-    Result result;
-
     std::map<std::string, ValueItem>::iterator it;
     for(it = items.m_valueMap.begin();
         it != items.m_valueMap.end();

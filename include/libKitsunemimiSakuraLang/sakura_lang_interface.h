@@ -50,14 +50,14 @@ class BlossomItem;
 class SakuraLangInterface
 {
 public:
-    SakuraLangInterface();
+    SakuraLangInterface(const bool enableDebug = false);
     ~SakuraLangInterface();
 
     // processing
     bool processFiles(const std::string &inputPath,
                       const DataMap &initialValues,
-                      const bool enableDebug,
-                      const bool dryRun);
+                      const bool dryRun,
+                      std::string &errorMessage);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,

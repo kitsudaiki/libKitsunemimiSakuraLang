@@ -38,15 +38,23 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-SakuraLangInterface::SakuraLangInterface()
+/**
+ * @brief constructor
+ *
+ * @param enableDebug set to true to enable the debug-output of the parser
+ */
+SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
 {
-    garden = new SakuraGarden();
+    garden = new SakuraGarden(enableDebug);
     m_queue = new SubtreeQueue();
     jinja2Converter = new Kitsunemimi::Jinja2::Jinja2Converter();
     // TODO: make number of threads configurable
     m_threadPoos = new ThreadPool(6, this);
 }
 
+/**
+ * @brief destructor
+ */
 SakuraLangInterface::~SakuraLangInterface()
 {
     delete garden;
@@ -57,18 +65,27 @@ SakuraLangInterface::~SakuraLangInterface()
 
 /**
  * @brief SakuraLangInterface::processFiles
- * @param inputPath
- * @param initialValues
- * @param dryRun
- * @return
+ *
+ * @param inputPath path to the initial sakura-file or directory with the root.sakura file
+ * @param initialValues map-item with initial values to override the items of the initial tree-item
+ * @param dryRun set to true to only parse and check the files, without executing them
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::processFiles(const std::string &inputPath,
                                   const DataMap &initialValues,
-                                  const bool enableDebug,
-                                  const bool dryRun)
+                                  const bool dryRun,
+                                  std::string &errorMessage)
 {
-    std::string errorMessage = "";
+    // precheck input
+    if(bfs::is_regular_file(inputPath) == false
+            && bfs::is_directory(inputPath) == false)
+    {
+        errorMessage = "Not a regular file or directory as input-path " + inputPath;
+        return false;
+    }
 
     // set default-file in case that a directory instead of a file was selected
     std::string treeFile = inputPath;
@@ -79,24 +96,19 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     // parse all files
     if(garden->addTree(treeFile, errorMessage) == false)
     {
-        LOG_ERROR("failed to add trees\n    " + errorMessage);
+        errorMessage = "failed to add trees\n    " + errorMessage;
         return false;
     }
 
-    SakuraItem* tree = nullptr;
+    // get relative path from the input-path
+    const bfs::path parent = bfs::path(treeFile).parent_path();
+    const std::string relPath = bfs::relative(treeFile, parent).string();
 
-    // get initial sakura-file
-    if(bfs::is_regular_file(treeFile))
-    {
-        const bfs::path parent = bfs::path(treeFile).parent_path();
-        const std::string relPath = bfs::relative(treeFile, parent).string();
-
-        tree = garden->getTree(relPath, parent.string());
-    }
-
+    // get initial tree-item
+    SakuraItem* tree = garden->getTree(relPath, parent.string());
     if(tree == nullptr)
     {
-        LOG_ERROR("No tree found for the input-path " + treeFile);
+        errorMessage = "No tree found for the input-path " + treeFile;
         return false;
     }
 
@@ -104,47 +116,39 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     const std::vector<std::string> failedInput = checkInput(tree->values, initialValues);
     if(failedInput.size() > 0)
     {
-        std::string errorMessage = "Following input-values are not valid for the initial tress:\n";
-        for(const std::string& item : failedInput)
-        {
+        errorMessage = "Following input-values are not valid for the initial tress:\n";
+
+        for(const std::string& item : failedInput) {
             errorMessage += "    " + item + "\n";
         }
-        LOG_ERROR(errorMessage);
+
         return false;
     }
 
     // validate parsed blossoms
-    errorMessage = "";
-    if(checkAllItems(this, errorMessage) == false)
-    {
-        LOG_ERROR("\n" + errorMessage);
+    if(checkAllItems(this, errorMessage) == false) {
         return false;
     }
 
     // in case of a dry-run, cancel here before executing the scripts
-    if(dryRun)
-    {
-        LOG_INFO("dry-run successfully finished", GREEN_COLOR);
+    if(dryRun) {
         return true;
     }
 
     // process sakura-file with initial values
-    errorMessage = "";
-    if(runProcess(tree, initialValues, errorMessage) == false)
-    {
-        LOG_ERROR("\n" + errorMessage);
+    if(runProcess(tree, initialValues, errorMessage) == false) {
         return false;
     }
-
-    LOG_INFO("finish", GREEN_COLOR);
 
     return true;
 }
 
 /**
  * @brief SakuraLangInterface::doesBlossomExist
+ *
  * @param groupName
  * @param itemName
+ *
  * @return
  */
 bool
@@ -169,9 +173,11 @@ SakuraLangInterface::doesBlossomExist(const std::string &groupName,
 
 /**
  * @brief SakuraLangInterface::addBlossom
+ *
  * @param groupName
  * @param itemName
  * @param newBlossom
+ *
  * @return
  */
 bool
@@ -200,8 +206,10 @@ SakuraLangInterface::addBlossom(const std::string &groupName,
 
 /**
  * @brief SakuraLangInterface::getBlossom
+ *
  * @param groupName
  * @param itemName
+ *
  * @return
  */
 Blossom*
@@ -225,7 +233,12 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
 }
 
 /**
- * @brief SakuraRoot::runProcess
+ * @brief SakuraLangInterface::runProcess
+ *
+ * @param item
+ * @param initialValues
+ * @param errorMessage reference for error-message
+ *
  * @return
  */
 bool
@@ -238,8 +251,6 @@ SakuraLangInterface::runProcess(SakuraItem* item,
     std::vector<std::string> hierarchy;
 
     const bool result = m_queue->spawnParallelSubtrees(childs,
-                                                       0,
-                                                       1,
                                                        "",
                                                        hierarchy,
                                                        initialValues,
@@ -247,10 +258,10 @@ SakuraLangInterface::runProcess(SakuraItem* item,
     return result;
 }
 
-
 /**
- * @brief SakuraRoot::printOutput
- * @param blossomItem
+ * @brief convert blossom-group-item into an output-message
+ *
+ * @param blossomItem blossom-group-tem to generate the output
  */
 void
 SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
@@ -260,8 +271,7 @@ SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
     // print call-hierarchy
     for(uint32_t i = 0; i < blossomGroupItem.nameHirarchie.size(); i++)
     {
-        for(uint32_t j = 0; j < i; j++)
-        {
+        for(uint32_t j = 0; j < i; j++) {
             output += "   ";
         }
         output += blossomGroupItem.nameHirarchie.at(i) + "\n";
@@ -271,17 +281,14 @@ SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
 }
 
 /**
- * @brief SakuraRoot::printOutput
- * @param blossomItem
+ * @brief convert blossom-item into an output-message
+ *
+ * @param blossomItem blossom-item to generate the output
  */
 void
 SakuraLangInterface::printOutput(const BlossomItem &blossomItem)
 {
-    const std::string output = convertBlossomOutput(blossomItem);
-
-    // only for prototyping hardcoded
-    //m_networking->sendBlossomOuput("127.0.0.1", "", output);
-    printOutput(output);
+    printOutput(convertBlossomOutput(blossomItem));
 }
 
 /**
@@ -292,15 +299,16 @@ SakuraLangInterface::printOutput(const BlossomItem &blossomItem)
 void
 SakuraLangInterface::printOutput(const std::string &output)
 {
-    // TODO: use logger instead
     m_mutex.lock();
 
     // get width of the termial to draw the separator-line
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
     uint32_t terminalWidth = size.ws_col;
-    if(terminalWidth > 500) {
-        terminalWidth = 500;
+
+    // limit the length of the line to avoid problems in the gitlab-ci-runner
+    if(terminalWidth > 300) {
+        terminalWidth = 300;
     }
 
     // draw separator line

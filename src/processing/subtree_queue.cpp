@@ -62,14 +62,14 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  */
 bool
 SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
-                                        const uint64_t startPos,
-                                        const uint64_t endPos,
                                         const std::string &filePath,
                                         const std::vector<std::string> &hierarchy,
                                         DataMap &parentValues,
                                         const std::string &tempVarName,
                                         DataArray* array,
-                                        std::string &errorMessage)
+                                        std::string &errorMessage,
+                                        uint64_t endPos,
+                                        const uint64_t startPos)
 {
     // create and initialize one counter-instance for all new subtrees
     ActiveCounter* activeCounter = new ActiveCounter();
@@ -135,12 +135,12 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
  */
 bool
 SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
-                                    const uint64_t startPos,
-                                    const uint64_t endPos,
                                     const std::string &filePath,
                                     const std::vector<std::string> &hierarchy,
                                     const DataMap &parentValues,
-                                    std::string &errorMessage)
+                                    std::string &errorMessage,
+                                    const uint64_t endPos,
+                                    const uint64_t startPos)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 

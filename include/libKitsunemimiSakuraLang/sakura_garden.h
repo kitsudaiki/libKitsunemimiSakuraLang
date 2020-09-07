@@ -45,7 +45,7 @@ class SakuraParsing;
 class SakuraGarden
 {
 public:
-    SakuraGarden();
+    SakuraGarden(const bool enableDebug);
     ~SakuraGarden();
 
     const bfs::path getRelativePath(const bfs::path &blossomFilePath,
@@ -65,6 +65,7 @@ public:
     DataBuffer* getFile(const bfs::path &relativePath);
 
 
+    // object-handling
     std::string rootPath = "";
     std::map<std::string, TreeItem*> trees;
     std::map<std::string, TreeItem*> resources;

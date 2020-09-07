@@ -40,13 +40,6 @@ namespace Sakura
 
 using Kitsunemimi::DataMap;
 
-struct Result
-{
-    bool success = false;
-    std::string errorMessage = "";
-    DataItem* item = nullptr;
-};
-
 bool getProcessedItem(ValueItem &valueItem,
                       DataMap &insertValues,
                       std::string &errorMessage);
