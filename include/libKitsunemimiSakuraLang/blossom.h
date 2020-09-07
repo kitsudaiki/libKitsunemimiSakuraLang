@@ -42,10 +42,10 @@ public:
     void growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage);
 
-    virtual Blossom* createNewInstance() = 0;
+    bool validateInput(BlossomItem &blossomItem,
+                       std::string &errorMessage);
 
-    bool m_hasOutput = false;
-    DataMap m_requiredKeys;
+    virtual Blossom* createNewInstance() = 0;
 
 protected:
     virtual void initBlossom(BlossomItem &blossomItem) = 0;
@@ -53,6 +53,9 @@ protected:
     virtual void runTask(BlossomItem &blossomItem) = 0;
     virtual void postCheck(BlossomItem &blossomItem) = 0;
     virtual void closeBlossom(BlossomItem &blossomItem) = 0;
+
+    bool m_hasOutput = false;
+    DataMap m_requiredKeys;
 };
 
 }
