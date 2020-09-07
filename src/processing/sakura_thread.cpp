@@ -22,7 +22,7 @@
 
 #include "sakura_thread.h"
 
-#include <libKitsunemimiSakuraLang/items/item_methods.h>
+#include <items/item_methods.h>
 #include <libKitsunemimiSakuraLang/sakura_garden.h>
 
 #include <processing/subtree_queue.h>

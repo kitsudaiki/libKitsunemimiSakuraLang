@@ -22,9 +22,10 @@
 
 #include "validator.h"
 
-#include <libKitsunemimiSakuraLang/blossom.h>
-#include <libKitsunemimiSakuraLang/items/item_methods.h>
+#include <items/item_methods.h>
+
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
+#include <libKitsunemimiSakuraLang/blossom.h>
 
 namespace Kitsunemimi
 {
