@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SUBTREE_QUEUE_H
-#define SUBTREE_QUEUE_H
+#ifndef SAKURA_LANG_SUBTREE_QUEUE_H
+#define SAKURA_LANG_SUBTREE_QUEUE_H
 
 #include <thread>
 #include <chrono>
@@ -157,4 +157,4 @@ private:
 }
 }
 
-#endif // SUBTREE_QUEUE_H
+#endif // SAKURA_LANG_SUBTREE_QUEUE_H

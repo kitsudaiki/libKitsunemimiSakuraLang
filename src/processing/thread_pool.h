@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#ifndef SAKURA_LANG_THREAD_POOL_H
+#define SAKURA_LANG_THREAD_POOL_H
 
 #include <vector>
 #include <libKitsunemimiCommon/threading/thread.h>
@@ -50,4 +50,4 @@ private:
 }
 }
 
-#endif // THREAD_POOL_H
+#endif // SAKURA_LANG_THREAD_POOL_H

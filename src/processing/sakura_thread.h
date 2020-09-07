@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_THREAD_H
-#define SAKURA_THREAD_H
+#ifndef SAKURA_LANG_THREAD_H
+#define SAKURA_LANG_THREAD_H
 
 #include <thread>
 #include <string>
@@ -104,4 +104,4 @@ private:
 }
 }
 
-#endif // SAKURA_THREAD_H
+#endif // SAKURA_LANG_THREAD_H

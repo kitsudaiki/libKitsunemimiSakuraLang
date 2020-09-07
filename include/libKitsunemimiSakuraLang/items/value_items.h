@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_VALUE_ITEMS_H
-#define SAKURA_VALUE_ITEMS_H
+#ifndef SAKURA_LANG_VALUE_ITEMS_H
+#define SAKURA_LANG_VALUE_ITEMS_H
 
 #include <string>
 #include <vector>
@@ -114,4 +114,4 @@ struct ValueItem
 }
 }
 
-#endif // SAKURA_VALUE_ITEMS_H
+#endif // SAKURA_LANG_VALUE_ITEMS_H

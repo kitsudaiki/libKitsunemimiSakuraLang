@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_PARSER_INTERFACE_H
-#define SAKURA_PARSER_INTERFACE_H
+#ifndef SAKURA_LANG_PARSER_INTERFACE_H
+#define SAKURA_LANG_PARSER_INTERFACE_H
 
 #include <vector>
 #include <string>
@@ -77,4 +77,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsunemimi
 
-#endif // SAKURA_PARSER_INTERFACE_H
+#endif // SAKURA_LANG_PARSER_INTERFACE_H

@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_ITEMS_H
-#define SAKURA_ITEMS_H
+#ifndef SAKURA_LANG_SAKURA_ITEMS_H
+#define SAKURA_LANG_SAKURA_ITEMS_H
 
 #include <vector>
 #include <string>
@@ -239,4 +239,4 @@ public:
 }
 }
 
-#endif // SAKURA_ITEMS_H
+#endif // SAKURA_LANG_SAKURA_ITEMS_H

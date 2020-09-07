@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_PARSING_H
-#define SAKURA_PARSING_H
+#ifndef SAKURA_LANG_PARSING_H
+#define SAKURA_LANG_PARSING_H
 
 #include <string>
 #include <vector>
@@ -102,4 +102,4 @@ private:
 }  // namespace Sakura
 }  // namespace Kitsunemimi
 
-#endif // SAKURA_PARSING_H
+#endif // SAKURA_LANG_PARSING_H

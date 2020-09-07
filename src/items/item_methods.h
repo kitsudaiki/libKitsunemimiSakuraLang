@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_ITEM_METHODS_H
-#define SAKURA_ITEM_METHODS_H
+#ifndef SAKURA_LANG_ITEM_METHODS_H
+#define SAKURA_LANG_ITEM_METHODS_H
 
 #include <vector>
 #include <string>
@@ -111,4 +111,4 @@ const std::string createError(const std::string &errorLocation,
 }
 }
 
-#endif // SAKURA_ITEM_METHODS_H
+#endif // SAKURA_LANG_ITEM_METHODS_H

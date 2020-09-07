@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_GARDEN_H
-#define SAKURA_GARDEN_H
+#ifndef SAKURA_LANG_GARDEN_H
+#define SAKURA_LANG_GARDEN_H
 
 #include <vector>
 #include <string>
@@ -80,4 +80,4 @@ private:
 }
 }
 
-#endif // SAKURA_GARDEN_H
+#endif // SAKURA_LANG_GARDEN_H

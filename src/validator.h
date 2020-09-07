@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef VALIDATOR_H
-#define VALIDATOR_H
+#ifndef SAKURA_LANG_VALIDATOR_H
+#define SAKURA_LANG_VALIDATOR_H
 
 #include <string>
 #include <map>
@@ -50,4 +50,4 @@ bool checkAllItems(SakuraLangInterface *interface,
 }
 }
 
-#endif // VALIDATOR_H
+#endif // SAKURA_LANG_VALIDATOR_H

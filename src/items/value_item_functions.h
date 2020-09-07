@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_VALUE_ITEM_FUNCTIONS_H
-#define SAKURA_VALUE_ITEM_FUNCTIONS_H
+#ifndef SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
+#define SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
 
 #include <string>
 
@@ -47,4 +47,4 @@ DataItem* parseJson(DataValue* intput, std::string &errorMessage);
 }
 }
 
-#endif // SAKURA_VALUE_ITEM_FUNCTIONS_H
+#endif // SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
