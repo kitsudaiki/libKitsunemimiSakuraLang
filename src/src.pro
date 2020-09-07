@@ -32,20 +32,20 @@ INCLUDEPATH += $$PWD \
 
 
 HEADERS += \
-    ../include/libKitsunemimiSakuraLang/items/item_methods.h \
     ../include/libKitsunemimiSakuraLang/sakura_garden.h \
     ../include/libKitsunemimiSakuraLang/items/sakura_items.h \
-    ../include/libKitsunemimiSakuraLang/items/value_item_functions.h \
     ../include/libKitsunemimiSakuraLang/items/value_item_map.h \
     ../include/libKitsunemimiSakuraLang/items/value_items.h \
+    ../include/libKitsunemimiSakuraLang/blossom.h \
+    ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h \
+    items/item_methods.h \
+    items/value_item_functions.h \
     parsing/sakura_parser_interface.h \
     parsing/sakura_parsing.h \
     processing/sakura_thread.h \
     processing/subtree_queue.h \
     processing/thread_pool.h \
-    validator.h \
-    ../include/libKitsunemimiSakuraLang/blossom.h \
-    ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h
+    validator.h
 
 SOURCES += \
     items/item_methods.cpp \

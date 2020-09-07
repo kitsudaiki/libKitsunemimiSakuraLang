@@ -71,10 +71,6 @@ private:
     bool processSubtree(SubtreeItem* subtreeItem,
                         const std::string &filePath,
                         std::string &errorMessage);
-    bool processSeedInit(SeedInitItem* seedItem,
-                         const std::string &filePath, std::string &);
-    bool processSeedTrigger(SeedTriggerItem* seedItem,
-                            std::string &errorMessage);
     bool processIf(IfBranching* ifCondition,
                    const std::string &filePath,
                    std::string &errorMessage);

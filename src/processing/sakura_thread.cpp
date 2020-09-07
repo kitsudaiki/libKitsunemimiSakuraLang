@@ -22,7 +22,7 @@
 
 #include "sakura_thread.h"
 
-#include <libKitsunemimiSakuraLang/items/item_methods.h>
+#include <items/item_methods.h>
 #include <libKitsunemimiSakuraLang/sakura_garden.h>
 
 #include <processing/subtree_queue.h>
@@ -216,7 +216,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
 
     // get and prcess the requested blossom
     Blossom* blossom = m_interface->getBlossom(blossomItem.blossomGroupType,
-                                               blossomItem.blossomType);
+                                               blossomItem.blossomType)->createNewInstance();
     if(blossom == nullptr)
     {
         errorMessage = createError(blossomItem, "processing", "unknow blossom-type");
@@ -228,6 +228,8 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     blossomItem.blossomPath = filePath;
 
     blossom->growBlossom(blossomItem, errorMessage);
+
+    delete blossom;
 
     if(blossomItem.success == false) {
         return false;
@@ -383,155 +385,6 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
 
     return ret;
 }
-
-/**
- * @brief process a seed-init-item
- *
- * @param seedItem seed-init object, which should be processed
- *
- * @return true if successful, else false
- */
-/**
-bool
-SakuraThread::processSeedInit(SeedInitItem *seedItem,
-                              const std::string &filePath,
-                              std::string &)
-{
-    LOG_DEBUG("processSeedInit");
-
-    // start server
-    if(SakuraRoot::m_networking->createServer(SakuraRoot::m_serverPort) == false)
-    {
-        LOG_ERROR("failed to create server on port " + std::to_string(SakuraRoot::m_serverPort));
-        return false;
-    }
-
-    // get predefined provisioning tree
-    TreeItem* provisioningTree = SakuraRoot::m_currentGarden->getRessource("sakura_provisioning");
-    assert(provisioningTree != nullptr);
-
-    // prepare values for provisioning subtree
-    DataMap values;
-    values.insert("executable_path", new DataValue(SakuraRoot::m_executablePath), true);
-    values.insert("server_port", new DataValue(SakuraRoot::m_serverPort), true);
-    values.insert("server_ip_address", new DataValue(SakuraRoot::m_serverAddress), true);
-
-    // create and initialize one counter-instance for all new subtrees
-    SubtreeQueue::ActiveCounter* activeCounter = new SubtreeQueue::ActiveCounter();
-    activeCounter->shouldCount = static_cast<uint32_t>(seedItem->childs.size());
-    std::vector<SubtreeQueue::SubtreeObject*> spawnedObjects;
-
-    // iterate of all hosts, which are defined within the seed-file
-    for(SeedPart* part : seedItem->childs)
-    {
-        std::vector<std::string> tags;
-
-        // get and convert tags inside the part
-        DataArray* unconvertedTags = dynamic_cast<DataArray*>(part->values.get("tags"));
-        if(unconvertedTags != nullptr)
-        {
-            for(uint32_t i = 0; i < unconvertedTags->size(); i++) {
-                tags.push_back(unconvertedTags->get(i)->toString());
-            }
-        }
-
-        // set host specific values
-        values.insert("target_path", part->values.get("target_path"), true);
-        values.insert("client_ip_address", part->values.get("ip_address"), true);
-        values.insert("ssh_user", part->values.get("ssh_user"), true);
-        values.insert("ssh_port", part->values.get("ssh_port"), true);
-        values.insert("ssh_key_path", part->values.get("ssh_key_path"), true);
-
-        // register host based on the information
-        SakuraRoot::m_networking->registerHost(part->id, tags);
-
-        // provision seed in separate thread
-        SubtreeQueue::SubtreeObject* object = new SubtreeQueue::SubtreeObject();
-        object->subtree = provisioningTree->copy();
-        object->items = values;
-        object->hirarchy = m_hierarchy;
-        object->activeCounter = activeCounter;
-        object->filePath = filePath;
-
-        m_queue->addSubtreeObject(object);
-        spawnedObjects.push_back(object);
-    }
-
-    // wait until the created subtree was fully processed by the worker-threads
-    while(activeCounter->isEqual() == false) {
-        std::this_thread::sleep_for(chronoMilliSec(10));
-    }
-
-    // wait until all hosts ready or until timeout after 10 seconds
-    uint32_t maxTries = 100;
-    // TODO: make timeout configurable
-    while(maxTries > 0)
-    {
-        if(SakuraRoot::m_networking->areAllHostsReady() == true) {
-            break;
-        }
-
-        usleep(100000);
-        maxTries--;
-    }
-
-    // if timeout then fail
-    if(maxTries == 0)
-    {
-        // TODO: better error
-        LOG_ERROR("TIMEOUT");
-        return false;
-    }
-
-    // free allocated resources
-    for(SubtreeQueue::SubtreeObject* obj : spawnedObjects)
-    {
-        delete obj->subtree;
-        delete obj;
-    }
-    delete activeCounter;
-
-    // send all sakura-files, templates and files too all hosts, which are defined within the seed
-    SakuraRoot::m_networking->sendDataToAll(*SakuraRoot::m_currentGarden);
-
-    return true;
-}
-**/
-/**
- * @brief process a seed-trigger-item
- *
- * @param seed-trigger object, which should be processed
- *
- * @return true if successful, else false
- */
-/**
-bool
-SakuraThread::processSeedTrigger(SeedTriggerItem* seedItem,
-                                 std::string &errorMessage)
-{
-    LOG_DEBUG("processSeed");
-
-    // fill normal map
-    const bool fillResult = fillInputValueItemMap(seedItem->values, m_parentValues, errorMessage);
-    if(fillResult == false)
-    {
-        errorMessage = createError("seed-processing",
-                                   "error while processing blossom items:\n"
-                                   + errorMessage);
-        return false;
-    }
-
-    // prepare values
-    DataMap fullValues = m_parentValues;
-    overrideItems(fullValues, seedItem->values, ALL);
-
-    SakuraRoot::m_networking->triggerSeedByTag(seedItem->tag,
-                                               seedItem->treeId,
-                                               fullValues.toString());
-
-    return true;
-}
-**/
 
 /**
  * @brief process a if-else-condition
