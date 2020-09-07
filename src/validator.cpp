@@ -33,24 +33,26 @@ namespace Sakura
 {
 
 /**
- * @brief check if all values are set inside a blossom-item
+ * @brief check content of a blossom-item
  *
- * @param blossomItem blossom-item with the information
+ * @param interface pointer to the interface-object to get the information to check
+ * @param blossomItem blossom-item with the values, which should be validated
+ * @param errorMessage reference for error-message
  *
- * @return true, if all necessary values are set, else false
+ * @return true, if check successfull, else false
  */
 bool
 checkBlossomItem(SakuraLangInterface* interface,
                  BlossomItem &blossomItem,
                  std::string &errorMessage)
 {
-    bool result = false;
-
-    TreeItem* item = interface->m_garden->getRessource(blossomItem.blossomType);
+    // check if the object is a resource and skip check
+    TreeItem* item = interface->garden->getRessource(blossomItem.blossomType);
     if(item != nullptr) {
         return true;
     }
 
+    // get blossom by type and group-type
     Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType,
                                              blossomItem.blossomType);
     if(blossom == nullptr)
@@ -59,17 +61,18 @@ checkBlossomItem(SakuraLangInterface* interface,
         return false;
     }
 
-    result = blossom->validateInput(blossomItem, errorMessage);
-
-    return result;
+    return blossom->validateInput(blossomItem, errorMessage);
 }
 
 /**
- * @brief central method of the thread to check the current part of the execution-tree
+ * @brief check all items of a tree recursively and validate all found blossom-items
  *
- * @param sakuraItem subtree, which should be checked
+ * @param interface pointer to the interface-object to get the information to check
+ * @param sakuraItem item to check
+ * @param filePath path of the file, which will be actually checked
+ * @param errorMessage reference for error-message
  *
- * @return true if successful, else false
+ * @return true, if check successfull, else false
  */
 bool
 checkSakuraItem(SakuraLangInterface* interface,
@@ -161,27 +164,36 @@ checkSakuraItem(SakuraLangInterface* interface,
         return checkSakuraItem(interface, parallel->childs, filePath, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
-    // TODO: error-message
+
+    // This case should never appear. It can't be produced by the parser at the moment,
+    // so if this assert is called, there so something totally wrong in the implementation
+    assert(false);
 
     return false;
 }
 
 /**
- * @brief checkAllItems
- * @param garden
- * @return
+ * @brief check all blossom-items of all parsed trees
+ *
+ * @param interface pointer to the interface-object to get the information to check
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if check successfull, else false
  */
 bool
-checkAllItems(SakuraLangInterface *interface,
-              const SakuraGarden &garden,
+checkAllItems(SakuraLangInterface* interface,
               std::string &errorMessage)
 {
     std::map<std::string, TreeItem*>::const_iterator mapIt;
-    for(mapIt = garden.trees.begin();
-        mapIt != garden.trees.end();
+    for(mapIt = interface->garden->trees.begin();
+        mapIt != interface->garden->trees.end();
         mapIt++)
     {
-        if(checkSakuraItem(interface,mapIt->second, "", errorMessage) == false) {
+        if(checkSakuraItem(interface,
+                           mapIt->second,
+                           mapIt->second->relativePath,
+                           errorMessage) == false)
+        {
             return false;
         }
     }

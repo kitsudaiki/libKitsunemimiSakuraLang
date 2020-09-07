@@ -35,18 +35,9 @@ namespace Sakura
 {
 class SakuraLangInterface;
 
-bool checkOutput(SakuraLangInterface *interface,
-                 BlossomItem &blossomItem,
-                 const bool hasOutput,
-                 std::string &errorMessage);
 bool checkBlossomItem(SakuraLangInterface *interface,
                       BlossomItem &blossomItem,
                       std::string &errorMessage);
-bool checkBlossomItem(SakuraLangInterface *,
-                      BlossomItem &blossomItem,
-                      DataMap &requiredKey,
-                      std::string &errorMessages);
-
 
 bool checkSakuraItem(SakuraLangInterface *interface,
                      SakuraItem* sakuraItem,
@@ -54,7 +45,6 @@ bool checkSakuraItem(SakuraLangInterface *interface,
                      std::string &errorMessage);
 
 bool checkAllItems(SakuraLangInterface *interface,
-                   const SakuraGarden &garden,
                    std::string &errorMessage);
 
 }

@@ -263,7 +263,7 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
 
     // convert name as jinja2-string
     std::string convertResult = "";
-    const bool ret = m_interface->m_jinja2Converter->convert(convertResult,
+    const bool ret = m_interface->jinja2Converter->convert(convertResult,
                                                              blossomGroupItem.id,
                                                              &m_parentValues,
                                                              errorMessage);
@@ -283,7 +283,7 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
     for(BlossomItem* blossomItem : blossomGroupItem.blossoms)
     {
         // handle special-cass of a ressource-call
-        TreeItem* item = m_interface->m_garden->getRessource(blossomItem->blossomType);
+        TreeItem* item = m_interface->garden->getRessource(blossomItem->blossomType);
         if(item != nullptr)
         {
             const bool ret = runSubtreeCall(item,
@@ -367,7 +367,7 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
     LOG_DEBUG("processSubtree");
 
     // get sakura-file based on the required path
-    Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->m_garden;
+    Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->garden;
     const bfs::path relPath = garden->getRelativePath(filePath, subtreeItem->nameOrPath);
     SakuraItem* newSubtree = garden->getTree(relPath,garden->rootPath);
     if(newSubtree == nullptr)

@@ -74,8 +74,8 @@ public:
     void printOutput(const std::string &output);
 
 
-    SakuraGarden* m_garden = nullptr;
-    Kitsunemimi::Jinja2::Jinja2Converter* m_jinja2Converter = nullptr;
+    SakuraGarden* garden = nullptr;
+    Kitsunemimi::Jinja2::Jinja2Converter* jinja2Converter = nullptr;
 
 private:
     friend SakuraThread;

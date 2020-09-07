@@ -51,17 +51,18 @@ public:
     const bfs::path getRelativePath(const bfs::path &blossomFilePath,
                                     const bfs::path &blossomInternalRelPath);
 
+    // add
     bool addTree(const bfs::path &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
                      std::string &errorMessage);
 
+    // get
     TreeItem* getTree(const bfs::path &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getRessource(const std::string &id);
     const std::string getTemplate(const bfs::path &relativePath);
     DataBuffer* getFile(const bfs::path &relativePath);
-
 
 
     std::string rootPath = "";

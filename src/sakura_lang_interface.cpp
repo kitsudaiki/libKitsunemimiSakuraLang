@@ -40,19 +40,19 @@ namespace Sakura
 
 SakuraLangInterface::SakuraLangInterface()
 {
-    m_garden = new SakuraGarden();
+    garden = new SakuraGarden();
     m_queue = new SubtreeQueue();
-    m_jinja2Converter = new Kitsunemimi::Jinja2::Jinja2Converter();
+    jinja2Converter = new Kitsunemimi::Jinja2::Jinja2Converter();
     // TODO: make number of threads configurable
     m_threadPoos = new ThreadPool(6, this);
 }
 
 SakuraLangInterface::~SakuraLangInterface()
 {
-    delete m_garden;
+    delete garden;
     delete m_queue;
     delete m_threadPoos;
-    delete m_jinja2Converter;
+    delete jinja2Converter;
 }
 
 /**
@@ -77,7 +77,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     }
 
     // parse all files
-    if(m_garden->addTree(treeFile, errorMessage) == false)
+    if(garden->addTree(treeFile, errorMessage) == false)
     {
         LOG_ERROR("failed to add trees\n    " + errorMessage);
         return false;
@@ -91,7 +91,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
         const bfs::path parent = bfs::path(treeFile).parent_path();
         const std::string relPath = bfs::relative(treeFile, parent).string();
 
-        tree = m_garden->getTree(relPath, parent.string());
+        tree = garden->getTree(relPath, parent.string());
     }
 
     if(tree == nullptr)
@@ -115,7 +115,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
 
     // validate parsed blossoms
     errorMessage = "";
-    if(checkAllItems(this, *m_garden, errorMessage) == false)
+    if(checkAllItems(this, errorMessage) == false)
     {
         LOG_ERROR("\n" + errorMessage);
         return false;
