@@ -87,6 +87,7 @@ public:
     std::string blossomPath = "";
 
     DataMap blossomOutput;
+    DataMap* parentValues = nullptr;
 
     // result
     bool success = true;

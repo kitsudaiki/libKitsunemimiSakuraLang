@@ -227,6 +227,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
 
     // update blossom-item for processing
     blossomItem.blossomPath = filePath;
+    blossomItem.parentValues = &m_parentValues;
 
     blossom->growBlossom(blossomItem, errorMessage);
 
@@ -239,12 +240,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     m_interface->printOutput(blossomItem);
 
     // write processing result back to parent
-    if(fillInputValueItemMap(blossomItem.values,
-                             blossomItem.blossomOutput,
-                             errorMessage) == false)
-    {
-        return false;
-    }
+    fillOutputValueItemMap(blossomItem.values, blossomItem.blossomOutput);
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     overrideItems(m_parentValues, blossomItem.values, ONLY_EXISTING);
@@ -659,7 +655,7 @@ SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
     LOG_DEBUG("runSubtreeCall");
 
     // fill values
-    bool fillResult = fillInputValueItemMap(values, m_parentValues, errorMessage);
+    const bool fillResult = fillInputValueItemMap(values, m_parentValues, errorMessage);
     if(fillResult == false)
     {
         errorMessage = createError("subtree-processing",
@@ -677,13 +673,16 @@ SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
     overrideItems(m_parentValues, newSubtree->values, ALL);
 
     // process tree-item
-    const bool ret = processSakuraItem(newSubtree, filePath, errorMessage);
-    if(ret == false) {
+    if( processSakuraItem(newSubtree, filePath, errorMessage) == false) {
         return false;
     }
 
     // write output back after restoring the parent-values to resume normally
-    fillSubtreeOutputValueItemMap(newSubtree->values, &m_parentValues);
+    if(fillOutputValueItemMap(newSubtree->values, m_parentValues) == false) {
+        return false;
+    }
+
+    // write values back
     m_parentValues = parentBackup;
     overrideItems(m_parentValues, newSubtree->values, ONLY_EXISTING);
 

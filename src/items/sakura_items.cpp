@@ -63,6 +63,7 @@ BlossomItem::copy()
     newItem->blossomPath = blossomPath;
 
     newItem->blossomOutput = blossomOutput;
+    newItem->parentValues = parentValues;
 
     // result
     newItem->nameHirarchie = nameHirarchie;

@@ -54,10 +54,8 @@ bool fillValueItem(ValueItem &valueItem,
 bool fillInputValueItemMap(ValueItemMap &items,
                            DataMap &insertValues,
                            std::string &errorMessage);
-bool fillBlossomOutputValueItemMap(ValueItemMap &items,
-                                   DataItem* output);
-bool fillSubtreeOutputValueItemMap(ValueItemMap &items,
-                                   DataMap *output);
+bool fillOutputValueItemMap(ValueItemMap &items,
+                            DataMap &output);
 
 // override functions
 enum OverrideType
