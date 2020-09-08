@@ -47,12 +47,7 @@ BlossomItem::BlossomItem()
     type = BLOSSOM_ITEM;
 }
 
-BlossomItem::~BlossomItem()
-{
-    if(blossomOutput != nullptr) {
-        delete blossomOutput;
-    }
-}
+BlossomItem::~BlossomItem() {}
 
 SakuraItem*
 BlossomItem::copy()
@@ -67,12 +62,7 @@ BlossomItem::copy()
     newItem->blossomType = blossomType;
     newItem->blossomPath = blossomPath;
 
-    if(blossomOutput != nullptr) {
-        newItem->blossomOutput = blossomOutput->copy();
-    }
-    if(inputValues != nullptr) {
-        newItem->inputValues = inputValues;
-    }
+    newItem->blossomOutput = blossomOutput;
 
     // result
     newItem->nameHirarchie = nameHirarchie;

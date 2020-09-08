@@ -309,6 +309,7 @@ fillInputValueItemMap(ValueItemMap &items,
                       DataMap &insertValues,
                       std::string &errorMessage)
 {
+    // fill values
     std::map<std::string, ValueItem>::iterator it;
     for(it = items.m_valueMap.begin();
         it != items.m_valueMap.end();
@@ -319,6 +320,7 @@ fillInputValueItemMap(ValueItemMap &items,
         }
     }
 
+    // fill childs
     std::map<std::string, ValueItemMap*>::iterator itChild;
     for(itChild = items.m_childMaps.begin();
         itChild != items.m_childMaps.end();

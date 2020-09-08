@@ -41,66 +41,18 @@ void
 Blossom::growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage)
 {
-    //----------------------------------------------------------------------------------------------
-    LOG_DEBUG("initBlossom " + blossomItem.blossomName);
+    blossomItem.blossomOutput.clear();
 
-    initBlossom(blossomItem);
-
-    if(blossomItem.success == false)
-    {
-        errorMessage = createError(blossomItem, "blossom init", blossomItem.outputMessage);
-        return;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    LOG_DEBUG("preCheck " + blossomItem.blossomName);
-
-    preCheck(blossomItem);
-
-    if(blossomItem.success == false)
-    {
-        errorMessage = createError(blossomItem, "blossom pre-check", blossomItem.outputMessage);
-        return;
-    }
-
-    if(blossomItem.skip) {
-        return;
-    }
-
-    //----------------------------------------------------------------------------------------------
+    // process blossom
     LOG_DEBUG("runTask " + blossomItem.blossomName);
-
     runTask(blossomItem);
 
+    // handle result
     if(blossomItem.success == false)
     {
         errorMessage = createError(blossomItem, "blossom execute", blossomItem.outputMessage);
         return;
     }
-
-    //----------------------------------------------------------------------------------------------
-    LOG_DEBUG("postCheck " + blossomItem.blossomName);
-
-    postCheck(blossomItem);
-
-    if(blossomItem.success == false)
-    {
-        errorMessage = createError(blossomItem, "blossom post-check", blossomItem.outputMessage);
-        return;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    LOG_DEBUG("closeBlossom " + blossomItem.blossomName);
-
-    closeBlossom(blossomItem);
-
-    if(blossomItem.success == false)
-    {
-        errorMessage = createError(blossomItem, "blossom close", blossomItem.outputMessage);
-        return;
-    }
-
-    //----------------------------------------------------------------------------------------------
 
     return;
 }

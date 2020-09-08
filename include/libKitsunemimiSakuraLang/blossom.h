@@ -45,14 +45,8 @@ public:
     bool validateInput(BlossomItem &blossomItem,
                        std::string &errorMessage);
 
-    virtual Blossom* createNewInstance() = 0;
-
 protected:
-    virtual void initBlossom(BlossomItem &blossomItem) = 0;
-    virtual void preCheck(BlossomItem &blossomItem) = 0;
     virtual void runTask(BlossomItem &blossomItem) = 0;
-    virtual void postCheck(BlossomItem &blossomItem) = 0;
-    virtual void closeBlossom(BlossomItem &blossomItem) = 0;
 
     bool m_hasOutput = false;
     DataMap m_requiredKeys;

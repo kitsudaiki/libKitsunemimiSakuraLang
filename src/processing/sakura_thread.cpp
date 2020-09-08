@@ -199,9 +199,6 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     // only debug-output
     LOG_DEBUG("processBlossom: \n");
     LOG_DEBUG("    name: " + blossomItem.blossomName);
-    if(blossomItem.inputValues != nullptr) {
-        LOG_DEBUG("    parentValues:" + blossomItem.inputValues->toString());
-    }
 
     // process values by filling with information of the parent-object
     const bool result = fillInputValueItemMap(blossomItem.values, m_parentValues, errorMessage);
@@ -229,13 +226,9 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     }
 
     // update blossom-item for processing
-    blossomItem.inputValues = &m_parentValues;
     blossomItem.blossomPath = filePath;
 
-    // get a new instance of the blossom to avoid conflics with parallel threads
-    blossom = blossom->createNewInstance();
     blossom->growBlossom(blossomItem, errorMessage);
-    delete blossom;
 
     // check result
     if(blossomItem.success == false) {
@@ -246,7 +239,12 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     m_interface->printOutput(blossomItem);
 
     // write processing result back to parent
-    fillBlossomOutputValueItemMap(blossomItem.values, blossomItem.blossomOutput);
+    if(fillInputValueItemMap(blossomItem.values,
+                             blossomItem.blossomOutput,
+                             errorMessage) == false)
+    {
+        return false;
+    }
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     overrideItems(m_parentValues, blossomItem.values, ONLY_EXISTING);

@@ -86,12 +86,11 @@ public:
     std::string blossomName = "";
     std::string blossomPath = "";
 
-    DataItem* blossomOutput = nullptr;
-    DataMap* inputValues = nullptr;
+    DataMap blossomOutput;
 
     // result
-    bool skip = false;
     bool success = true;
+    bool skip = false;
     std::string outputMessage = "";
 };
 
