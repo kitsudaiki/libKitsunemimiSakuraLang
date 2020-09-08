@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_VALUE_ITEM_MAP_H
-#define SAKURA_LANG_VALUE_ITEM_MAP_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_MAP_H
+#define KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_MAP_H
 
 #include <string>
 #include <map>
@@ -47,9 +47,9 @@ public:
     ValueItemMap &operator=(const ValueItemMap &other);
 
     // add and remove
-    bool insert(const std::string &key, DataItem* value, bool force=true);
-    bool insert(const std::string &key, ValueItem &value, bool force=true);
-    bool insert(const std::string &key, ValueItemMap* value, bool force=true);
+    bool insert(const std::string &key, DataItem* value, bool force = true);
+    bool insert(const std::string &key, ValueItem &value, bool force = true);
+    bool insert(const std::string &key, ValueItemMap* value, bool force = true);
     bool remove(const std::string &key);
 
     // getter
@@ -68,7 +68,7 @@ private:
     void clearChildMap();
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_VALUE_ITEM_MAP_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_MAP_H

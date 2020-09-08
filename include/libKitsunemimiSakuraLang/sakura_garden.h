@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_GARDEN_H
-#define SAKURA_LANG_GARDEN_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_GARDEN_H
+#define KITSUNEMIMI_SAKURA_LANG_GARDEN_H
 
 #include <vector>
 #include <string>
@@ -78,7 +78,7 @@ private:
     TreeItem* getTreeByPath(const bfs::path &relativePath);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_GARDEN_H
+#endif // KITSUNEMIMI_SAKURA_LANG_GARDEN_H

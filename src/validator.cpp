@@ -201,5 +201,5 @@ checkAllItems(SakuraLangInterface* interface,
     return true;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

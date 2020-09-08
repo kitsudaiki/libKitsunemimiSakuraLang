@@ -57,8 +57,8 @@ namespace Sakura
 
 class SakuraParserInterface;
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi
 }
 
 // The parsing context.

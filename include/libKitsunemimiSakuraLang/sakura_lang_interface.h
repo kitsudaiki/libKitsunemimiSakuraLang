@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_INTERFACE_H
-#define SAKURA_LANG_INTERFACE_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_INTERFACE_H
+#define KITSUNEMIMI_SAKURA_LANG_INTERFACE_H
 
 #include <string>
 #include <map>
@@ -91,7 +91,7 @@ private:
                     std::string &errorMessage);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_INTERFACE_H
+#endif // KITSUNEMIMI_SAKURA_LANG_INTERFACE_H

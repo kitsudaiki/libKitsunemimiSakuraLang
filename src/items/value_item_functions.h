@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
-#define SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
+#define KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
 
 #include <string>
 
@@ -58,7 +58,7 @@ DataArray* clearEmpty(DataArray* item,
 DataItem* parseJson(DataValue* intput,
                     std::string &errorMessage);
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H

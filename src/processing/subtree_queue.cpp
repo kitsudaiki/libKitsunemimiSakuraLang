@@ -242,5 +242,5 @@ SubtreeQueue::clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects)
     }
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

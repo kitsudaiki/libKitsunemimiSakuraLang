@@ -346,6 +346,5 @@ ParallelPart::copy()
     return newItem;
 }
 
-}
-}
-
+} // namespace Sakura
+} // namespace Kitsunemimi

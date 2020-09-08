@@ -69,5 +69,5 @@ ThreadPool::clearChildThreads()
     m_childThreads.clear();
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

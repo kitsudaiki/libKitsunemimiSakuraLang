@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_VALIDATOR_H
-#define SAKURA_LANG_VALIDATOR_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
+#define KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
 
 #include <string>
 #include <map>
@@ -47,7 +47,7 @@ bool checkSakuraItem(SakuraLangInterface *interface,
 bool checkAllItems(SakuraLangInterface *interface,
                    std::string &errorMessage);
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_VALIDATOR_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H

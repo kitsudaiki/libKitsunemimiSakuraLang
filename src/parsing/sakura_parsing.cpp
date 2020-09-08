@@ -509,5 +509,5 @@ SakuraParsing::initErrorOutput(TableItem &errorOutput)
     errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
 }
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi

@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_ITEM_METHODS_H
-#define SAKURA_LANG_ITEM_METHODS_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H
+#define KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H
 
 #include <vector>
 #include <string>
@@ -32,9 +32,6 @@
 
 namespace Kitsunemimi
 {
-namespace Jinja2 {
-class Jinja2Converter;
-}
 namespace Sakura
 {
 
@@ -81,7 +78,7 @@ void overrideItems(ValueItemMap &original,
                    OverrideType type);
 
 // check items
-const std::vector<std::string> checkInput(Kitsunemimi::Sakura::ValueItemMap &original,
+const std::vector<std::string> checkInput(ValueItemMap &original,
                                           const DataMap &itemInputValues);
 const std::vector<std::string> checkItems(DataMap &items);
 
@@ -101,7 +98,7 @@ const std::string createError(const std::string &errorLocation,
                               const std::string &blossomName = "",
                               const std::string &blossomFilePath = "");
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_ITEM_METHODS_H
+#endif // KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H

@@ -72,10 +72,12 @@ SakuraGarden::addTree(const bfs::path &treePath,
 }
 
 /**
- * @brief SakuraGarden::addResource
- * @param content
- * @param errorMessage
- * @return
+ * @brief add a tree as resource
+ *
+ * @param content string to parse and add
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successful, else false
  */
 bool
 SakuraGarden::addResource(const std::string &content,
@@ -109,7 +111,7 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
 
     // build new relative path for the new file-request
     if(relativePath == ".") {
-       return blossomInternalRelPath;
+        return blossomInternalRelPath;
     } else {
         return relativePath / blossomInternalRelPath;;
     }
@@ -149,9 +151,11 @@ SakuraGarden::getTree(const bfs::path &relativePath,
 }
 
 /**
- * @brief SakuraGarden::getRessource
- * @param id
- * @return
+ * @brief request a resource
+ *
+ * @param id name of the resource
+ *
+ * @return copy of the tree-item, if id exist, else nullptr
  */
 TreeItem*
 SakuraGarden::getRessource(const std::string &id)
@@ -226,5 +230,5 @@ SakuraGarden::getFile(const bfs::path &relativePath)
     return nullptr;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

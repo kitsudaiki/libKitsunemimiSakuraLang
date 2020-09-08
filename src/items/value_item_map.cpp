@@ -359,5 +359,5 @@ ValueItemMap::clearChildMap()
     m_childMaps.clear();
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

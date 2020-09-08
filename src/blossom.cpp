@@ -185,5 +185,5 @@ Blossom::validateInput(BlossomItem &blossomItem,
     return true;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

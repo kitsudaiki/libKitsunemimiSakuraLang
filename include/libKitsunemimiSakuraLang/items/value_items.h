@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_VALUE_ITEMS_H
-#define SAKURA_LANG_VALUE_ITEMS_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALUE_ITEMS_H
+#define KITSUNEMIMI_SAKURA_LANG_VALUE_ITEMS_H
 
 #include <string>
 #include <vector>
@@ -33,9 +33,9 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-//===================================================================
+//==================================================================================================
 // FunctionItem
-//===================================================================
+//==================================================================================================
 struct ValueItem;
 
 struct FunctionItem
@@ -44,9 +44,9 @@ struct FunctionItem
     std::vector<ValueItem> arguments;
 };
 
-//===================================================================
+//==================================================================================================
 // ValueItem
-//===================================================================
+//==================================================================================================
 struct ValueItem
 {
     enum ValueType
@@ -111,7 +111,7 @@ struct ValueItem
     }
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_VALUE_ITEMS_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALUE_ITEMS_H

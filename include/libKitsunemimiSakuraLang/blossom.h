@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_BLOSSOM_H
-#define SAKURA_LANG_BLOSSOM_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
+#define KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 
 #include <string>
 #include <libKitsunemimiSakuraLang/items/sakura_items.h>
@@ -58,7 +58,7 @@ protected:
     DataMap m_requiredKeys;
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_BLOSSOM_H
+#endif // KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H

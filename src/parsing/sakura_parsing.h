@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_PARSING_H
-#define SAKURA_LANG_PARSING_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_PARSING_H
+#define KITSUNEMIMI_SAKURA_LANG_PARSING_H
 
 #include <string>
 #include <vector>
@@ -99,7 +99,7 @@ private:
     bool alreadyCollected(const bfs::path &path);
 };
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_PARSING_H
+#endif // KITSUNEMIMI_SAKURA_LANG_PARSING_H

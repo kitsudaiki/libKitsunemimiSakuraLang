@@ -362,6 +362,5 @@ parseJson(DataValue* intput,
     return nullptr;
 }
 
-}
-}
-
+} // namespace Sakura
+} // namespace Kitsunemimi

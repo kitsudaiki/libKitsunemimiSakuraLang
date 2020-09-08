@@ -319,5 +319,5 @@ SakuraLangInterface::printOutput(const std::string &output)
     m_mutex.unlock();
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

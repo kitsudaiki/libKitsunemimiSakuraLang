@@ -703,5 +703,5 @@ createError(const std::string &errorLocation,
     return errorOutput.toString(200);
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

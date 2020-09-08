@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_SUBTREE_QUEUE_H
-#define SAKURA_LANG_SUBTREE_QUEUE_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H
+#define KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H
 
 #include <thread>
 #include <chrono>
@@ -154,7 +154,7 @@ private:
     void clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_SUBTREE_QUEUE_H
+#endif // KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H

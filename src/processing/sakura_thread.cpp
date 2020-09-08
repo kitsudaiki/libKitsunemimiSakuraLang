@@ -747,5 +747,5 @@ SakuraThread::runLoop(SakuraItem* loopContent,
     return true;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

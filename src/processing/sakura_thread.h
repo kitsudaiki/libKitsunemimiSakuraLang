@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_THREAD_H
-#define SAKURA_LANG_THREAD_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_THREAD_H
+#define KITSUNEMIMI_SAKURA_LANG_THREAD_H
 
 #include <thread>
 #include <string>
@@ -100,7 +100,7 @@ private:
                  const uint64_t startPos = 0);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_THREAD_H
+#endif // KITSUNEMIMI_SAKURA_LANG_THREAD_H

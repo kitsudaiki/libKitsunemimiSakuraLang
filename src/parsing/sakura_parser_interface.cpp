@@ -226,5 +226,5 @@ SakuraParserInterface::removeQuotes(const std::string &input)
     return input;
 }
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi
