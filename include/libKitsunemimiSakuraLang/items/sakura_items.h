@@ -80,16 +80,16 @@ public:
     SakuraItem* copy();
 
     std::string blossomType = "";
+    std::string blossomGroupType = "";
+    std::vector<std::string> nameHirarchie;
 
     std::string blossomName = "";
-    std::string blossomGroupType = "";
     std::string blossomPath = "";
 
     DataItem* blossomOutput = nullptr;
-    DataMap* parentValues = nullptr;
+    DataMap* inputValues = nullptr;
 
     // result
-    std::vector<std::string> nameHirarchie;
     bool skip = false;
     bool success = true;
     std::string outputMessage = "";

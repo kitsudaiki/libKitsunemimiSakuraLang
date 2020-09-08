@@ -201,7 +201,7 @@ SakuraLangInterface::addBlossom(const std::string &groupName,
     groupIt = m_registeredBlossoms.find(groupName);
     groupIt->second.insert(std::make_pair(itemName, newBlossom));
 
-    return false;
+    return true;
 }
 
 /**

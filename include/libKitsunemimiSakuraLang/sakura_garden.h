@@ -33,8 +33,6 @@ namespace bfs = boost::filesystem;
 
 namespace Kitsunemimi
 {
-class DataItem;
-class DataMap;
 class DataBuffer;
 
 namespace Sakura
@@ -55,14 +53,15 @@ public:
     bool addTree(const bfs::path &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
+                     const bfs::path &treePath,
                      std::string &errorMessage);
 
     // get
-    TreeItem* getTree(const bfs::path &relativePath,
+    TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getRessource(const std::string &id);
-    const std::string getTemplate(const bfs::path &relativePath);
-    DataBuffer* getFile(const bfs::path &relativePath);
+    const std::string getTemplate(const std::string &relativePath);
+    DataBuffer* getFile(const std::string &relativePath);
 
 
     // object-handling

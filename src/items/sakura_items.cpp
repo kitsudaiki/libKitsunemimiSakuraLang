@@ -70,8 +70,8 @@ BlossomItem::copy()
     if(blossomOutput != nullptr) {
         newItem->blossomOutput = blossomOutput->copy();
     }
-    if(parentValues != nullptr) {
-        newItem->parentValues = parentValues;
+    if(inputValues != nullptr) {
+        newItem->inputValues = inputValues;
     }
 
     // result

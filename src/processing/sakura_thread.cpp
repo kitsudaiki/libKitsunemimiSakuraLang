@@ -199,8 +199,8 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     // only debug-output
     LOG_DEBUG("processBlossom: \n");
     LOG_DEBUG("    name: " + blossomItem.blossomName);
-    if(blossomItem.parentValues != nullptr) {
-        LOG_DEBUG("    parentValues:" + blossomItem.parentValues->toString());
+    if(blossomItem.inputValues != nullptr) {
+        LOG_DEBUG("    parentValues:" + blossomItem.inputValues->toString());
     }
 
     // process values by filling with information of the parent-object
@@ -229,7 +229,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     }
 
     // update blossom-item for processing
-    blossomItem.parentValues = &m_parentValues;
+    blossomItem.inputValues = &m_parentValues;
     blossomItem.blossomPath = filePath;
 
     // get a new instance of the blossom to avoid conflics with parallel threads
@@ -380,7 +380,7 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
     // get sakura-file based on the required path
     Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->garden;
     const bfs::path relPath = garden->getRelativePath(filePath, subtreeItem->nameOrPath);
-    SakuraItem* newSubtree = garden->getTree(relPath,garden->rootPath);
+    SakuraItem* newSubtree = garden->getTree(relPath.string(), garden->rootPath);
 
     if(newSubtree == nullptr)
     {

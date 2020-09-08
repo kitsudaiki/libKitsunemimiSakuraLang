@@ -35,7 +35,9 @@ namespace Sakura
 {
 
 /**
- * @brief SakuraGarden::SakuraGarden
+ * @brief constructor
+ *
+ * @param enableDebug true to enable debugging of the parser
  */
 SakuraGarden::SakuraGarden(const bool enableDebug)
 {
@@ -43,7 +45,7 @@ SakuraGarden::SakuraGarden(const bool enableDebug)
 }
 
 /**
- * @brief SakuraGarden::~SakuraGarden
+ * @brief destructor
  */
 SakuraGarden::~SakuraGarden()
 {
@@ -75,16 +77,21 @@ SakuraGarden::addTree(const bfs::path &treePath,
  * @brief add a tree as resource
  *
  * @param content string to parse and add
+ * @param treePath
  * @param errorMessage reference for error-message
  *
  * @return true, if successful, else false
  */
 bool
 SakuraGarden::addResource(const std::string &content,
+                          const bfs::path &treePath,
                           std::string &errorMessage)
 {
     // parse all files and convert the into
-    const bool treeParseResult = m_parser->parseRessourceString(*this, content, errorMessage);
+    const bool treeParseResult = m_parser->parseRessourceString(*this,
+                                                                treePath.string(),
+                                                                content,
+                                                                errorMessage);
     if(treeParseResult == false) {
         return false;
     }
@@ -126,7 +133,7 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
  * @return requested pointer to tree-item
  */
 TreeItem*
-SakuraGarden::getTree(const bfs::path &relativePath,
+SakuraGarden::getTree(const std::string &relativePath,
                       const std::string &rootPath)
 {
     // build complete file-path
@@ -141,7 +148,7 @@ SakuraGarden::getTree(const bfs::path &relativePath,
         if(relativePath == "") {
             return getTreeByPath(bfs::path("root.sakura"));
         } else {
-            return getTreeByPath(relativePath / bfs::path("root.sakura"));
+            return getTreeByPath(bfs::path(relativePath) / bfs::path("root.sakura"));
         }
     }
     else
@@ -200,10 +207,10 @@ SakuraGarden::getTreeByPath(const bfs::path &relativePath)
  * @return
  */
 const std::string
-SakuraGarden::getTemplate(const bfs::path &relativePath)
+SakuraGarden::getTemplate(const std::string &relativePath)
 {
     std::map<std::string, std::string>::const_iterator it;
-    it = templates.find(relativePath.string());
+    it = templates.find(relativePath);
 
     if(it != templates.end()) {
         return it->second;
@@ -218,10 +225,10 @@ SakuraGarden::getTemplate(const bfs::path &relativePath)
  * @return
  */
 Kitsunemimi::DataBuffer*
-SakuraGarden::getFile(const bfs::path &relativePath)
+SakuraGarden::getFile(const std::string &relativePath)
 {
     std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
-    it = files.find(relativePath.string());
+    it = files.find(relativePath);
 
     if(it != files.end()) {
         return it->second;

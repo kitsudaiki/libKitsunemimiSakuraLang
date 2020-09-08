@@ -43,8 +43,10 @@ namespace Sakura
 using Kitsunemimi::splitStringByDelimiter;
 
 /**
- * The class is the interface for the bison-generated parser.
- * It starts the parsing-process and store the returned values.
+ * @brief constructor
+ *
+ * @param traceParsing true to enable debug-output of the parser
+ * @param sakuraParsing
  */
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing,
                                              SakuraParsing* sakuraParsing)
@@ -58,34 +60,52 @@ SakuraParserInterface::SakuraParserInterface(const bool traceParsing,
  */
 SakuraParserInterface::~SakuraParserInterface()
 {
-    if(m_output != nullptr) {
+    if(m_output != nullptr)
+    {
         delete m_output;
+        m_output = nullptr;
     }
 }
 
 /**
- * Start the scanner and parser
+ * @brief parse string
+ *
+ * @param inputString string to parse
+ * @param filePath absolute path to the file, where the content belongs to for the case of and
+ *                 error for easier debugging
  *
  * @return true, if parsing was successful, else false
  */
 bool
-SakuraParserInterface::parse(const std::string &inputString)
+SakuraParserInterface::parse(const std::string &inputString,
+                             const std::string &filePath)
 {
     // init global values
     m_inputString = inputString;
     m_registeredKeys.clear();
     m_registeredKeys.push_back("blossom_output");
+
+    // init error-message
     m_errorMessage.clearTable();
     m_errorMessage.addColumn("key");
     m_errorMessage.addColumn("value");
     m_errorMessage.addRow(std::vector<std::string>{"ERROR", " "});
 
-    m_output = nullptr;
+    if(filePath != "") {
+        m_errorMessage.addRow(std::vector<std::string>{"file", filePath});
+    }
+
+    // free and reset output to avoid memory-leak
+    if(m_output != nullptr)
+    {
+        delete m_output;
+        m_output = nullptr;
+    }
 
     // run parser-code
     this->scan_begin(inputString);
     Kitsunemimi::Sakura::SakuraParser parser(*this);
-    int res = parser.parse();
+    const int res = parser.parse();
     this->scan_end();
 
     if(res != 0) {

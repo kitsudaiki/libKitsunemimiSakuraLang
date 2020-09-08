@@ -57,11 +57,13 @@ public:
                         std::string &errorMessage);
 
     bool parseTreeString(SakuraGarden &result,
-                         const bfs::path &relativePath,
+                         const std::string &absolutePath,
+                         const std::string &relativePath,
                          const std::string &content,
                          std::string &errorMessage);
 
     bool parseRessourceString(SakuraGarden &result,
+                              const std::string &absolutePath,
                               const std::string &content,
                               std::string &errorMessage);
 
@@ -70,7 +72,6 @@ public:
 
 private:
     SakuraParserInterface* m_parser = nullptr;
-    bool m_debug = false;
     std::deque<std::string> m_fileQueue;
     std::vector<std::string> m_collectedDirectories;
     bfs::path m_rootPath;
@@ -80,6 +81,7 @@ private:
                               const bfs::path &rootPath,
                               std::string &errorMessage);
     TreeItem* parseStringToTree(const std::string &content,
+                                const std::string &filePath,
                                 std::string &errorMessage);
 
     void initErrorOutput(TableItem &errorOutput);

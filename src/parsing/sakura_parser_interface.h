@@ -43,13 +43,15 @@ class SakuraParserInterface
 {
 
 public:
-    SakuraParserInterface(const bool traceParsing, SakuraParsing* sakuraParsing);
+    SakuraParserInterface(const bool traceParsing,
+                          SakuraParsing* sakuraParsing);
     ~SakuraParserInterface();
 
     // connection the the scanner and parser
     void scan_begin(const std::string &inputString);
     void scan_end();
-    bool parse(const std::string &inputString);
+    bool parse(const std::string &inputString,
+               const std::string &filePath);
 
     // output-handling
     void setOutput(SakuraItem* output);
@@ -66,7 +68,6 @@ public:
     bool isKeyRegistered(const std::string &key);
 
     SakuraParsing* m_sakuraParsing = nullptr;
-
 private:
     bool m_traceParsing = false;
     std::string m_inputString = "";
