@@ -483,7 +483,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" value_item ">>" "identifier"
+    item_set  "-" "identifier" ">>" "identifier"
     {
         if(driver.isKeyRegistered($5) == false)
         {
@@ -493,7 +493,9 @@ item_set:
             return 1;
         }
 
-        ValueItem newItem = $3;
+        ValueItem newItem;
+        newItem.item = new DataValue($3);
+        newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
         $1->insert($5, newItem);
@@ -548,7 +550,7 @@ item_set:
         $$->insert($2, newItem);
     }
 |
-    "-" value_item ">>" "identifier"
+    "-" "identifier" ">>" "identifier"
     {
         if(driver.isKeyRegistered($4) == false)
         {
@@ -560,7 +562,9 @@ item_set:
 
         $$ = new ValueItemMap();
 
-        ValueItem newItem = $2;
+        ValueItem newItem;
+        newItem.item = new DataValue($2);
+        newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
         $$->insert($4, newItem);
