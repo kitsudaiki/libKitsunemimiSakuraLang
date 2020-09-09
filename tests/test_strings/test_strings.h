@@ -58,7 +58,7 @@ const std::string testTreeString =
         "    apt (\"this is another test\")\n"
         "    -> latest:\n"
         "       - names = \"{{packages}}\"\n"
-        "       - output.get(i) >> as_output\n"
+        "       - output>> as_output\n"
         "    print (\"this is another test\")\n"
         "    - names = packages[asdf][3]\n"
         "}\n"
