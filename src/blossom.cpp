@@ -37,7 +37,7 @@ Blossom::~Blossom() {}
  * @brief SakuraBlossom::growBlossom
  * @return
  */
-void
+bool
 Blossom::growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage)
 {
@@ -45,16 +45,16 @@ Blossom::growBlossom(BlossomItem &blossomItem,
 
     // process blossom
     LOG_DEBUG("runTask " + blossomItem.blossomName);
-    runTask(blossomItem);
+    const bool ret = runTask(blossomItem, errorMessage);
 
     // handle result
-    if(blossomItem.success == false)
+    if(ret == false)
     {
-        errorMessage = createError(blossomItem, "blossom execute", blossomItem.outputMessage);
-        return;
+        errorMessage = createError(blossomItem, "blossom execute", errorMessage);
+        return false;
     }
 
-    return;
+    return true;
 }
 
 /**

@@ -39,14 +39,14 @@ public:
     Blossom();
     virtual ~Blossom();
 
-    void growBlossom(BlossomItem &blossomItem,
+    bool growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage);
 
     bool validateInput(BlossomItem &blossomItem,
                        std::string &errorMessage);
 
 protected:
-    virtual void runTask(BlossomItem &blossomItem) = 0;
+    virtual bool runTask(BlossomItem &blossomItem, std::string &errorMessage) = 0;
 
     bool m_hasOutput = false;
     DataMap m_requiredKeys;

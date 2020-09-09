@@ -588,17 +588,11 @@ convertBlossomOutput(const BlossomItem &blossom)
         output += blossom.nameHirarchie.at(i) + "\n";
     }
 
-    // print executeion-state
-    if(blossom.skip) {
-        output += "SKIPPED\n";
-    }
-
     // print error-output
-    if(blossom.outputMessage.size() > 0
-            && blossom.success)
+    if(blossom.terminalOutput.size() > 0)
     {
         output += "\n";
-        output += blossom.outputMessage + "\n";
+        output += blossom.terminalOutput + "\n";
     }
 
     return output;

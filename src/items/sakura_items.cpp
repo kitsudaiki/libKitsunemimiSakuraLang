@@ -67,9 +67,7 @@ BlossomItem::copy()
 
     // result
     newItem->nameHirarchie = nameHirarchie;
-    newItem->skip = skip;
-    newItem->success = success;
-    newItem->outputMessage = outputMessage;
+    newItem->terminalOutput = terminalOutput;
 
     return newItem;
 }

@@ -88,11 +88,7 @@ public:
 
     DataMap blossomOutput;
     DataMap* parentValues = nullptr;
-
-    // result
-    bool success = true;
-    bool skip = false;
-    std::string outputMessage = "";
+    std::string terminalOutput = "";
 };
 
 //==================================================================================================

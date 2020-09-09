@@ -208,8 +208,6 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
                                    "processing",
                                    "error while processing blossom items:\n    "
                                    + errorMessage);
-        blossomItem.success = false;
-
         return false;
     }
 
@@ -221,18 +219,17 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     if(blossom == nullptr)
     {
         errorMessage = createError(blossomItem, "processing", "unknow blossom-type");
-        blossomItem.success = false;
-        return blossomItem.success;
+        return false;
     }
 
     // update blossom-item for processing
     blossomItem.blossomPath = filePath;
     blossomItem.parentValues = &m_parentValues;
 
-    blossom->growBlossom(blossomItem, errorMessage);
+    const bool ret = blossom->growBlossom(blossomItem, errorMessage);
 
     // check result
-    if(blossomItem.success == false) {
+    if(ret == false) {
         return false;
     }
 
