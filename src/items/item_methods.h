@@ -82,6 +82,7 @@ const std::vector<std::string> checkItems(DataMap &items);
 
 // convert
 const std::string convertBlossomOutput(const BlossomItem &blossom);
+void convertValueMap(DataMap result, const ValueItemMap &input);
 
 // error-output
 const std::string createError(const BlossomItem &blossomItem,

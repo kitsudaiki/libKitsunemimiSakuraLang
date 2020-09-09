@@ -86,7 +86,9 @@ public:
     std::string blossomName = "";
     std::string blossomPath = "";
 
-    DataMap blossomOutput;
+    DataMap output;
+    DataMap intput;
+
     DataMap* parentValues = nullptr;
     std::string terminalOutput = "";
 };

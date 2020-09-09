@@ -62,7 +62,8 @@ BlossomItem::copy()
     newItem->blossomType = blossomType;
     newItem->blossomPath = blossomPath;
 
-    newItem->blossomOutput = blossomOutput;
+    newItem->output = output;
+    newItem->intput = intput;
     newItem->parentValues = parentValues;
 
     // result

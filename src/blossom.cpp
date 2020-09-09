@@ -41,7 +41,8 @@ bool
 Blossom::growBlossom(BlossomItem &blossomItem,
                      std::string &errorMessage)
 {
-    blossomItem.blossomOutput.clear();
+    blossomItem.output.clear();
+    convertValueMap(blossomItem.intput, blossomItem.values);
 
     // process blossom
     LOG_DEBUG("runTask " + blossomItem.blossomName);

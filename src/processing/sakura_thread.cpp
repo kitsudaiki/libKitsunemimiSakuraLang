@@ -237,7 +237,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     m_interface->printOutput(blossomItem);
 
     // write processing result back to parent
-    fillOutputValueItemMap(blossomItem.values, blossomItem.blossomOutput);
+    fillOutputValueItemMap(blossomItem.values, blossomItem.output);
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     overrideItems(m_parentValues, blossomItem.values, ONLY_EXISTING);

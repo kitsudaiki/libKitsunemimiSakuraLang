@@ -598,6 +598,34 @@ convertBlossomOutput(const BlossomItem &blossom)
     return output;
 }
 
+/**
+ * @brief convert value-item-map into data-map
+ *
+ * @param result resulting data-map
+ * @param input input value-item-map
+ */
+void
+convertValueMap(DataMap result, const ValueItemMap &input)
+{
+    // fill values
+    std::map<std::string, ValueItem>::const_iterator it;
+    for(it = input.m_valueMap.begin();
+        it != input.m_valueMap.end();
+        it++)
+    {
+        result.insert(it->first, it->second.item->copy());
+    }
+
+    // fill childs
+    std::map<std::string, ValueItemMap*>::const_iterator itChild;
+    for(itChild = input.m_childMaps.begin();
+        itChild != input.m_childMaps.end();
+        itChild++)
+    {
+        DataMap internalMap;
+        convertValueMap(internalMap, *itChild->second);
+    }
+}
 
 /**
  * @brief create an error-output
