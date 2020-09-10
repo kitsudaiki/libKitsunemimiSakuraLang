@@ -26,7 +26,7 @@
 #include <vector>
 #include <string>
 
-#include <libKitsunemimiSakuraLang/items/value_item_map.h>
+#include <items/value_item_map.h>
 
 namespace Kitsunemimi
 {
@@ -79,18 +79,9 @@ public:
     ~BlossomItem();
     SakuraItem* copy();
 
+    std::string blossomName = "";
     std::string blossomType = "";
     std::string blossomGroupType = "";
-    std::vector<std::string> nameHirarchie;
-
-    std::string blossomName = "";
-    std::string blossomPath = "";
-
-    DataMap output;
-    DataMap intput;
-
-    DataMap* parentValues = nullptr;
-    std::string terminalOutput = "";
 };
 
 //==================================================================================================

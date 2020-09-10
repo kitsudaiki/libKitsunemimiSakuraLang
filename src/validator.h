@@ -26,8 +26,7 @@
 #include <string>
 #include <map>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
@@ -35,17 +34,23 @@ namespace Sakura
 {
 class SakuraLangInterface;
 
-bool checkBlossomItem(SakuraLangInterface *interface,
-                      BlossomItem &blossomItem,
-                      std::string &errorMessage);
+class Validator
+{
+public:
+    bool checkBlossomItem(SakuraLangInterface *interface,
+                          BlossomItem &blossomItem,
+                          const std::string &filePath,
+                          std::string &errorMessage);
 
-bool checkSakuraItem(SakuraLangInterface *interface,
-                     SakuraItem* sakuraItem,
-                     const std::string &filePath,
-                     std::string &errorMessage);
+    bool checkSakuraItem(SakuraLangInterface *interface,
+                         SakuraItem* sakuraItem,
+                         const std::string &filePath,
+                         std::string &errorMessage);
 
-bool checkAllItems(SakuraLangInterface *interface,
-                   std::string &errorMessage);
+    bool checkAllItems(SakuraLangInterface *interface,
+                       std::string &errorMessage);
+
+};
 
 } // namespace Sakura
 } // namespace Kitsunemimi

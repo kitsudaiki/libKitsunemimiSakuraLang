@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
@@ -60,15 +60,6 @@ BlossomItem::copy()
     newItem->blossomName = blossomName;
     newItem->blossomGroupType = blossomGroupType;
     newItem->blossomType = blossomType;
-    newItem->blossomPath = blossomPath;
-
-    newItem->output = output;
-    newItem->intput = intput;
-    newItem->parentValues = parentValues;
-
-    // result
-    newItem->nameHirarchie = nameHirarchie;
-    newItem->terminalOutput = terminalOutput;
 
     return newItem;
 }

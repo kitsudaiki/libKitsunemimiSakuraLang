@@ -23,7 +23,7 @@
 #include "sakura_thread.h"
 
 #include <items/item_methods.h>
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <sakura_garden.h>
 
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
@@ -205,9 +205,9 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     if(result == false)
     {
         errorMessage = createError(blossomItem,
+                                   filePath,
                                    "processing",
-                                   "error while processing blossom items:\n    "
-                                   + errorMessage);
+                                   "error while processing blossom items:\n    " + errorMessage);
         return false;
     }
 
@@ -218,15 +218,22 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
                                                blossomItem.blossomType);
     if(blossom == nullptr)
     {
-        errorMessage = createError(blossomItem, "processing", "unknow blossom-type");
+        errorMessage = createError(blossomItem,
+                                   filePath,
+                                   "processing",
+                                   "unknow blossom-type");
         return false;
     }
 
-    // update blossom-item for processing
-    blossomItem.blossomPath = filePath;
-    blossomItem.parentValues = &m_parentValues;
+    BlossomLeaf blossomLeaf;
 
-    const bool ret = blossom->growBlossom(blossomItem, errorMessage);
+    // update blossom-leaf for processing
+    blossomLeaf.blossomPath = filePath;
+    blossomLeaf.nameHirarchie = m_hierarchy;
+    blossomLeaf.parentValues = &m_parentValues;
+    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomLeaf.blossomName);
+
+    const bool ret = blossom->growBlossom(blossomItem, blossomLeaf, errorMessage);
 
     // check result
     if(ret == false) {
@@ -234,10 +241,10 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     }
 
     // send result to root
-    m_interface->printOutput(blossomItem);
+    m_interface->printOutput(blossomLeaf);
 
     // write processing result back to parent
-    fillOutputValueItemMap(blossomItem.values, blossomItem.output);
+    fillOutputValueItemMap(blossomItem.values, blossomLeaf.output);
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     overrideItems(m_parentValues, blossomItem.values, ONLY_EXISTING);
@@ -283,7 +290,7 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
     for(BlossomItem* blossomItem : blossomGroupItem.blossoms)
     {
         // handle special-cass of a ressource-call
-        TreeItem* tempItem = m_interface->garden->getRessource(blossomItem->blossomType);
+        TreeItem* tempItem = m_interface->m_garden->getRessource(blossomItem->blossomType);
         if(tempItem != nullptr)
         {
             const bool ret = runSubtreeCall(tempItem,
@@ -297,10 +304,8 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
 
         // update blossom-item with group-values for console-output
         blossomItem->blossomGroupType = blossomGroupItem.blossomGroupType;
-        blossomItem->nameHirarchie = m_hierarchy;
         blossomItem->blossomName = blossomGroupItem.id;
         blossomItem->blossomGroupType = blossomGroupItem.blossomGroupType;
-        blossomItem->nameHirarchie.push_back("BLOSSOM: " + blossomGroupItem.id);
 
         // copy values of the blossom-group into the blossom, but only values, which are not defined
         // which in the blossom
@@ -369,7 +374,7 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
     LOG_DEBUG("processSubtree");
 
     // get sakura-file based on the required path
-    Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->garden;
+    Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->m_garden;
     const bfs::path relPath = garden->getRelativePath(filePath, subtreeItem->nameOrPath);
     SakuraItem* newSubtree = garden->getTree(relPath.string(), garden->rootPath);
 

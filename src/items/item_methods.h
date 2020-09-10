@@ -28,12 +28,13 @@
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
 namespace Sakura
 {
+struct BlossomLeaf;
 
 using Kitsunemimi::DataMap;
 
@@ -81,11 +82,17 @@ const std::vector<std::string> checkInput(ValueItemMap &original,
 const std::vector<std::string> checkItems(DataMap &items);
 
 // convert
-const std::string convertBlossomOutput(const BlossomItem &blossom);
-void convertValueMap(DataMap result, const ValueItemMap &input);
+const std::string convertBlossomOutput(const BlossomLeaf &blossom);
+void convertValueMap(DataMap &result,
+                     const ValueItemMap &input);
 
 // error-output
 const std::string createError(const BlossomItem &blossomItem,
+                              const std::string &blossomPath,
+                              const std::string &errorLocation,
+                              const std::string &errorMessage,
+                              const std::string &possibleSolution = "");
+const std::string createError(const BlossomLeaf &blossomLeaf,
                               const std::string &errorLocation,
                               const std::string &errorMessage,
                               const std::string &possibleSolution = "");

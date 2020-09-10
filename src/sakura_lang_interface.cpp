@@ -22,7 +22,7 @@
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <sakura_garden.h>
 #include <validator.h>
 
 #include <processing/subtree_queue.h>
@@ -45,7 +45,7 @@ namespace Sakura
  */
 SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
 {
-    garden = new SakuraGarden(enableDebug);
+    m_garden = new SakuraGarden(enableDebug);
     m_queue = new SubtreeQueue();
     jinja2Converter = new Kitsunemimi::Jinja2::Jinja2Converter();
     // TODO: make number of threads configurable
@@ -57,7 +57,7 @@ SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
  */
 SakuraLangInterface::~SakuraLangInterface()
 {
-    delete garden;
+    delete m_garden;
     delete m_queue;
     delete m_threadPoos;
     delete jinja2Converter;
@@ -94,7 +94,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     }
 
     // parse all files
-    if(garden->addTree(treeFile, errorMessage) == false)
+    if(m_garden->addTree(treeFile, errorMessage) == false)
     {
         errorMessage = "failed to add trees\n    " + errorMessage;
         return false;
@@ -105,7 +105,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     const std::string relPath = bfs::relative(treeFile, parent).string();
 
     // get initial tree-item
-    SakuraItem* tree = garden->getTree(relPath, parent.string());
+    SakuraItem* tree = m_garden->getTree(relPath, parent.string());
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + treeFile;
@@ -126,7 +126,8 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     }
 
     // validate parsed blossoms
-    if(checkAllItems(this, errorMessage) == false) {
+    Validator validator;
+    if(validator.checkAllItems(this, errorMessage) == false) {
         return false;
     }
 
@@ -141,6 +142,44 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     }
 
     return true;
+}
+
+/**
+ * @brief SakuraLangInterface::getTemplate
+ * @param relativePath
+ * @return
+ */
+const std::string
+SakuraLangInterface::getTemplate(const std::string &relativePath)
+{
+    return m_garden->getTemplate(relativePath);
+}
+
+/**
+ * @brief SakuraLangInterface::getFile
+ * @param relativePath
+ * @return
+ */
+DataBuffer*
+SakuraLangInterface::getFile(const std::string &relativePath)
+{
+    return m_garden->getFile(relativePath);
+}
+
+/**
+ * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
+ *        root-path.
+ *
+ * @param blossomFilePath absolut path of the file of the blossom
+ * @param blossomInternalRelPath relative path, which is called inside of the blossom
+ *
+ * @return path, which is relative to the root-path.
+ */
+const bfs::path
+SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
+                                     const bfs::path &blossomInternalRelPath)
+{
+    return m_garden->getRelativePath(blossomFilePath, blossomInternalRelPath);
 }
 
 /**
@@ -286,7 +325,7 @@ SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
  * @param blossomItem blossom-item to generate the output
  */
 void
-SakuraLangInterface::printOutput(const BlossomItem &blossomItem)
+SakuraLangInterface::printOutput(const BlossomLeaf &blossomItem)
 {
     printOutput(convertBlossomOutput(blossomItem));
 }

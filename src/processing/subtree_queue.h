@@ -28,7 +28,7 @@
 #include <mutex>
 #include <queue>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {

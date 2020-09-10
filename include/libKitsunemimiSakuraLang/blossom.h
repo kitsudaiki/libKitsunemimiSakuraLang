@@ -23,15 +23,31 @@
 #ifndef KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 #define KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 
-#include <string>
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
-
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/common_items/data_items.h>
 
 namespace Kitsunemimi
 {
 namespace Sakura
 {
+class BlossomItem;
+class SakuraThread;
+class Validator;
+
+struct BlossomLeaf
+{
+    std::string blossomType = "";
+    std::string blossomGroupType = "";
+    std::vector<std::string> nameHirarchie;
+
+    std::string blossomName = "";
+    std::string blossomPath = "";
+
+    DataMap output;
+    DataMap input;
+
+    DataMap* parentValues = nullptr;
+    std::string terminalOutput = "";
+};
 
 class Blossom
 {
@@ -39,17 +55,23 @@ public:
     Blossom();
     virtual ~Blossom();
 
-    bool growBlossom(BlossomItem &blossomItem,
-                     std::string &errorMessage);
-
-    bool validateInput(BlossomItem &blossomItem,
-                       std::string &errorMessage);
-
 protected:
-    virtual bool runTask(BlossomItem &blossomItem, std::string &errorMessage) = 0;
+    virtual bool runTask(BlossomLeaf &blossomLeaf, std::string &errorMessage) = 0;
 
     bool m_hasOutput = false;
     DataMap m_requiredKeys;
+
+private:
+    friend SakuraThread;
+    friend Validator;
+
+    bool growBlossom(BlossomItem &blossomItem,
+                     BlossomLeaf &blossomLeaf,
+                     std::string &errorMessage);
+
+    bool validateInput(BlossomItem &blossomItem,
+                       const std::string &filePath,
+                       std::string &errorMessage);
 };
 
 } // namespace Sakura

@@ -23,6 +23,7 @@
 #include <libKitsunemimiSakuraLang/blossom.h>
 
 #include <items/item_methods.h>
+#include <libKitsunemimiPersistence/logger/logger.h>
 
 namespace Kitsunemimi
 {
@@ -39,19 +40,20 @@ Blossom::~Blossom() {}
  */
 bool
 Blossom::growBlossom(BlossomItem &blossomItem,
+                     BlossomLeaf &blossomLeaf,
                      std::string &errorMessage)
 {
-    blossomItem.output.clear();
-    convertValueMap(blossomItem.intput, blossomItem.values);
+    blossomLeaf.output.clear();
+    convertValueMap(blossomLeaf.input, blossomItem.values);
 
     // process blossom
-    LOG_DEBUG("runTask " + blossomItem.blossomName);
-    const bool ret = runTask(blossomItem, errorMessage);
+    LOG_DEBUG("runTask " + blossomLeaf.blossomName);
+    const bool ret = runTask(blossomLeaf, errorMessage);
 
     // handle result
     if(ret == false)
     {
-        errorMessage = createError(blossomItem, "blossom execute", errorMessage);
+        errorMessage = createError(blossomLeaf, "blossom execute", errorMessage);
         return false;
     }
 
@@ -65,6 +67,7 @@ Blossom::growBlossom(BlossomItem &blossomItem,
  */
 bool
 Blossom::validateInput(BlossomItem &blossomItem,
+                       const std::string &filePath,
                        std::string &errorMessage)
 {
     // if "*" is in the list of required key, there is more allowed as the list contains items
@@ -85,7 +88,10 @@ Blossom::validateInput(BlossomItem &blossomItem,
                 const std::string message = "variable \""
                                             + it->first
                                             + "\" is not in the list of allowed keys";
-                errorMessage = createError(blossomItem, "validator", message);
+                errorMessage = createError(blossomItem,
+                                           filePath,
+                                           "validator",
+                                           message);
                 return false;
             }
         }
@@ -109,7 +115,10 @@ Blossom::validateInput(BlossomItem &blossomItem,
             const std::string message = "variable \""
                                         + it->first
                                         + "\" is required, but is not set.";
-            errorMessage = createError(blossomItem, "validator", message);
+            errorMessage = createError(blossomItem,
+                                       filePath,
+                                       "validator",
+                                       message);
             return false;
         }
     }
@@ -130,7 +139,10 @@ Blossom::validateInput(BlossomItem &blossomItem,
                                         + "\" is declared as output-variable, "
                                           "but the blossom has no "
                                           "output, which could be written into a variable.";
-            errorMessage = createError(blossomItem, "validator", message);
+            errorMessage = createError(blossomItem,
+                                       filePath,
+                                       "validator",
+                                       message);
             return false;
         }
     }

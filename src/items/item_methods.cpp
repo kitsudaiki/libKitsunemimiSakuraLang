@@ -574,7 +574,7 @@ checkItems(DataMap &items)
  * @return output as string
  */
 const std::string
-convertBlossomOutput(const BlossomItem &blossom)
+convertBlossomOutput(const BlossomLeaf &blossom)
 {
     std::string output = "";
 
@@ -605,7 +605,7 @@ convertBlossomOutput(const BlossomItem &blossom)
  * @param input input value-item-map
  */
 void
-convertValueMap(DataMap result, const ValueItemMap &input)
+convertValueMap(DataMap &result, const ValueItemMap &input)
 {
     // fill values
     std::map<std::string, ValueItem>::const_iterator it;
@@ -622,8 +622,9 @@ convertValueMap(DataMap result, const ValueItemMap &input)
         itChild != input.m_childMaps.end();
         itChild++)
     {
-        DataMap internalMap;
-        convertValueMap(internalMap, *itChild->second);
+        DataMap* internalMap = new DataMap();
+        convertValueMap(*internalMap, *itChild->second);
+        result.insert(itChild->first, internalMap);
     }
 }
 
@@ -631,12 +632,14 @@ convertValueMap(DataMap result, const ValueItemMap &input)
  * @brief create an error-output
  *
  * @param blossomItem blossom-item with information of the error-location
+ * @param blossomPath file-path, which contains the blossom
  * @param errorLocation location where the error appeared
  * @param errorMessage message to describe, what was wrong
  * @param possibleSolution message with a possible solution to solve the problem
  */
 const std::string
 createError(const BlossomItem &blossomItem,
+            const std::string &blossomPath,
             const std::string &errorLocation,
             const std::string &errorMessage,
             const std::string &possibleSolution)
@@ -647,7 +650,30 @@ createError(const BlossomItem &blossomItem,
                        blossomItem.blossomType,
                        blossomItem.blossomGroupType,
                        blossomItem.blossomName,
-                       blossomItem.blossomPath);
+                       blossomPath);
+}
+
+/**
+ * @brief create an error-output
+ *
+ * @param blossomLeaf blossom-item with information of the error-location
+ * @param errorLocation location where the error appeared
+ * @param errorMessage message to describe, what was wrong
+ * @param possibleSolution message with a possible solution to solve the problem
+ */
+const std::string
+createError(const BlossomLeaf &blossomLeaf,
+            const std::string &errorLocation,
+            const std::string &errorMessage,
+            const std::string &possibleSolution)
+{
+    return createError(errorLocation,
+                       errorMessage,
+                       possibleSolution,
+                       blossomLeaf.blossomType,
+                       blossomLeaf.blossomGroupType,
+                       blossomLeaf.blossomName,
+                       blossomLeaf.blossomPath);
 }
 
 /**
