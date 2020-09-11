@@ -20,15 +20,15 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_THREAD_H
-#define SAKURA_THREAD_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_THREAD_H
+#define KITSUNEMIMI_SAKURA_LANG_THREAD_H
 
 #include <thread>
 #include <string>
 #include <vector>
 
 #include <processing/subtree_queue.h>
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 #include <libKitsunemimiCommon/threading/thread.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
@@ -44,7 +44,6 @@ class SakuraThread
 {
 public:
     SakuraThread(SakuraLangInterface* interface);
-    ~SakuraThread();
 
 private:
     bool m_started = false;
@@ -74,10 +73,10 @@ private:
     bool processIf(IfBranching* ifCondition,
                    const std::string &filePath,
                    std::string &errorMessage);
-    bool processForEach(ForEachBranching* subtree,
+    bool processForEach(ForEachBranching* forEachItem,
                         const std::string &filePath,
                         std::string &errorMessage);
-    bool processFor(ForBranching* subtree,
+    bool processFor(ForBranching* forItem,
                     const std::string &filePath,
                     std::string &errorMessage);
     bool processSequeniellPart(SequentiellPart* subtree,
@@ -91,17 +90,17 @@ private:
                         ValueItemMap &values,
                         const std::string &filePath,
                         std::string &errorMessage);
-    bool runLoop(SakuraItem* subtreeContent,
-                 const ValueItemMap &subtreeValues,
-                 const uint64_t startPos,
-                 const uint64_t endPos,
+    bool runLoop(SakuraItem* loopContent,
+                 const ValueItemMap &values,
                  const std::string &filePath,
                  const std::string &tempVarName,
                  DataArray* array,
-                 std::string &errorMessage);
+                 std::string &errorMessage,
+                 const uint64_t endPos,
+                 const uint64_t startPos = 0);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_THREAD_H
+#endif // KITSUNEMIMI_SAKURA_LANG_THREAD_H

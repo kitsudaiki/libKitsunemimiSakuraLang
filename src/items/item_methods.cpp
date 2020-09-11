@@ -1,5 +1,5 @@
 /**
- * @file        common_methods.cpp
+ * @file        item_methods.cpp
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -67,9 +67,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = getValue(valueItem.item,
-                                          arg.item->toValue(),
-                                          errorMessage);
+                DataItem* tempItem = getValue(valueItem.item,
+                                              arg.item->toValue(),
+                                              errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -84,9 +86,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = splitValue(valueItem.item->toValue(),
-                                            arg.item->toValue(),
-                                            errorMessage);
+                DataItem* tempItem = splitValue(valueItem.item->toValue(),
+                                                arg.item->toValue(),
+                                                errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -101,9 +105,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = containsValue(valueItem.item,
-                                               arg.item->toValue(),
-                                               errorMessage);
+                DataItem* tempItem = containsValue(valueItem.item,
+                                                   arg.item->toValue(),
+                                                   errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -127,10 +133,12 @@ getProcessedItem(ValueItem &valueItem,
             if(fillValueItem(arg1, insertValues, errorMessage)
                     && fillValueItem(arg2, insertValues, errorMessage))
             {
-                valueItem.item = insertValue(valueItem.item->toMap(),
-                                             arg1.item->toValue(),
-                                             arg2.item,
-                                             errorMessage);
+                DataItem* tempItem = insertValue(valueItem.item->toMap(),
+                                                 arg1.item->toValue(),
+                                                 arg2.item,
+                                                 errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -145,9 +153,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = appendValue(valueItem.item->toArray(),
-                                             arg.item,
-                                             errorMessage);
+                DataItem* tempItem = appendValue(valueItem.item->toArray(),
+                                                 arg.item,
+                                                 errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -159,8 +169,10 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            valueItem.item = clearEmpty(valueItem.item->toArray(),
-                                        errorMessage);
+            DataItem* tempItem = clearEmpty(valueItem.item->toArray(),
+                                            errorMessage);
+            delete valueItem.item;
+            valueItem.item = tempItem;
 
             continue;
         }
@@ -171,17 +183,15 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            valueItem.item = parseJson(valueItem.item->toValue(),
-                                       errorMessage);
+            DataItem* tempItem = parseJson(valueItem.item->toValue(),
+                                           errorMessage);
+            delete valueItem.item;
+            valueItem.item = tempItem;
 
             continue;
         }
         //------------------------------------------------------------------------------------------
 
-        valueItem.item = nullptr;
-    }
-
-    if(valueItem.item == nullptr) {
         return false;
     }
 
@@ -309,8 +319,7 @@ fillInputValueItemMap(ValueItemMap &items,
                       DataMap &insertValues,
                       std::string &errorMessage)
 {
-    Result result;
-
+    // fill values
     std::map<std::string, ValueItem>::iterator it;
     for(it = items.m_valueMap.begin();
         it != items.m_valueMap.end();
@@ -321,6 +330,7 @@ fillInputValueItemMap(ValueItemMap &items,
         }
     }
 
+    // fill childs
     std::map<std::string, ValueItemMap*>::iterator itChild;
     for(itChild = items.m_childMaps.begin();
         itChild != items.m_childMaps.end();
@@ -336,7 +346,7 @@ fillInputValueItemMap(ValueItemMap &items,
 }
 
 /**
- * @brief wirte the output of a blossom-item back into a value-item-map
+ * @brief wirte the output back into a value-item-map
  *
  * @param items value-item-map, where the output should be inserted
  * @param output output of the blossom-item as data-item
@@ -344,8 +354,8 @@ fillInputValueItemMap(ValueItemMap &items,
  * @return true, if the output was written in at least one point of the value-item-map
  */
 bool
-fillBlossomOutputValueItemMap(ValueItemMap &items,
-                              DataItem* output)
+fillOutputValueItemMap(ValueItemMap &items,
+                       DataMap &output)
 {
     bool found = false;
 
@@ -357,42 +367,15 @@ fillBlossomOutputValueItemMap(ValueItemMap &items,
         // replace only as output-marked values
         if(it->second.type == ValueItem::OUTPUT_PAIR_TYPE)
         {
+            DataItem* tempItem = output.get(it->second.item->toString());
+            if(tempItem == nullptr)
+            {
+                // TODO: error-output
+                return false;
+            }
+
             ValueItem valueItem;
-            valueItem.item = output->copy();
-            valueItem.type = ValueItem::OUTPUT_PAIR_TYPE;
-            it->second = valueItem;
-            found = true;
-        }
-    }
-
-    return found;
-}
-
-
-/**
- * @brief wirte the output of a subtree or ressource back into a value-item-map
- *
- * @param items value-item-map, where the output should be inserted
- * @param output output of the blossom-item as data-item
- *
- * @return true, if the output was written in at least one point of the value-item-map
- */
-bool
-fillSubtreeOutputValueItemMap(ValueItemMap &items,
-                              DataMap* output)
-{
-    bool found = false;
-
-    std::map<std::string, ValueItem>::iterator it;
-    for(it = items.m_valueMap.begin();
-        it != items.m_valueMap.end();
-        it++)
-    {
-        // replace only as output-marked values
-        if(it->second.type == ValueItem::OUTPUT_PAIR_TYPE)
-        {
-            ValueItem valueItem;
-            valueItem.item = output->get(it->second.item->toString())->copy();
+            valueItem.item = tempItem->copy();
             valueItem.type = ValueItem::OUTPUT_PAIR_TYPE;
             it->second = valueItem;
             found = true;
@@ -601,7 +584,7 @@ checkItems(DataMap &items)
  * @return output as string
  */
 const std::string
-convertBlossomOutput(const BlossomItem &blossom)
+convertBlossomOutput(const BlossomLeaf &blossom)
 {
     std::string output = "";
 
@@ -615,33 +598,58 @@ convertBlossomOutput(const BlossomItem &blossom)
         output += blossom.nameHirarchie.at(i) + "\n";
     }
 
-    // print executeion-state
-    if(blossom.skip) {
-        output += "SKIPPED\n";
-    }
-
     // print error-output
-    if(blossom.outputMessage.size() > 0
-            && blossom.success)
+    if(blossom.terminalOutput.size() > 0)
     {
         output += "\n";
-        output += blossom.outputMessage + "\n";
+        output += blossom.terminalOutput + "\n";
     }
 
     return output;
 }
 
+/**
+ * @brief convert value-item-map into data-map
+ *
+ * @param result resulting data-map
+ * @param input input value-item-map
+ */
+void
+convertValueMap(DataMap &result, const ValueItemMap &input)
+{
+    // fill values
+    std::map<std::string, ValueItem>::const_iterator it;
+    for(it = input.m_valueMap.begin();
+        it != input.m_valueMap.end();
+        it++)
+    {
+        result.insert(it->first, it->second.item->copy());
+    }
+
+    // fill childs
+    std::map<std::string, ValueItemMap*>::const_iterator itChild;
+    for(itChild = input.m_childMaps.begin();
+        itChild != input.m_childMaps.end();
+        itChild++)
+    {
+        DataMap* internalMap = new DataMap();
+        convertValueMap(*internalMap, *itChild->second);
+        result.insert(itChild->first, internalMap);
+    }
+}
 
 /**
  * @brief create an error-output
  *
  * @param blossomItem blossom-item with information of the error-location
+ * @param blossomPath file-path, which contains the blossom
  * @param errorLocation location where the error appeared
  * @param errorMessage message to describe, what was wrong
  * @param possibleSolution message with a possible solution to solve the problem
  */
 const std::string
 createError(const BlossomItem &blossomItem,
+            const std::string &blossomPath,
             const std::string &errorLocation,
             const std::string &errorMessage,
             const std::string &possibleSolution)
@@ -652,7 +660,30 @@ createError(const BlossomItem &blossomItem,
                        blossomItem.blossomType,
                        blossomItem.blossomGroupType,
                        blossomItem.blossomName,
-                       blossomItem.blossomPath);
+                       blossomPath);
+}
+
+/**
+ * @brief create an error-output
+ *
+ * @param blossomLeaf blossom-item with information of the error-location
+ * @param errorLocation location where the error appeared
+ * @param errorMessage message to describe, what was wrong
+ * @param possibleSolution message with a possible solution to solve the problem
+ */
+const std::string
+createError(const BlossomLeaf &blossomLeaf,
+            const std::string &errorLocation,
+            const std::string &errorMessage,
+            const std::string &possibleSolution)
+{
+    return createError(errorLocation,
+                       errorMessage,
+                       possibleSolution,
+                       blossomLeaf.blossomType,
+                       blossomLeaf.blossomGroupType,
+                       blossomLeaf.blossomName,
+                       blossomLeaf.blossomPath);
 }
 
 /**
@@ -705,5 +736,5 @@ createError(const std::string &errorLocation,
     return errorOutput.toString(200);
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

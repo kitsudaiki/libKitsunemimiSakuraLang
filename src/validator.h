@@ -20,14 +20,13 @@
  *      limitations under the License.
  */
 
-#ifndef VALIDATOR_H
-#define VALIDATOR_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
+#define KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
 
 #include <string>
 #include <map>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
@@ -35,29 +34,25 @@ namespace Sakura
 {
 class SakuraLangInterface;
 
-bool checkOutput(SakuraLangInterface *interface,
-                 BlossomItem &blossomItem,
-                 const bool hasOutput,
-                 std::string &errorMessage);
-bool checkBlossomItem(SakuraLangInterface *interface,
-                      BlossomItem &blossomItem,
-                      std::string &errorMessage);
-bool checkBlossomItem(SakuraLangInterface *,
-                      BlossomItem &blossomItem,
-                      DataMap &requiredKey,
-                      std::string &errorMessages);
+class Validator
+{
+public:
+    bool checkBlossomItem(SakuraLangInterface *interface,
+                          BlossomItem &blossomItem,
+                          const std::string &filePath,
+                          std::string &errorMessage);
 
+    bool checkSakuraItem(SakuraLangInterface *interface,
+                         SakuraItem* sakuraItem,
+                         const std::string &filePath,
+                         std::string &errorMessage);
 
-bool checkSakuraItem(SakuraLangInterface *interface,
-                     SakuraItem* sakuraItem,
-                     const std::string &filePath,
-                     std::string &errorMessage);
+    bool checkAllItems(SakuraLangInterface *interface,
+                       std::string &errorMessage);
 
-bool checkAllItems(SakuraLangInterface *interface,
-                   const SakuraGarden &garden,
-                   std::string &errorMessage);
+};
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // VALIDATOR_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H

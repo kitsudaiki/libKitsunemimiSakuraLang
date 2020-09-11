@@ -22,8 +22,8 @@
 
 #include "sakura_parsing.h"
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <items/sakura_items.h>
+#include <sakura_garden.h>
 #include <parsing/sakura_parser_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
@@ -45,8 +45,7 @@ namespace Sakura
  */
 SakuraParsing::SakuraParsing(const bool debug)
 {
-    m_debug = debug;
-    m_parser = new SakuraParserInterface(m_debug, this);
+    m_parser = new SakuraParserInterface(debug, this);
 }
 
 /**
@@ -205,7 +204,7 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
         return nullptr;
     }
 
-    SakuraItem* resultItem = parseStringToTree(fileContent, errorMessage);
+    SakuraItem* resultItem = parseStringToTree(fileContent, filePath.string(), errorMessage);
     if(resultItem == nullptr) {
         return nullptr;
     }
@@ -227,27 +226,31 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
  */
 bool
 SakuraParsing::parseTreeString(SakuraGarden &result,
-                               const bfs::path &relativePath,
+                               const std::string &absolutePath,
+                               const std::string &relativePath,
                                const std::string &content,
                                std::string &errorMessage)
 {
-    TreeItem* parsetItem = parseStringToTree(content, errorMessage);
+    // precheck
+    TreeItem* check = result.getTree(relativePath);
+    if(check != nullptr)
+    {
+        errorMessage = "tree already registered with path: " + relativePath;
+        return false;
+    }
+
+    // parse
+    TreeItem* parsetItem = parseStringToTree(content, absolutePath, errorMessage);
     if(parsetItem == nullptr) {
         return false;
     }
 
-    TreeItem* check = result.getTree(relativePath);
-    if(check != nullptr)
-    {
-        errorMessage = "tree-id already registered: " + parsetItem->id;
-        return false;
-    }
-
+    // update content
     parsetItem->unparsedConent = content;
-    parsetItem->relativePath = relativePath.string();
-    m_fileQueue.clear();
+    parsetItem->relativePath = relativePath;
 
-    result.trees.insert(std::make_pair(relativePath.string(), parsetItem));
+    // add parsed item to garden
+    result.trees.insert(std::make_pair(relativePath, parsetItem));
 
     return true;
 }
@@ -261,16 +264,17 @@ SakuraParsing::parseTreeString(SakuraGarden &result,
  */
 bool
 SakuraParsing::parseRessourceString(SakuraGarden &result,
+                                    const std::string &absolutePath,
                                     const std::string &content,
                                     std::string &errorMessage)
 {
-    TreeItem* parsetItem = parseStringToTree(content, errorMessage);
+    // parse
+    TreeItem* parsetItem = parseStringToTree(content, absolutePath, errorMessage);
     if(parsetItem == nullptr) {
         return false;
     }
 
     result.resources.insert(std::make_pair(parsetItem->id, parsetItem));
-    m_fileQueue.clear();
 
     return true;
 }
@@ -414,7 +418,9 @@ SakuraParsing::getFilesInDir(SakuraGarden &result,
                     return false;
                 }
 
-                TreeItem* parsedTree = parseStringToTree(fileContent, errorMessage);
+                TreeItem* parsedTree = parseStringToTree(fileContent,
+                                                         itr->path().string(),
+                                                         errorMessage);
 
                 if(parsedTree == nullptr)
                 {
@@ -483,9 +489,10 @@ SakuraParsing::alreadyCollected(const bfs::path &path)
  */
 TreeItem*
 SakuraParsing::parseStringToTree(const std::string &content,
+                                 const std::string &filePath,
                                  std::string &errorMessage)
 {
-    const bool parserResult = m_parser->parse(content);
+    const bool parserResult = m_parser->parse(content, filePath);
     if(parserResult == false)
     {
         TableItem errorOutput = m_parser->getErrorMessage();
@@ -509,5 +516,5 @@ SakuraParsing::initErrorOutput(TableItem &errorOutput)
     errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
 }
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi

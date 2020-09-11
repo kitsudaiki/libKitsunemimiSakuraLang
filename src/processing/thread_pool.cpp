@@ -33,6 +33,7 @@ namespace Sakura
  * @brief constructor
  *
  * @param numberOfThreads number of initial created threads for the pool
+ * @param interface pointer to the interface-object to access the queue
  */
 ThreadPool::ThreadPool(const uint32_t numberOfThreads,
                        SakuraLangInterface* interface)
@@ -68,5 +69,5 @@ ThreadPool::clearChildThreads()
     m_childThreads.clear();
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

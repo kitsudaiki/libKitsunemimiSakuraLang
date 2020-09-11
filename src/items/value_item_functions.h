@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_VALUE_ITEM_FUNCTIONS_H
-#define SAKURA_VALUE_ITEM_FUNCTIONS_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
+#define KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
 
 #include <string>
 
@@ -35,16 +35,30 @@ class DataValue;
 namespace Sakura
 {
 
-DataItem* getValue(DataItem* item, DataValue* key, std::string &errorMessage);
-DataArray* splitValue(DataValue* item, DataValue* delimiter, std::string &errorMessage);
-DataValue* sizeValue(DataItem* item, std::string &errorMessage);
-DataValue* containsValue(DataItem* item, DataValue* key, std::string &errorMessage);
-DataArray* appendValue(DataArray* item, DataItem* value, std::string &errorMessage);
-DataMap* insertValue(DataMap* item, DataValue* key, DataItem* value, std::string &errorMessage);
-DataArray* clearEmpty(DataArray* item, std::string &errorMessage);
-DataItem* parseJson(DataValue* intput, std::string &errorMessage);
+DataItem* getValue(DataItem* item,
+                   DataValue* key,
+                   std::string &errorMessage);
+DataArray* splitValue(DataValue* item,
+                      DataValue* delimiter,
+                      std::string &errorMessage);
+DataValue* sizeValue(DataItem* item,
+                     std::string &errorMessage);
+DataValue* containsValue(DataItem* item,
+                         DataValue* key,
+                         std::string &errorMessage);
+DataArray* appendValue(DataArray* item,
+                       DataItem* value,
+                       std::string &errorMessage);
+DataMap* insertValue(DataMap* item,
+                     DataValue* key,
+                     DataItem* value,
+                     std::string &errorMessage);
+DataArray* clearEmpty(DataArray* item,
+                      std::string &errorMessage);
+DataItem* parseJson(DataValue* intput,
+                    std::string &errorMessage);
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_VALUE_ITEM_FUNCTIONS_H
+#endif // KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H

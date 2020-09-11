@@ -20,15 +20,15 @@
  *      limitations under the License.
  */
 
-#ifndef SUBTREE_QUEUE_H
-#define SUBTREE_QUEUE_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H
+#define KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H
 
 #include <thread>
 #include <chrono>
 #include <mutex>
 #include <queue>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
@@ -125,21 +125,21 @@ public:
     void addSubtreeObject(SubtreeObject* newObject);
 
     bool spawnParallelSubtrees(const std::vector<SakuraItem *> &childs,
-                               const uint64_t startPos,
-                               const uint64_t endPos,
                                const std::string &filePath,
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,
-                               std::string &errorMessage);
+                               std::string &errorMessage,
+                               const uint64_t endPos = 1,
+                               const uint64_t startPos = 0);
     bool spawnParallelSubtreesLoop(SakuraItem* subtree,
-                                   const uint64_t startPos,
-                                   const uint64_t endPos,
                                    const std::string &filePath,
                                    const std::vector<std::string> &hierarchy,
                                    DataMap &parentValues,
                                    const std::string &tempVarName,
                                    DataArray* array,
-                                   std::string &errorMessage);
+                                   std::string &errorMessage,
+                                   uint64_t endPos,
+                                   const uint64_t startPos = 0);
 
 
 
@@ -154,7 +154,7 @@ private:
     void clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SUBTREE_QUEUE_H
+#endif // KITSUNEMIMI_SAKURA_LANG_SUBTREE_QUEUE_H

@@ -20,8 +20,9 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include "sakura_garden.h"
+
+#include <items/sakura_items.h>
 #include <parsing/sakura_parsing.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
@@ -35,19 +36,21 @@ namespace Sakura
 {
 
 /**
- * @brief SakuraGarden::SakuraGarden
+ * @brief constructor
+ *
+ * @param enableDebug true to enable debugging of the parser
  */
-SakuraGarden::SakuraGarden()
+SakuraGarden::SakuraGarden(const bool enableDebug)
 {
-    m_parser = new SakuraParsing(false);
+    m_parser = new SakuraParsing(enableDebug);
 }
 
 /**
- * @brief SakuraGarden::~SakuraGarden
+ * @brief destructor
  */
 SakuraGarden::~SakuraGarden()
 {
-    // TODO
+    delete m_parser;
 }
 
 /**
@@ -72,17 +75,24 @@ SakuraGarden::addTree(const bfs::path &treePath,
 }
 
 /**
- * @brief SakuraGarden::addResource
- * @param content
- * @param errorMessage
- * @return
+ * @brief add a tree as resource
+ *
+ * @param content string to parse and add
+ * @param treePath
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successful, else false
  */
 bool
 SakuraGarden::addResource(const std::string &content,
+                          const bfs::path &treePath,
                           std::string &errorMessage)
 {
     // parse all files and convert the into
-    const bool treeParseResult = m_parser->parseRessourceString(*this, content, errorMessage);
+    const bool treeParseResult = m_parser->parseRessourceString(*this,
+                                                                treePath.string(),
+                                                                content,
+                                                                errorMessage);
     if(treeParseResult == false) {
         return false;
     }
@@ -109,7 +119,7 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
 
     // build new relative path for the new file-request
     if(relativePath == ".") {
-       return blossomInternalRelPath;
+        return blossomInternalRelPath;
     } else {
         return relativePath / blossomInternalRelPath;;
     }
@@ -124,7 +134,7 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
  * @return requested pointer to tree-item
  */
 TreeItem*
-SakuraGarden::getTree(const bfs::path &relativePath,
+SakuraGarden::getTree(const std::string &relativePath,
                       const std::string &rootPath)
 {
     // build complete file-path
@@ -139,7 +149,7 @@ SakuraGarden::getTree(const bfs::path &relativePath,
         if(relativePath == "") {
             return getTreeByPath(bfs::path("root.sakura"));
         } else {
-            return getTreeByPath(relativePath / bfs::path("root.sakura"));
+            return getTreeByPath(bfs::path(relativePath) / bfs::path("root.sakura"));
         }
     }
     else
@@ -149,9 +159,11 @@ SakuraGarden::getTree(const bfs::path &relativePath,
 }
 
 /**
- * @brief SakuraGarden::getRessource
- * @param id
- * @return
+ * @brief request a resource
+ *
+ * @param id name of the resource
+ *
+ * @return copy of the tree-item, if id exist, else nullptr
  */
 TreeItem*
 SakuraGarden::getRessource(const std::string &id)
@@ -196,10 +208,10 @@ SakuraGarden::getTreeByPath(const bfs::path &relativePath)
  * @return
  */
 const std::string
-SakuraGarden::getTemplate(const bfs::path &relativePath)
+SakuraGarden::getTemplate(const std::string &relativePath)
 {
     std::map<std::string, std::string>::const_iterator it;
-    it = templates.find(relativePath.string());
+    it = templates.find(relativePath);
 
     if(it != templates.end()) {
         return it->second;
@@ -214,10 +226,10 @@ SakuraGarden::getTemplate(const bfs::path &relativePath)
  * @return
  */
 Kitsunemimi::DataBuffer*
-SakuraGarden::getFile(const bfs::path &relativePath)
+SakuraGarden::getFile(const std::string &relativePath)
 {
     std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
-    it = files.find(relativePath.string());
+    it = files.find(relativePath);
 
     if(it != files.end()) {
         return it->second;
@@ -226,5 +238,5 @@ SakuraGarden::getFile(const bfs::path &relativePath)
     return nullptr;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

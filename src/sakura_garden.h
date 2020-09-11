@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_GARDEN_H
-#define SAKURA_GARDEN_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_GARDEN_H
+#define KITSUNEMIMI_SAKURA_LANG_GARDEN_H
 
 #include <vector>
 #include <string>
@@ -33,8 +33,6 @@ namespace bfs = boost::filesystem;
 
 namespace Kitsunemimi
 {
-class DataItem;
-class DataMap;
 class DataBuffer;
 
 namespace Sakura
@@ -45,25 +43,28 @@ class SakuraParsing;
 class SakuraGarden
 {
 public:
-    SakuraGarden();
+    SakuraGarden(const bool enableDebug);
     ~SakuraGarden();
 
     const bfs::path getRelativePath(const bfs::path &blossomFilePath,
                                     const bfs::path &blossomInternalRelPath);
 
+    // add
     bool addTree(const bfs::path &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
+                     const bfs::path &treePath,
                      std::string &errorMessage);
 
-    TreeItem* getTree(const bfs::path &relativePath,
+    // get
+    TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath = "");
     TreeItem* getRessource(const std::string &id);
-    const std::string getTemplate(const bfs::path &relativePath);
-    DataBuffer* getFile(const bfs::path &relativePath);
+    const std::string getTemplate(const std::string &relativePath);
+    DataBuffer* getFile(const std::string &relativePath);
 
 
-
+    // object-handling
     std::string rootPath = "";
     std::map<std::string, TreeItem*> trees;
     std::map<std::string, TreeItem*> resources;
@@ -76,7 +77,7 @@ private:
     TreeItem* getTreeByPath(const bfs::path &relativePath);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_GARDEN_H
+#endif // KITSUNEMIMI_SAKURA_LANG_GARDEN_H

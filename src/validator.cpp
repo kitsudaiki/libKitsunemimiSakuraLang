@@ -23,6 +23,7 @@
 #include "validator.h"
 
 #include <items/item_methods.h>
+#include <sakura_garden.h>
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 #include <libKitsunemimiSakuraLang/blossom.h>
@@ -33,49 +34,54 @@ namespace Sakura
 {
 
 /**
- * @brief check if all values are set inside a blossom-item
+ * @brief check content of a blossom-item
  *
- * @param blossomItem blossom-item with the information
+ * @param interface pointer to the interface-object to get the information to check
+ * @param blossomItem blossom-item with the values, which should be validated
+ * @param filePath path of the file, which will be actually checked
+ * @param errorMessage reference for error-message
  *
- * @return true, if all necessary values are set, else false
+ * @return true, if check successfull, else false
  */
 bool
-checkBlossomItem(SakuraLangInterface* interface,
-                 BlossomItem &blossomItem,
-                 std::string &errorMessage)
+Validator::checkBlossomItem(SakuraLangInterface* interface,
+                            BlossomItem &blossomItem,
+                            const std::string &filePath,
+                            std::string &errorMessage)
 {
-    bool result = false;
-
+    // check if the object is a resource and skip check
     TreeItem* item = interface->m_garden->getRessource(blossomItem.blossomType);
     if(item != nullptr) {
         return true;
     }
 
+    // get blossom by type and group-type
     Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType,
                                              blossomItem.blossomType);
     if(blossom == nullptr)
     {
-        errorMessage = createError(blossomItem, "validator", "unknow blossom-type");
+        errorMessage = createError(blossomItem, filePath, "validator", "unknow blossom-type");
         return false;
     }
 
-    result = blossom->validateInput(blossomItem, errorMessage);
-
-    return result;
+    return blossom->validateInput(blossomItem, filePath, errorMessage);
 }
 
 /**
- * @brief central method of the thread to check the current part of the execution-tree
+ * @brief check all items of a tree recursively and validate all found blossom-items
  *
- * @param sakuraItem subtree, which should be checked
+ * @param interface pointer to the interface-object to get the information to check
+ * @param sakuraItem item to check
+ * @param filePath path of the file, which will be actually checked
+ * @param errorMessage reference for error-message
  *
- * @return true if successful, else false
+ * @return true, if check successfull, else false
  */
 bool
-checkSakuraItem(SakuraLangInterface* interface,
-                SakuraItem* sakuraItem,
-                const std::string &filePath,
-                std::string &errorMessage)
+Validator::checkSakuraItem(SakuraLangInterface* interface,
+                           SakuraItem* sakuraItem,
+                           const std::string &filePath,
+                           std::string &errorMessage)
 {
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::SEQUENTIELL_ITEM)
@@ -83,7 +89,11 @@ checkSakuraItem(SakuraLangInterface* interface,
         SequentiellPart* sequential = dynamic_cast<SequentiellPart*>(sakuraItem);
         for(SakuraItem* item : sequential->childs)
         {
-            if(checkSakuraItem(interface, item, filePath, errorMessage) == false) {
+            if(checkSakuraItem(interface,
+                               item,
+                               filePath,
+                               errorMessage) == false)
+            {
                 return false;
             }
         }
@@ -94,7 +104,10 @@ checkSakuraItem(SakuraLangInterface* interface,
     {
         TreeItem* treeItem = dynamic_cast<TreeItem*>(sakuraItem);
         const std::string completePath = treeItem->rootPath + "/" + treeItem->relativePath;
-        return checkSakuraItem(interface, treeItem->childs, completePath, errorMessage);
+        return checkSakuraItem(interface,
+                               treeItem->childs,
+                               completePath,
+                               errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::SUBTREE_ITEM)
@@ -105,8 +118,10 @@ checkSakuraItem(SakuraLangInterface* interface,
     if(sakuraItem->getType() == SakuraItem::BLOSSOM_ITEM)
     {
         BlossomItem* blossomItem = dynamic_cast<BlossomItem*>(sakuraItem);
-        blossomItem->blossomPath = filePath;
-        return checkBlossomItem(interface, *blossomItem, errorMessage);
+        return checkBlossomItem(interface,
+                                *blossomItem,
+                                filePath,
+                                errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::BLOSSOM_GROUP_ITEM)
@@ -121,7 +136,11 @@ checkSakuraItem(SakuraLangInterface* interface,
                           blossomGroupItem->values,
                           ONLY_NON_EXISTING);
 
-            if(checkSakuraItem(interface, blossomItem, filePath, errorMessage) == false) {
+            if(checkSakuraItem(interface,
+                               blossomItem,
+                               filePath,
+                               errorMessage) == false)
+            {
                 return false;
             }
         }
@@ -132,11 +151,20 @@ checkSakuraItem(SakuraLangInterface* interface,
     if(sakuraItem->getType() == SakuraItem::IF_ITEM)
     {
         IfBranching* ifBranching = dynamic_cast<IfBranching*>(sakuraItem);
-        if(checkSakuraItem(interface, ifBranching->ifContent, filePath, errorMessage) == false) {
+        if(checkSakuraItem(interface,
+                           ifBranching->ifContent,
+                           filePath,
+                           errorMessage) == false)
+        {
             return false;
         }
 
-        if(checkSakuraItem(interface, ifBranching->elseContent, filePath, errorMessage) == false) {
+        if(checkSakuraItem(interface,
+                           ifBranching->elseContent,
+                           filePath,
+
+                           errorMessage) == false)
+        {
             return false;
         }
 
@@ -146,42 +174,60 @@ checkSakuraItem(SakuraLangInterface* interface,
     if(sakuraItem->getType() == SakuraItem::FOR_EACH_ITEM)
     {
         ForEachBranching* forEachBranching = dynamic_cast<ForEachBranching*>(sakuraItem);
-        return checkSakuraItem(interface, forEachBranching->content, filePath, errorMessage);
+        return checkSakuraItem(interface,
+                               forEachBranching->content,
+                               filePath,
+                               errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::FOR_ITEM)
     {
         ForBranching* forBranching = dynamic_cast<ForBranching*>(sakuraItem);
-        return checkSakuraItem(interface, forBranching->content, filePath, errorMessage);
+        return checkSakuraItem(interface,
+                               forBranching->content,
+                               filePath,
+                               errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::PARALLEL_ITEM)
     {
         ParallelPart* parallel = dynamic_cast<ParallelPart*>(sakuraItem);
-        return checkSakuraItem(interface, parallel->childs, filePath, errorMessage);
+        return checkSakuraItem(interface,
+                               parallel->childs,
+                               filePath,
+                               errorMessage);
     }
     //----------------------------------------------------------------------------------------------
-    // TODO: error-message
+
+    // This case should never appear. It can't be produced by the parser at the moment,
+    // so if this assert is called, there so something totally wrong in the implementation
+    assert(false);
 
     return false;
 }
 
 /**
- * @brief checkAllItems
- * @param garden
- * @return
+ * @brief check all blossom-items of all parsed trees
+ *
+ * @param interface pointer to the interface-object to get the information to check
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if check successfull, else false
  */
 bool
-checkAllItems(SakuraLangInterface *interface,
-              const SakuraGarden &garden,
-              std::string &errorMessage)
+Validator::checkAllItems(SakuraLangInterface* interface,
+                         std::string &errorMessage)
 {
     std::map<std::string, TreeItem*>::const_iterator mapIt;
-    for(mapIt = garden.trees.begin();
-        mapIt != garden.trees.end();
+    for(mapIt = interface->m_garden->trees.begin();
+        mapIt != interface->m_garden->trees.end();
         mapIt++)
     {
-        if(checkSakuraItem(interface,mapIt->second, "", errorMessage) == false) {
+        if(checkSakuraItem(interface,
+                           mapIt->second,
+                           mapIt->second->relativePath,
+                           errorMessage) == false)
+        {
             return false;
         }
     }
@@ -189,5 +235,5 @@ checkAllItems(SakuraLangInterface *interface,
     return true;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

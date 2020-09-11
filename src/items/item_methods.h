@@ -1,5 +1,5 @@
 /**
- * @file        common_methods.h
+ * @file        item_methods.h
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -20,32 +20,23 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_ITEM_METHODS_H
-#define SAKURA_ITEM_METHODS_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H
+#define KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H
 
 #include <vector>
 #include <string>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
-namespace Jinja2 {
-class Jinja2Converter;
-}
 namespace Sakura
 {
+struct BlossomLeaf;
 
 using Kitsunemimi::DataMap;
-
-struct Result
-{
-    bool success = false;
-    std::string errorMessage = "";
-    DataItem* item = nullptr;
-};
 
 bool getProcessedItem(ValueItem &valueItem,
                       DataMap &insertValues,
@@ -64,10 +55,8 @@ bool fillValueItem(ValueItem &valueItem,
 bool fillInputValueItemMap(ValueItemMap &items,
                            DataMap &insertValues,
                            std::string &errorMessage);
-bool fillBlossomOutputValueItemMap(ValueItemMap &items,
-                                   DataItem* output);
-bool fillSubtreeOutputValueItemMap(ValueItemMap &items,
-                                   DataMap *output);
+bool fillOutputValueItemMap(ValueItemMap &items,
+                            DataMap &output);
 
 // override functions
 enum OverrideType
@@ -88,15 +77,22 @@ void overrideItems(ValueItemMap &original,
                    OverrideType type);
 
 // check items
-const std::vector<std::string> checkInput(Kitsunemimi::Sakura::ValueItemMap &original,
+const std::vector<std::string> checkInput(ValueItemMap &original,
                                           const DataMap &itemInputValues);
 const std::vector<std::string> checkItems(DataMap &items);
 
 // convert
-const std::string convertBlossomOutput(const BlossomItem &blossom);
+const std::string convertBlossomOutput(const BlossomLeaf &blossom);
+void convertValueMap(DataMap &result,
+                     const ValueItemMap &input);
 
 // error-output
 const std::string createError(const BlossomItem &blossomItem,
+                              const std::string &blossomPath,
+                              const std::string &errorLocation,
+                              const std::string &errorMessage,
+                              const std::string &possibleSolution = "");
+const std::string createError(const BlossomLeaf &blossomLeaf,
                               const std::string &errorLocation,
                               const std::string &errorMessage,
                               const std::string &possibleSolution = "");
@@ -108,7 +104,7 @@ const std::string createError(const std::string &errorLocation,
                               const std::string &blossomName = "",
                               const std::string &blossomFilePath = "");
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_ITEM_METHODS_H
+#endif // KITSUNEMIMI_SAKURA_LANG_ITEM_METHODS_H

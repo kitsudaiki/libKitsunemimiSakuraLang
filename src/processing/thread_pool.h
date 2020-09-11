@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_THREAD_POOL_H
+#define KITSUNEMIMI_SAKURA_LANG_THREAD_POOL_H
 
 #include <vector>
 #include <libKitsunemimiCommon/threading/thread.h>
@@ -47,7 +47,7 @@ private:
     std::vector<SakuraThread*> m_childThreads;
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // THREAD_POOL_H
+#endif // KITSUNEMIMI_SAKURA_LANG_THREAD_POOL_H

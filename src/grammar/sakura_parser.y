@@ -42,7 +42,7 @@
 #include <iostream>
 #include <vector>
 #include <libKitsunemimiCommon/common_items/data_items.h>
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 #include <parsing/sakura_parsing.h>
 
 using Kitsunemimi::DataItem;
@@ -57,8 +57,8 @@ namespace Sakura
 
 class SakuraParserInterface;
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi
 }
 
 // The parsing context.
@@ -483,7 +483,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" value_item ">>" "identifier"
+    item_set  "-" "identifier" ">>" "identifier"
     {
         if(driver.isKeyRegistered($5) == false)
         {
@@ -493,7 +493,9 @@ item_set:
             return 1;
         }
 
-        ValueItem newItem = $3;
+        ValueItem newItem;
+        newItem.item = new DataValue($3);
+        newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
         $1->insert($5, newItem);
@@ -548,7 +550,7 @@ item_set:
         $$->insert($2, newItem);
     }
 |
-    "-" value_item ">>" "identifier"
+    "-" "identifier" ">>" "identifier"
     {
         if(driver.isKeyRegistered($4) == false)
         {
@@ -560,7 +562,9 @@ item_set:
 
         $$ = new ValueItemMap();
 
-        ValueItem newItem = $2;
+        ValueItem newItem;
+        newItem.item = new DataValue($2);
+        newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
         $$->insert($4, newItem);

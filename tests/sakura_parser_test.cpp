@@ -23,9 +23,8 @@
 #include "sakura_parser_test.h"
 
 #include <parsing/sakura_parsing.h>
-
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
-#include <libKitsunemimiSakuraLang/sakura_garden.h>
+#include <items/sakura_items.h>
+#include <sakura_garden.h>
 
 #include <test_strings/test_strings.h>
 
@@ -59,8 +58,9 @@ ParsingTest::parseTree_Test()
                                         testTreeString,
                                         errorMessage,
                                         true);
-    SakuraGarden garden;
+    SakuraGarden garden(true);
     bool success = m_parser->parseTreeString(garden,
+                                             "sakura_parser_test.tree",
                                              "sakura_parser_test.tree",
                                              testTreeString,
                                              errorMessage);

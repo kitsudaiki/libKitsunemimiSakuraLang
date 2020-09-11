@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraLang/items/sakura_items.h>
+#include <items/sakura_items.h>
 
 namespace Kitsunemimi
 {
@@ -47,12 +47,7 @@ BlossomItem::BlossomItem()
     type = BLOSSOM_ITEM;
 }
 
-BlossomItem::~BlossomItem()
-{
-    if(blossomOutput != nullptr) {
-        delete blossomOutput;
-    }
-}
+BlossomItem::~BlossomItem() {}
 
 SakuraItem*
 BlossomItem::copy()
@@ -65,20 +60,6 @@ BlossomItem::copy()
     newItem->blossomName = blossomName;
     newItem->blossomGroupType = blossomGroupType;
     newItem->blossomType = blossomType;
-    newItem->blossomPath = blossomPath;
-
-    if(blossomOutput != nullptr) {
-        newItem->blossomOutput = blossomOutput->copy();
-    }
-    if(parentValues != nullptr) {
-        newItem->parentValues = parentValues;
-    }
-
-    // result
-    newItem->nameHirarchie = nameHirarchie;
-    newItem->skip = skip;
-    newItem->success = success;
-    newItem->outputMessage = outputMessage;
 
     return newItem;
 }
@@ -346,6 +327,5 @@ ParallelPart::copy()
     return newItem;
 }
 
-}
-}
-
+} // namespace Sakura
+} // namespace Kitsunemimi

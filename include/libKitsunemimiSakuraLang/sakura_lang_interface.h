@@ -20,19 +20,21 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_LANG_INTERFACE_H
-#define SAKURA_LANG_INTERFACE_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_INTERFACE_H
+#define KITSUNEMIMI_SAKURA_LANG_INTERFACE_H
 
 #include <string>
 #include <map>
 #include <mutex>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <boost/filesystem.hpp>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 
 namespace Kitsunemimi
 {
+class DataBuffer;
 namespace Jinja2 {
 class Jinja2Converter;
 }
@@ -46,18 +48,28 @@ class SakuraThread;
 class Blossom;
 class BlossomGroupItem;
 class BlossomItem;
+class BlossomLeaf;
+class Validator;
+
+namespace bfs = boost::filesystem;
 
 class SakuraLangInterface
 {
 public:
-    SakuraLangInterface();
+    SakuraLangInterface(const bool enableDebug = false);
     ~SakuraLangInterface();
 
     // processing
     bool processFiles(const std::string &inputPath,
                       const DataMap &initialValues,
-                      const bool enableDebug,
-                      const bool dryRun);
+                      const bool dryRun,
+                      std::string &errorMessage);
+
+    // getter
+    const std::string getTemplate(const std::string &relativePath);
+    DataBuffer* getFile(const std::string &relativePath);
+    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
+                                    const bfs::path &blossomInternalRelPath);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,
@@ -68,17 +80,13 @@ public:
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
 
-    // output
-    void printOutput(const BlossomGroupItem &blossomGroupItem);
-    void printOutput(const BlossomItem &blossomItem);
-    void printOutput(const std::string &output);
-
-
-    SakuraGarden* m_garden = nullptr;
-    Kitsunemimi::Jinja2::Jinja2Converter* m_jinja2Converter = nullptr;
+    Kitsunemimi::Jinja2::Jinja2Converter* jinja2Converter = nullptr;
 
 private:
     friend SakuraThread;
+    friend Validator;
+
+    SakuraGarden* m_garden = nullptr;
 
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
@@ -89,9 +97,14 @@ private:
     bool runProcess(SakuraItem* item,
                     const DataMap &initialValues,
                     std::string &errorMessage);
+
+    // output
+    void printOutput(const BlossomGroupItem &blossomGroupItem);
+    void printOutput(const BlossomLeaf &blossomItem);
+    void printOutput(const std::string &output);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_LANG_INTERFACE_H
+#endif // KITSUNEMIMI_SAKURA_LANG_INTERFACE_H

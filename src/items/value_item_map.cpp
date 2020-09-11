@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include <libKitsunemimiSakuraLang/items/value_item_map.h>
+#include <items/value_item_map.h>
 
 #include <libKitsunemimiCommon/common_items/table_item.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
@@ -202,16 +202,14 @@ ValueItemMap::contains(const std::string &key)
     std::map<std::string, ValueItem>::const_iterator it;
     it = m_valueMap.find(key);
 
-    if(it != m_valueMap.end())
-    {
+    if(it != m_valueMap.end()) {
         return true;
     }
 
     std::map<std::string, ValueItemMap*>::const_iterator childIt;
     childIt = m_childMaps.find(key);
 
-    if(childIt != m_childMaps.end())
-    {
+    if(childIt != m_childMaps.end()) {
         return true;
     }
 
@@ -357,8 +355,9 @@ ValueItemMap::clearChildMap()
         ValueItemMap* oldMap = itChilds->second;
         delete oldMap;
     }
+
     m_childMaps.clear();
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
