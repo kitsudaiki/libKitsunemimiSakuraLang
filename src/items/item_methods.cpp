@@ -67,9 +67,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = getValue(valueItem.item,
-                                          arg.item->toValue(),
-                                          errorMessage);
+                DataItem* tempItem = getValue(valueItem.item,
+                                              arg.item->toValue(),
+                                              errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -84,9 +86,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = splitValue(valueItem.item->toValue(),
-                                            arg.item->toValue(),
-                                            errorMessage);
+                DataItem* tempItem = splitValue(valueItem.item->toValue(),
+                                                arg.item->toValue(),
+                                                errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -101,9 +105,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = containsValue(valueItem.item,
-                                               arg.item->toValue(),
-                                               errorMessage);
+                DataItem* tempItem = containsValue(valueItem.item,
+                                                   arg.item->toValue(),
+                                                   errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -127,10 +133,12 @@ getProcessedItem(ValueItem &valueItem,
             if(fillValueItem(arg1, insertValues, errorMessage)
                     && fillValueItem(arg2, insertValues, errorMessage))
             {
-                valueItem.item = insertValue(valueItem.item->toMap(),
-                                             arg1.item->toValue(),
-                                             arg2.item,
-                                             errorMessage);
+                DataItem* tempItem = insertValue(valueItem.item->toMap(),
+                                                 arg1.item->toValue(),
+                                                 arg2.item,
+                                                 errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -145,9 +153,11 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg = functionItem.arguments.at(0);
             if(fillValueItem(arg, insertValues, errorMessage))
             {
-                valueItem.item = appendValue(valueItem.item->toArray(),
-                                             arg.item,
-                                             errorMessage);
+                DataItem* tempItem = appendValue(valueItem.item->toArray(),
+                                                 arg.item,
+                                                 errorMessage);
+                delete valueItem.item;
+                valueItem.item = tempItem;
             }
 
             continue;
@@ -159,8 +169,10 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            valueItem.item = clearEmpty(valueItem.item->toArray(),
-                                        errorMessage);
+            DataItem* tempItem = clearEmpty(valueItem.item->toArray(),
+                                            errorMessage);
+            delete valueItem.item;
+            valueItem.item = tempItem;
 
             continue;
         }
@@ -171,17 +183,15 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            valueItem.item = parseJson(valueItem.item->toValue(),
-                                       errorMessage);
+            DataItem* tempItem = parseJson(valueItem.item->toValue(),
+                                           errorMessage);
+            delete valueItem.item;
+            valueItem.item = tempItem;
 
             continue;
         }
         //------------------------------------------------------------------------------------------
 
-        valueItem.item = nullptr;
-    }
-
-    if(valueItem.item == nullptr) {
         return false;
     }
 

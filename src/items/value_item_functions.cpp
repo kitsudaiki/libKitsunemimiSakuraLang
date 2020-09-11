@@ -59,7 +59,7 @@ getValue(DataItem* item,
     // get value in case of item is a map
     if(item->isMap())
     {
-        DataItem* resultItem = item->get(key->toString());
+        DataItem* resultItem = item->get(key->toString())->copy();
         return resultItem;
     }
 
@@ -78,7 +78,7 @@ getValue(DataItem* item,
             return nullptr;
         }
 
-        DataItem* resultItem = item->get(static_cast<uint64_t>(key->getLong()));
+        DataItem* resultItem = item->get(static_cast<uint64_t>(key->getLong()))->copy();
         return resultItem;
     }
 

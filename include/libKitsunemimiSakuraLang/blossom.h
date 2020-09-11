@@ -33,6 +33,7 @@ class BlossomItem;
 class SakuraThread;
 class Validator;
 
+//--------------------------------------------------------------------------------------------------
 struct BlossomLeaf
 {
     std::string blossomType = "";
@@ -48,6 +49,7 @@ struct BlossomLeaf
     DataMap* parentValues = nullptr;
     std::string terminalOutput = "";
 };
+//--------------------------------------------------------------------------------------------------
 
 class Blossom
 {
@@ -65,8 +67,7 @@ private:
     friend SakuraThread;
     friend Validator;
 
-    bool growBlossom(BlossomItem &blossomItem,
-                     BlossomLeaf &blossomLeaf,
+    bool growBlossom(BlossomLeaf &blossomLeaf,
                      std::string &errorMessage);
 
     bool validateInput(BlossomItem &blossomItem,

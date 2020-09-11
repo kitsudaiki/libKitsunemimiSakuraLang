@@ -80,12 +80,6 @@ public:
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
 
-    // output
-    void printOutput(const BlossomGroupItem &blossomGroupItem);
-    void printOutput(const BlossomLeaf &blossomItem);
-    void printOutput(const std::string &output);
-
-
     Kitsunemimi::Jinja2::Jinja2Converter* jinja2Converter = nullptr;
 
 private:
@@ -103,6 +97,11 @@ private:
     bool runProcess(SakuraItem* item,
                     const DataMap &initialValues,
                     std::string &errorMessage);
+
+    // output
+    void printOutput(const BlossomGroupItem &blossomGroupItem);
+    void printOutput(const BlossomLeaf &blossomItem);
+    void printOutput(const std::string &output);
 };
 
 } // namespace Sakura

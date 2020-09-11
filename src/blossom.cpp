@@ -30,21 +30,29 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
+/**
+ * @brief constructor
+ */
 Blossom::Blossom() {}
 
+/**
+ * @brief destructor
+ */
 Blossom::~Blossom() {}
 
 /**
- * @brief SakuraBlossom::growBlossom
- * @return
+ * @brief execute blossom
+ *
+ * @param blossomLeaf leaf-object for values-handling while processing
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfull, else false
  */
 bool
-Blossom::growBlossom(BlossomItem &blossomItem,
-                     BlossomLeaf &blossomLeaf,
+Blossom::growBlossom(BlossomLeaf &blossomLeaf,
                      std::string &errorMessage)
 {
     blossomLeaf.output.clear();
-    convertValueMap(blossomLeaf.input, blossomItem.values);
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
@@ -61,9 +69,13 @@ Blossom::growBlossom(BlossomItem &blossomItem,
 }
 
 /**
- * @brief Blossom::validateInput
- * @param blossomItem
- * @return
+ * @brief validate given input with the required and allowed values of the selected blossom
+ *
+ * @param blossomItem blossom-item with given values
+ * @param filePath file-path where the blossom belongs to, only used for error-output
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfull, else false
  */
 bool
 Blossom::validateInput(BlossomItem &blossomItem,

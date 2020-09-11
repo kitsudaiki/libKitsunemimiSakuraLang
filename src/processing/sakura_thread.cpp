@@ -231,9 +231,11 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
     blossomLeaf.blossomPath = filePath;
     blossomLeaf.nameHirarchie = m_hierarchy;
     blossomLeaf.parentValues = &m_parentValues;
-    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomLeaf.blossomName);
+    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomItem.blossomName);
 
-    const bool ret = blossom->growBlossom(blossomItem, blossomLeaf, errorMessage);
+    convertValueMap(blossomLeaf.input, blossomItem.values);
+
+    const bool ret = blossom->growBlossom(blossomLeaf, errorMessage);
 
     // check result
     if(ret == false) {
