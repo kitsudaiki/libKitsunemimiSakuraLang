@@ -64,7 +64,7 @@ SakuraLangInterface::~SakuraLangInterface()
 }
 
 /**
- * @brief SakuraLangInterface::processFiles
+ * @brief process set of sakura-files
  *
  * @param inputPath path to the initial sakura-file or directory with the root.sakura file
  * @param initialValues map-item with initial values to override the items of the initial tree-item
@@ -105,7 +105,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     const std::string relPath = bfs::relative(treeFile, parent).string();
 
     // get initial tree-item
-    SakuraItem* tree = m_garden->getTree(relPath, parent.string());
+    TreeItem* tree = m_garden->getTree(relPath, parent.string());
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + treeFile;
@@ -145,9 +145,11 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
 }
 
 /**
- * @brief SakuraLangInterface::getTemplate
- * @param relativePath
- * @return
+ * @brief get template-string
+ *
+ * @param relativePath relative path of the template as identification
+ *
+ * @return template as string or empty string, if no template found for the given path
  */
 const std::string
 SakuraLangInterface::getTemplate(const std::string &relativePath)
@@ -156,9 +158,11 @@ SakuraLangInterface::getTemplate(const std::string &relativePath)
 }
 
 /**
- * @brief SakuraLangInterface::getFile
- * @param relativePath
- * @return
+ * @brief get file as data-buffer
+ *
+ * @param relativePath relative path of the file as identification
+ *
+ * @return file as data-buffer or nullptr, if no file found for the given path
  */
 DataBuffer*
 SakuraLangInterface::getFile(const std::string &relativePath)
@@ -183,12 +187,12 @@ SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
 }
 
 /**
- * @brief SakuraLangInterface::doesBlossomExist
+ * @brief check if a specific blossom was registered
  *
- * @param groupName
- * @param itemName
+ * @param groupName group-identifier of the blossom
+ * @param itemName item-identifier of the blossom
  *
- * @return
+ * @return true, if blossom with the given group- and item-name exist, else false
  */
 bool
 SakuraLangInterface::doesBlossomExist(const std::string &groupName,
@@ -213,17 +217,19 @@ SakuraLangInterface::doesBlossomExist(const std::string &groupName,
 /**
  * @brief SakuraLangInterface::addBlossom
  *
- * @param groupName
- * @param itemName
- * @param newBlossom
+ * @param groupName group-identifier of the blossom
+ * @param itemName item-identifier of the blossom
+ * @param newBlossom pointer to the new blossom
  *
- * @return
+ * @return true, if blossom was registered or false, if the group- and item-name are already
+ *         registered
  */
 bool
 SakuraLangInterface::addBlossom(const std::string &groupName,
                                 const std::string &itemName,
                                 Blossom* newBlossom)
 {
+    // check if already used
     if(doesBlossomExist(groupName, itemName) == true) {
         return false;
     }
@@ -231,12 +237,14 @@ SakuraLangInterface::addBlossom(const std::string &groupName,
     std::map<std::string, std::map<std::string, Blossom*>>::iterator groupIt;
     groupIt = m_registeredBlossoms.find(groupName);
 
+    // create internal group-map, if not already exist
     if(groupIt == m_registeredBlossoms.end())
     {
         std::map<std::string, Blossom*> newMap;
         m_registeredBlossoms.insert(std::make_pair(groupName, newMap));
     }
 
+    // add item to group
     groupIt = m_registeredBlossoms.find(groupName);
     groupIt->second.insert(std::make_pair(itemName, newBlossom));
 
@@ -244,22 +252,25 @@ SakuraLangInterface::addBlossom(const std::string &groupName,
 }
 
 /**
- * @brief SakuraLangInterface::getBlossom
+ * @brief request a registered blossom
  *
- * @param groupName
- * @param itemName
+ * @param groupName group-identifier of the blossom
+ * @param itemName item-identifier of the blossom
  *
- * @return
+ * @return pointer to the blossom or
+ *         nullptr, if blossom the given group- and item-name was not found
  */
 Blossom*
 SakuraLangInterface::getBlossom(const std::string &groupName,
                                 const std::string &itemName)
 {
+    // search for group
     std::map<std::string, std::map<std::string, Blossom*>>::const_iterator groupIt;
     groupIt = m_registeredBlossoms.find(groupName);
 
     if(groupIt != m_registeredBlossoms.end())
     {
+        // search for item within group
         std::map<std::string, Blossom*>::const_iterator itemIt;
         itemIt = groupIt->second.find(itemName);
 
@@ -272,16 +283,17 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
 }
 
 /**
- * @brief SakuraLangInterface::runProcess
+ * @brief start processing by spawning the first subtree-object
  *
- * @param item
- * @param initialValues
+ * @param item subtree to spawn
+ * @param initialValues initial set of values to override the same named values within the initial
+ *                      called tree-item
  * @param errorMessage reference for error-message
  *
- * @return
+ * @return true, if proocess was successfull, else false
  */
 bool
-SakuraLangInterface::runProcess(SakuraItem* item,
+SakuraLangInterface::runProcess(TreeItem* item,
                                 const DataMap &initialValues,
                                 std::string &errorMessage)
 {
