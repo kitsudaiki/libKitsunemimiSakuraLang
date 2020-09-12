@@ -290,7 +290,7 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
  *                      called tree-item
  * @param errorMessage reference for error-message
  *
- * @return true, if proocess was successfull, else false
+ * @return true, if proocess was successful, else false
  */
 bool
 SakuraLangInterface::runProcess(TreeItem* item,
