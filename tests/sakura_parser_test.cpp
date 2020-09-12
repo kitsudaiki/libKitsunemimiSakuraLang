@@ -54,14 +54,13 @@ void
 ParsingTest::parseTree_Test()
 {
     std::string errorMessage = "";
-    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.tree",
+    Kitsunemimi::Persistence::writeFile("/tmp/sakura_parser_test.sakura",
                                         testTreeString,
                                         errorMessage,
                                         true);
     SakuraGarden garden(true);
     bool success = m_parser->parseTreeString(garden,
-                                             "sakura_parser_test.tree",
-                                             "sakura_parser_test.tree",
+                                             "sakura_parser_test.sakura",
                                              testTreeString,
                                              errorMessage);
 

@@ -46,7 +46,7 @@ Blossom::~Blossom() {}
  * @param blossomLeaf leaf-object for values-handling while processing
  * @param errorMessage reference for error-message
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 Blossom::growBlossom(BlossomLeaf &blossomLeaf,
@@ -75,7 +75,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @param filePath file-path where the blossom belongs to, only used for error-output
  * @param errorMessage reference for error-message
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 Blossom::validateInput(BlossomItem &blossomItem,

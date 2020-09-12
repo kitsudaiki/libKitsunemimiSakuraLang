@@ -42,6 +42,7 @@ namespace Sakura
 {
 class SakuraGarden;
 class SakuraItem;
+class TreeItem;
 class ThreadPool;
 class SubtreeQueue;
 class SakuraThread;
@@ -86,15 +87,15 @@ private:
     friend SakuraThread;
     friend Validator;
 
+    // internally used objects
     SakuraGarden* m_garden = nullptr;
-
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
     std::mutex m_mutex;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(SakuraItem* item,
+    bool runProcess(TreeItem *item,
                     const DataMap &initialValues,
                     std::string &errorMessage);
 

@@ -78,7 +78,7 @@ SakuraGarden::addTree(const bfs::path &treePath,
  * @brief add a tree as resource
  *
  * @param content string to parse and add
- * @param treePath
+ * @param treePath absolut file-path
  * @param errorMessage reference for error-message
  *
  * @return true, if successful, else false
@@ -147,14 +147,14 @@ SakuraGarden::getTree(const std::string &relativePath,
     if(bfs::is_directory(completePath))
     {
         if(relativePath == "") {
-            return getTreeByPath(bfs::path("root.sakura"));
+            return getTree(bfs::path("root.sakura").string());
         } else {
-            return getTreeByPath(bfs::path(relativePath) / bfs::path("root.sakura"));
+            return getTree((bfs::path(relativePath) / bfs::path("root.sakura")).string());
         }
     }
     else
     {
-        return getTreeByPath(relativePath);
+        return getTree(relativePath);
     }
 }
 
@@ -182,15 +182,17 @@ SakuraGarden::getRessource(const std::string &id)
 }
 
 /**
- * @brief SakuraGarden::getTreeByPath
- * @param relativePath
- * @return
+ * @brief request a tree
+ *
+ * @param id name of the tree
+ *
+ * @return copy of the tree-item, if id exist, else nullptr
  */
 TreeItem*
-SakuraGarden::getTreeByPath(const bfs::path &relativePath)
+SakuraGarden::getTree(const std::string &id)
 {
     std::map<std::string, TreeItem*>::const_iterator it;
-    it = trees.find(relativePath.string());
+    it = trees.find(id);
 
     if(it != trees.end())
     {
@@ -203,15 +205,17 @@ SakuraGarden::getTreeByPath(const bfs::path &relativePath)
 }
 
 /**
- * @brief SakuraGarden::getTemplate
- * @param relativePath
- * @return
+ * @brief request template
+ *
+ * @param id id of the template
+ *
+ * @return template, if id found, else empty string
  */
 const std::string
-SakuraGarden::getTemplate(const std::string &relativePath)
+SakuraGarden::getTemplate(const std::string &id)
 {
     std::map<std::string, std::string>::const_iterator it;
-    it = templates.find(relativePath);
+    it = templates.find(id);
 
     if(it != templates.end()) {
         return it->second;
@@ -221,15 +225,17 @@ SakuraGarden::getTemplate(const std::string &relativePath)
 }
 
 /**
- * @brief SakuraGarden::getFile
- * @param relativePath
- * @return
+ * @brief request file
+ *
+ * @param id id of the file
+ *
+ * @return file as data-buffer, if id found, else nullptr
  */
 Kitsunemimi::DataBuffer*
-SakuraGarden::getFile(const std::string &relativePath)
+SakuraGarden::getFile(const std::string &id)
 {
     std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
-    it = files.find(relativePath);
+    it = files.find(id);
 
     if(it != files.end()) {
         return it->second;

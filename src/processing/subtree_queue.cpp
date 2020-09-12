@@ -50,15 +50,19 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
 }
 
 /**
- * @brief SakuraRoot::spawnParallelSubtreesLoop
- * @param childs
- * @param startPos
- * @param endPos
- * @param filePath
- * @param hierarchy
- * @param parentValues
- * @param errorMessage
- * @return
+ * @brief run a parallel loop
+ *
+ * @param subtree subtree, which should be executed multiple times by multiple threads
+ * @param filePath path of the file, where the subtree belongs to
+ * @param hierarchy actual hierarchy for terminal output
+ * @param parentValues data-map with parent-values
+ * @param tempVarName loop-internal variable
+ * @param array data-array in case of an iterator-loop, else false
+ * @param errorMessage reference for error-message
+ * @param endPos end position in array or counter end
+ * @param startPos start position in array or counter start
+ *
+ * @return true, if successful, else false
  */
 bool
 SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
@@ -123,15 +127,17 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
 }
 
 /**
- * @brief SakuraRoot::spawnParallelSubtrees
- * @param childs
- * @param startPos
- * @param endPos
- * @param filePath
- * @param hierarchy
- * @param parentValues
- * @param errorMessage
- * @return
+ * @brief run multiple different subtrees in parallel threads
+ *
+ * @param childs vector with subtrees, where each subtree should be executed by another thread
+ * @param filePath path of the file, where the subtree belongs to
+ * @param hierarchy actual hierarchy for terminal output
+ * @param parentValues data-map with parent-values
+ * @param errorMessage reference for error-message
+ * @param endPos end position in array or counter end
+ * @param startPos start position in array or counter start
+ *
+ * @return true, if successful, else false
  */
 bool
 SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
@@ -197,10 +203,12 @@ SubtreeQueue::getSubtreeObject()
 
 
 /**
- * @brief waitUntilFinish
- * @param activeCounter
- * @param errorMessage
- * @return
+ * @brief wait until all spawned tasks are finished
+ *
+ * @param activeCounter pointer to the active-counter, which was given each spawned thread
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successful, else false
  */
 bool
 SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter,
@@ -221,8 +229,9 @@ SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter,
 }
 
 /**
- * @brief clearSpawnedObjects
- * @param spawnedObjects
+ * @brief free memory of all spawned objects
+ *
+ * @param vector with spawned queue-objects
  */
 void
 SubtreeQueue::clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects)

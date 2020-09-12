@@ -41,7 +41,7 @@ namespace Sakura
  * @param filePath path of the file, which will be actually checked
  * @param errorMessage reference for error-message
  *
- * @return true, if check successfull, else false
+ * @return true, if check successful, else false
  */
 bool
 Validator::checkBlossomItem(SakuraLangInterface* interface,
@@ -75,7 +75,7 @@ Validator::checkBlossomItem(SakuraLangInterface* interface,
  * @param filePath path of the file, which will be actually checked
  * @param errorMessage reference for error-message
  *
- * @return true, if check successfull, else false
+ * @return true, if check successful, else false
  */
 bool
 Validator::checkSakuraItem(SakuraLangInterface* interface,
@@ -212,7 +212,7 @@ Validator::checkSakuraItem(SakuraLangInterface* interface,
  * @param interface pointer to the interface-object to get the information to check
  * @param errorMessage reference for error-message
  *
- * @return true, if check successfull, else false
+ * @return true, if check successful, else false
  */
 bool
 Validator::checkAllItems(SakuraLangInterface* interface,

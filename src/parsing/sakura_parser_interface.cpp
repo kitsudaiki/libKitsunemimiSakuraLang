@@ -46,7 +46,7 @@ using Kitsunemimi::splitStringByDelimiter;
  * @brief constructor
  *
  * @param traceParsing true to enable debug-output of the parser
- * @param sakuraParsing
+ * @param sakuraParsing pointer to SakuraParsing-object to write the result back
  */
 SakuraParserInterface::SakuraParserInterface(const bool traceParsing,
                                              SakuraParsing* sakuraParsing)
@@ -161,6 +161,7 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
     m_errorMessage.addRow(std::vector<std::string>{"message", message});
     m_errorMessage.addRow(std::vector<std::string>{"line-number", std::to_string(linenumber)});
 
+    // add additional position information
     if(customError == false)
     {
         if(splittedContent[linenumber - 1].size() > errorStart-1+errorLength)
@@ -229,17 +230,19 @@ SakuraParserInterface::isKeyRegistered(const std::string &key)
 const std::string
 SakuraParserInterface::removeQuotes(const std::string &input)
 {
+    // precheck
     if(input.length() == 0) {
         return input;
     }
 
+    // remove double-quotes
     if(input[0] == '\"' && input[input.length()-1] == '\"')
     {
         std::string result = "";
-        for(uint32_t i = 1; i < input.length()-1; i++)
-        {
+        for(uint32_t i = 1; i < input.length()-1; i++) {
             result += input[i];
         }
+
         return result;
     }
 

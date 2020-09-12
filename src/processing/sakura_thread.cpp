@@ -648,7 +648,7 @@ SakuraThread::processParallelPart(ParallelPart* parallelPart,
  * @param filePath of the current file
  * @param errorMessage reference for error-message
  *
- * @return true, if check successfull, else false
+ * @return true, if check successful, else false
  */
 bool
 SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
@@ -706,7 +706,7 @@ SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
  * @param endPos start-position in the array or of the counter
  * @param startPos start-position in the array or of the counter
  *
- * @return true, if check successfull, else false
+ * @return true, if check successful, else false
  */
 bool
 SakuraThread::runLoop(SakuraItem* loopContent,

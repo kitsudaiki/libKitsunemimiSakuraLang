@@ -60,7 +60,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "get")
         {
-            if(functionItem.arguments.size() != 1) {
+            if(functionItem.arguments.size() != 1)
+            {
+                errorMessage = type + "-functiono requires 1 argument";
                 return false;
             }
 
@@ -79,7 +81,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "split")
         {
-            if(functionItem.arguments.size() != 1) {
+            if(functionItem.arguments.size() != 1)
+            {
+                errorMessage = type + "-functiono requires 1 argument";
                 return false;
             }
 
@@ -98,7 +102,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "contains")
         {
-            if(functionItem.arguments.size() != 1) {
+            if(functionItem.arguments.size() != 1)
+            {
+                errorMessage = type + "-functiono requires 1 argument";
                 return false;
             }
 
@@ -117,13 +123,21 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "size")
         {
+            if(functionItem.arguments.size() != 0)
+            {
+                errorMessage = type + "-functiono requires 0 arguments";
+                return false;
+            }
+
             valueItem.item = sizeValue(valueItem.item, errorMessage);
             continue;
         }
         //------------------------------------------------------------------------------------------
         if(type == "insert")
         {
-            if(functionItem.arguments.size() != 2) {
+            if(functionItem.arguments.size() != 2)
+            {
+                errorMessage = type + "-functiono requires 2 arguments";
                 return false;
             }
 
@@ -146,7 +160,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "append")
         {
-            if(functionItem.arguments.size() != 1) {
+            if(functionItem.arguments.size() != 1)
+            {
+                errorMessage = type + "-functiono requires 1 argument";
                 return false;
             }
 
@@ -165,7 +181,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "clear_empty")
         {
-            if(functionItem.arguments.size() != 0) {
+            if(functionItem.arguments.size() != 0)
+            {
+                errorMessage = type + "-functiono requires 0 arguments";
                 return false;
             }
 
@@ -179,7 +197,9 @@ getProcessedItem(ValueItem &valueItem,
         //------------------------------------------------------------------------------------------
         if(type == "parse_json")
         {
-            if(functionItem.arguments.size() != 0) {
+            if(functionItem.arguments.size() != 0)
+            {
+                errorMessage = type + "-functiono requires 0 arguments";
                 return false;
             }
 

@@ -52,23 +52,21 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
-    bool parseTreeFiles(SakuraGarden &result,
+    bool parseTreeFiles(SakuraGarden &garden,
                         const bfs::path &initialFilePath,
                         std::string &errorMessage);
 
-    bool parseTreeString(SakuraGarden &result,
-                         const std::string &absolutePath,
-                         const std::string &relativePath,
+    bool parseTreeString(SakuraGarden &garden,
+                         const std::string &name,
                          const std::string &content,
                          std::string &errorMessage);
 
-    bool parseRessourceString(SakuraGarden &result,
+    bool parseRessourceString(SakuraGarden &garden,
                               const std::string &absolutePath,
                               const std::string &content,
                               std::string &errorMessage);
 
-    void addFileToQueue(bfs::path oldRelativePath);
-
+    void addFileToQueue(bfs::path relativePath);
 
 private:
     SakuraParserInterface* m_parser = nullptr;
@@ -85,16 +83,16 @@ private:
                                 std::string &errorMessage);
 
     void initErrorOutput(TableItem &errorOutput);
-    bool collectFiles(SakuraGarden &result,
+    bool collectFiles(SakuraGarden &garden,
                       const bfs::path &dirPath,
                       std::string &errorMessage);
-    bool collectRessources(SakuraGarden &result,
+    bool collectResources(SakuraGarden &garden,
                            const bfs::path &dirPath,
                            std::string &errorMessage);
-    bool collectTemplates(SakuraGarden &result,
+    bool collectTemplates(SakuraGarden &garden,
                           const bfs::path &dirPath,
                           std::string &errorMessage);
-    bool getFilesInDir(SakuraGarden &result,
+    bool getFilesInDir(SakuraGarden &garden,
                        const bfs::path &directory,
                        const std::string &type,
                        std::string &errorMessage);
