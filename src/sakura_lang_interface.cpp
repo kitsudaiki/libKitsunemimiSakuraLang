@@ -38,6 +38,8 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
+Kitsunemimi::Sakura::SakuraLangInterface* SakuraLangInterface::m_instance = nullptr;
+
 /**
  * @brief constructor
  *
@@ -47,9 +49,23 @@ SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
 {
     m_garden = new SakuraGarden(enableDebug);
     m_queue = new SubtreeQueue();
-    jinja2Converter = new Kitsunemimi::Jinja2::Jinja2Converter();
     // TODO: make number of threads configurable
     m_threadPoos = new ThreadPool(6, this);
+}
+
+/**
+ * @brief static methode to get instance of the interface
+ *
+ * @return pointer to the static instance
+ */
+SakuraLangInterface*
+SakuraLangInterface::getInstance()
+{
+    if(m_instance == nullptr) {
+        m_instance = new SakuraLangInterface();
+    }
+
+    return m_instance;
 }
 
 /**
@@ -60,7 +76,6 @@ SakuraLangInterface::~SakuraLangInterface()
     delete m_garden;
     delete m_queue;
     delete m_threadPoos;
-    delete jinja2Converter;
 }
 
 /**
@@ -93,10 +108,13 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
         treeFile = treeFile + "/root.sakura";
     }
 
+    m_lock.lock();
+
     // parse all files
     if(m_garden->addTree(treeFile, errorMessage) == false)
     {
         errorMessage = "failed to add trees\n    " + errorMessage;
+        m_lock.unlock();
         return false;
     }
 
@@ -109,6 +127,7 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + treeFile;
+        m_lock.unlock();
         return false;
     }
 
@@ -122,24 +141,33 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
             errorMessage += "    " + item + "\n";
         }
 
+        m_lock.unlock();
+
         return false;
     }
 
     // validate parsed blossoms
     Validator validator;
-    if(validator.checkAllItems(this, errorMessage) == false) {
+    if(validator.checkAllItems(this, errorMessage) == false)
+    {
+        m_lock.unlock();
         return false;
     }
 
     // in case of a dry-run, cancel here before executing the scripts
     if(dryRun) {
+        m_lock.unlock();
         return true;
     }
 
     // process sakura-file with initial values
-    if(runProcess(tree, initialValues, errorMessage) == false) {
+    if(runProcess(tree, initialValues, errorMessage) == false)
+    {
+        m_lock.unlock();
         return false;
     }
+
+    m_lock.unlock();
 
     return true;
 }
@@ -350,8 +378,6 @@ SakuraLangInterface::printOutput(const BlossomLeaf &blossomItem)
 void
 SakuraLangInterface::printOutput(const std::string &output)
 {
-    m_mutex.lock();
-
     // get width of the termial to draw the separator-line
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
@@ -366,8 +392,6 @@ SakuraLangInterface::printOutput(const std::string &output)
     std::string line(terminalWidth, '=');
 
     LOG_INFO(line + "\n\n" + output + "\n");
-
-    m_mutex.unlock();
 }
 
 } // namespace Sakura

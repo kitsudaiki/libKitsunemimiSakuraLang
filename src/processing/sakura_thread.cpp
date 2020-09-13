@@ -272,10 +272,11 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
 
     // convert name as jinja2-string
     std::string convertResult = "";
-    const bool ret = m_interface->jinja2Converter->convert(convertResult,
-                                                             blossomGroupItem.id,
-                                                             &m_parentValues,
-                                                             errorMessage);
+    Jinja2::Jinja2Converter* converter = Jinja2::Jinja2Converter::getInstance();
+    const bool ret = converter->convert(convertResult,
+                                        blossomGroupItem.id,
+                                        &m_parentValues,
+                                        errorMessage);
     if(ret == false)
     {
         errorMessage = createError("jinja2-converter", errorMessage);

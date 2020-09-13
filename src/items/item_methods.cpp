@@ -34,6 +34,8 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
+using Kitsunemimi::Jinja2::Jinja2Converter;
+
 /**
  * @brief process a value-item by handling its function-calls
  *
@@ -266,7 +268,7 @@ fillJinja2Template(ValueItem &valueItem,
                    std::string &errorMessage)
 {
     // convert jinja2-string
-    Kitsunemimi::Jinja2::Jinja2Converter* converter = new Kitsunemimi::Jinja2::Jinja2Converter();
+    Jinja2Converter* converter = Jinja2Converter::getInstance();
     std::string convertResult = "";
     bool ret = converter->convert(convertResult,
                                   valueItem.item->toString(),
