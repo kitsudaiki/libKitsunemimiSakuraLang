@@ -508,6 +508,7 @@ SakuraThread::processForEach(ForEachBranching* forEachItem,
     else
     {
         result = m_interface->m_queue->spawnParallelSubtreesLoop(forEachItem->content,
+                                                                 forEachItem->values,
                                                                  filePath,
                                                                  m_hierarchy,
                                                                  m_parentValues,
@@ -574,6 +575,7 @@ SakuraThread::processFor(ForBranching* forItem,
     else
     {
         result = m_interface->m_queue->spawnParallelSubtreesLoop(forItem->content,
+                                                                 forItem->values,
                                                                  filePath,
                                                                  m_hierarchy,
                                                                  m_parentValues,

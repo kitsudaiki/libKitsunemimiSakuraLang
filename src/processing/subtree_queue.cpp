@@ -53,6 +53,7 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  * @brief run a parallel loop
  *
  * @param subtree subtree, which should be executed multiple times by multiple threads
+ * @param postProcessing post-aggregation information
  * @param filePath path of the file, where the subtree belongs to
  * @param hierarchy actual hierarchy for terminal output
  * @param parentValues data-map with parent-values
@@ -66,6 +67,7 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  */
 bool
 SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
+                                        ValueItemMap postProcessing,
                                         const std::string &filePath,
                                         const std::vector<std::string> &hierarchy,
                                         DataMap &parentValues,
@@ -108,7 +110,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
     for(uint64_t i = startPos; i < endPos; i++)
     {
         std::string errorMessage = "";
-        if(fillInputValueItemMap(subtree->values,
+        if(fillInputValueItemMap(postProcessing,
                                  spawnedObjects.at(static_cast<uint32_t>(i))->items,
                                  errorMessage) == false)
         {
@@ -119,7 +121,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
         }
     }
 
-    overrideItems(parentValues, subtree->values, ONLY_EXISTING);
+    overrideItems(parentValues, postProcessing, ONLY_EXISTING);
 
     clearSpawnedObjects(spawnedObjects);
 
