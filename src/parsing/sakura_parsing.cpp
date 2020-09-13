@@ -206,6 +206,19 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
         return nullptr;
     }
 
+    // check if file was empty
+    if(fileContent.size() == 0)
+    {
+        TableItem errorOutput;
+        initErrorOutput(errorOutput);
+        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
+        errorOutput.addRow(std::vector<std::string>{"message", "file-path: "
+                                                               + filePath.string()
+                                                               + " is an empty file"});
+        errorMessage = errorOutput.toString();
+        return nullptr;
+    }
+
     // parse tree
     SakuraItem* resultItem = parseStringToTree(fileContent, filePath.string(), errorMessage);
     if(resultItem == nullptr) {
