@@ -59,8 +59,14 @@ getValue(DataItem* item,
     // get value in case of item is a map
     if(item->isMap())
     {
-        DataItem* resultItem = item->get(key->toString())->copy();
-        return resultItem;
+        DataItem* resultItem = item->get(key->toString());
+        if(resultItem == nullptr)
+        {
+            errorMessage = "key " + key->toString() + " doesn't exist in the map";
+            return nullptr;
+        }
+
+        return resultItem->copy();
     }
 
     // get value in case of item is an array
@@ -78,7 +84,14 @@ getValue(DataItem* item,
             return nullptr;
         }
 
-        DataItem* resultItem = item->get(static_cast<uint64_t>(key->getLong()))->copy();
+        const uint64_t pos = static_cast<uint64_t>(key->getLong());
+        if(item->size() <= pos)
+        {
+            errorMessage = "input value for get-function is too but for the array";
+            return nullptr;
+        }
+
+        DataItem* resultItem = item->get(pos)->copy();
         return resultItem;
     }
 
