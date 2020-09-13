@@ -132,6 +132,7 @@ public:
                                const uint64_t endPos = 1,
                                const uint64_t startPos = 0);
     bool spawnParallelSubtreesLoop(SakuraItem* subtree,
+                                   ValueItemMap postProcessing,
                                    const std::string &filePath,
                                    const std::vector<std::string> &hierarchy,
                                    DataMap &parentValues,
