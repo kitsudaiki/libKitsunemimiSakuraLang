@@ -52,6 +52,10 @@ public:
     SakuraParsing(const bool debug = false);
     ~SakuraParsing();
 
+    TreeItem* parseTreeString(const std::string &name,
+                              const std::string &content,
+                              std::string &errorMessage);
+
     bool parseTreeFiles(SakuraGarden &garden,
                         const bfs::path &initialFilePath,
                         std::string &errorMessage);

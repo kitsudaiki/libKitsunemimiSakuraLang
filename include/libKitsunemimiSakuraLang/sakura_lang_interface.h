@@ -66,6 +66,11 @@ public:
                       const DataMap &initialValues,
                       const bool dryRun,
                       std::string &errorMessage);
+    bool processString(const std::string &name,
+                       const std::string &inputString,
+                       const DataMap &initialValues,
+                       const bool dryRun,
+                       std::string &errorMessage);
 
     // getter
     const std::string getTemplate(const std::string &relativePath);
@@ -98,8 +103,9 @@ private:
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(TreeItem *item,
+    bool runProcess(TreeItem *tree,
                     const DataMap &initialValues,
+                    const bool dryRun,
                     std::string &errorMessage);
 
     // output
