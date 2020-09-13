@@ -56,6 +56,10 @@ public:
                      const bfs::path &treePath,
                      std::string &errorMessage);
 
+    TreeItem* parseString(const std::string &name,
+                          const std::string &content,
+                          std::string &errorMessage);
+
     // get
     TreeItem* getTree(const std::string &relativePath,
                       const std::string &rootPath);

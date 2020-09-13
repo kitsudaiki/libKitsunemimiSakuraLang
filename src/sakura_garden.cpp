@@ -101,6 +101,23 @@ SakuraGarden::addResource(const std::string &content,
 }
 
 /**
+ * @brief parse single string
+ *
+ * @param name name for identification in debug and error-output
+ * @param content string to parse
+ * @param errorMessage reference for error-message
+ *
+ * @return parsed tree-item, if successful, else nullptr
+ */
+TreeItem*
+SakuraGarden::parseString(const std::string &name,
+                          const std::string &content,
+                          std::string &errorMessage)
+{
+    return m_parser->parseTreeString(name, content, errorMessage);
+}
+
+/**
  * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
  *        root-path.
  *

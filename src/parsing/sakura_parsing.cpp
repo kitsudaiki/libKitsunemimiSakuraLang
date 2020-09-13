@@ -57,6 +57,33 @@ SakuraParsing::~SakuraParsing()
 }
 
 /**
+ * @brief parse single string without storing into sakura-garden
+ *
+ * @param name name for identification in debug and error-output
+ * @param content string to parse
+ * @param errorMessage reference to error-message
+ *
+ * @return parsed tree-item, if successfule, else nullptr
+ */
+TreeItem*
+SakuraParsing::parseTreeString(const std::string &name,
+                               const std::string &content,
+                               std::string &errorMessage)
+{
+    // parse
+    TreeItem* parsetItem = parseStringToTree(content, "", errorMessage);
+    if(parsetItem == nullptr) {
+        return nullptr;
+    }
+
+    // update content
+    parsetItem->unparsedConent = content;
+    parsetItem->relativePath = name;
+
+    return parsetItem;
+}
+
+/**
  * @brief parse all sakura-files at a specific location
  *
  * @param garden reference to the sakura-garden-object to store all found data

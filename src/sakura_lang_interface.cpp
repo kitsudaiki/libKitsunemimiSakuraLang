@@ -131,37 +131,55 @@ SakuraLangInterface::processFiles(const std::string &inputPath,
         return false;
     }
 
-    // check if input-values match with the first tree
-    const std::vector<std::string> failedInput = checkInput(tree->values, initialValues);
-    if(failedInput.size() > 0)
-    {
-        errorMessage = "Following input-values are not valid for the initial tress:\n";
-
-        for(const std::string& item : failedInput) {
-            errorMessage += "    " + item + "\n";
-        }
-
-        m_lock.unlock();
-
-        return false;
-    }
-
-    // validate parsed blossoms
-    Validator validator;
-    if(validator.checkAllItems(this, errorMessage) == false)
+    // process sakura-file with initial values
+    if(runProcess(tree,
+                  initialValues,
+                  dryRun,
+                  errorMessage) == false)
     {
         m_lock.unlock();
         return false;
     }
 
-    // in case of a dry-run, cancel here before executing the scripts
-    if(dryRun) {
+    m_lock.unlock();
+
+    return true;
+}
+
+/**
+ * @brief process single string
+ *
+ * @param name name for identification in debug and error-output
+ * @param inputString file-content to execute
+ * @param initialValues map-item with initial values to override the items of the initial tree-item
+ * @param dryRun set to true to only parse and check the files, without executing them
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
+ */
+bool
+SakuraLangInterface::processString(const std::string &name,
+                                   const std::string &inputString,
+                                   const DataMap &initialValues,
+                                   const bool dryRun,
+                                   std::string &errorMessage)
+{
+    m_lock.lock();
+
+    // get initial tree-item
+    TreeItem* tree = m_garden->parseString(name, inputString, errorMessage);
+    if(tree == nullptr)
+    {
+        errorMessage = "Failed to parse " + name;
         m_lock.unlock();
-        return true;
+        return false;
     }
 
     // process sakura-file with initial values
-    if(runProcess(tree, initialValues, errorMessage) == false)
+    if(runProcess(tree,
+                  initialValues,
+                  dryRun,
+                  errorMessage) == false)
     {
         m_lock.unlock();
         return false;
@@ -316,17 +334,44 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
  * @param item subtree to spawn
  * @param initialValues initial set of values to override the same named values within the initial
  *                      called tree-item
+ * @param dryRun set to true to only parse and check the files, without executing them
  * @param errorMessage reference for error-message
  *
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(TreeItem* item,
+SakuraLangInterface::runProcess(TreeItem* tree,
                                 const DataMap &initialValues,
+                                const bool dryRun,
                                 std::string &errorMessage)
 {
+    // check if input-values match with the first tree
+    const std::vector<std::string> failedInput = checkInput(tree->values, initialValues);
+    if(failedInput.size() > 0)
+    {
+        errorMessage = "Following input-values are not valid for the initial tress:\n";
+
+        for(const std::string& item : failedInput) {
+            errorMessage += "    " + item + "\n";
+        }
+
+        return false;
+    }
+
+    // validate parsed blossoms
+    Validator validator;
+    if(validator.checkAllItems(this, errorMessage) == false)
+    {
+        return false;
+    }
+
+    // in case of a dry-run, cancel here before executing the scripts
+    if(dryRun) {
+        return true;
+    }
+
     std::vector<SakuraItem*> childs;
-    childs.push_back(item);
+    childs.push_back(tree);
     std::vector<std::string> hierarchy;
 
     const bool result = m_queue->spawnParallelSubtrees(childs,
@@ -334,6 +379,7 @@ SakuraLangInterface::runProcess(TreeItem* item,
                                                        hierarchy,
                                                        initialValues,
                                                        errorMessage);
+
     return result;
 }
 
