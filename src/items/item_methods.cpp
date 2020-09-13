@@ -64,7 +64,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-functiono requires 1 argument";
+                errorMessage = type + "-function requires 1 argument";
                 return false;
             }
 
@@ -85,7 +85,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-functiono requires 1 argument";
+                errorMessage = type + "-function requires 1 argument";
                 return false;
             }
 
@@ -106,7 +106,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-functiono requires 1 argument";
+                errorMessage = type + "-function requires 1 argument";
                 return false;
             }
 
@@ -127,7 +127,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-functiono requires 0 arguments";
+                errorMessage = type + "-function requires 0 arguments";
                 return false;
             }
 
@@ -139,7 +139,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 2)
             {
-                errorMessage = type + "-functiono requires 2 arguments";
+                errorMessage = type + "-function requires 2 arguments";
                 return false;
             }
 
@@ -164,7 +164,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-functiono requires 1 argument";
+                errorMessage = type + "-function requires 1 argument";
                 return false;
             }
 
@@ -185,7 +185,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-functiono requires 0 arguments";
+                errorMessage = type + "-function requires 0 arguments";
                 return false;
             }
 
@@ -201,7 +201,7 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-functiono requires 0 arguments";
+                errorMessage = type + "-function requires 0 arguments";
                 return false;
             }
 
