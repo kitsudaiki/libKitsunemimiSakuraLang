@@ -57,7 +57,8 @@ namespace bfs = boost::filesystem;
 class SakuraLangInterface
 {
 public:
-    SakuraLangInterface(const bool enableDebug = false);
+    static SakuraLangInterface* getInstance();
+
     ~SakuraLangInterface();
 
     // processing
@@ -81,17 +82,19 @@ public:
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
 
-    Kitsunemimi::Jinja2::Jinja2Converter* jinja2Converter = nullptr;
-
 private:
     friend SakuraThread;
     friend Validator;
+
+    SakuraLangInterface(const bool enableDebug = false);
+
+    static SakuraLangInterface* m_instance;
 
     // internally used objects
     SakuraGarden* m_garden = nullptr;
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
-    std::mutex m_mutex;
+    std::mutex m_lock;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
