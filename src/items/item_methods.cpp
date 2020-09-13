@@ -56,7 +56,7 @@ getProcessedItem(ValueItem &valueItem,
         if(valueItem.item == nullptr) {
             return false;
         }
-
+        DataItem* tempItem = nullptr;
         const std::string type = functionItem.type;
 
         //------------------------------------------------------------------------------------------
@@ -69,16 +69,13 @@ getProcessedItem(ValueItem &valueItem,
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage))
-            {
-                DataItem* tempItem = getValue(valueItem.item,
-                                              arg.item->toValue(),
-                                              errorMessage);
-                delete valueItem.item;
-                valueItem.item = tempItem;
+            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+                return false;
             }
 
-            continue;
+            tempItem = getValue(valueItem.item,
+                                arg.item->toValue(),
+                                errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "split")
@@ -90,16 +87,13 @@ getProcessedItem(ValueItem &valueItem,
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage))
-            {
-                DataItem* tempItem = splitValue(valueItem.item->toValue(),
-                                                arg.item->toValue(),
-                                                errorMessage);
-                delete valueItem.item;
-                valueItem.item = tempItem;
+            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+                return false;
             }
 
-            continue;
+            tempItem = splitValue(valueItem.item->toValue(),
+                                  arg.item->toValue(),
+                                  errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "contains")
@@ -111,16 +105,13 @@ getProcessedItem(ValueItem &valueItem,
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage))
-            {
-                DataItem* tempItem = containsValue(valueItem.item,
-                                                   arg.item->toValue(),
-                                                   errorMessage);
-                delete valueItem.item;
-                valueItem.item = tempItem;
+            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+                return false;
             }
 
-            continue;
+            tempItem = containsValue(valueItem.item,
+                                     arg.item->toValue(),
+                                     errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "size")
@@ -131,8 +122,7 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            valueItem.item = sizeValue(valueItem.item, errorMessage);
-            continue;
+            tempItem = sizeValue(valueItem.item, errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "insert")
@@ -146,18 +136,16 @@ getProcessedItem(ValueItem &valueItem,
             ValueItem arg1 = functionItem.arguments.at(0);
             ValueItem arg2 = functionItem.arguments.at(1);
 
-            if(fillValueItem(arg1, insertValues, errorMessage)
-                    && fillValueItem(arg2, insertValues, errorMessage))
+            if(fillValueItem(arg1, insertValues, errorMessage) == false
+                    || fillValueItem(arg2, insertValues, errorMessage) == false)
             {
-                DataItem* tempItem = insertValue(valueItem.item->toMap(),
-                                                 arg1.item->toValue(),
-                                                 arg2.item,
-                                                 errorMessage);
-                delete valueItem.item;
-                valueItem.item = tempItem;
+                return false;
             }
 
-            continue;
+            tempItem = insertValue(valueItem.item->toMap(),
+                                   arg1.item->toValue(),
+                                   arg2.item,
+                                   errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "append")
@@ -169,16 +157,13 @@ getProcessedItem(ValueItem &valueItem,
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage))
-            {
-                DataItem* tempItem = appendValue(valueItem.item->toArray(),
-                                                 arg.item,
-                                                 errorMessage);
-                delete valueItem.item;
-                valueItem.item = tempItem;
+            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+                return false;
             }
 
-            continue;
+            tempItem = appendValue(valueItem.item->toArray(),
+                                   arg.item,
+                                   errorMessage);
         }
         //------------------------------------------------------------------------------------------
         if(type == "clear_empty")
@@ -189,12 +174,9 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            DataItem* tempItem = clearEmpty(valueItem.item->toArray(),
-                                            errorMessage);
-            delete valueItem.item;
-            valueItem.item = tempItem;
+            tempItem = clearEmpty(valueItem.item->toArray(),
+                                  errorMessage);
 
-            continue;
         }
         //------------------------------------------------------------------------------------------
         if(type == "parse_json")
@@ -205,16 +187,18 @@ getProcessedItem(ValueItem &valueItem,
                 return false;
             }
 
-            DataItem* tempItem = parseJson(valueItem.item->toValue(),
-                                           errorMessage);
-            delete valueItem.item;
-            valueItem.item = tempItem;
+            tempItem = parseJson(valueItem.item->toValue(),
+                                 errorMessage);
 
-            continue;
         }
         //------------------------------------------------------------------------------------------
 
-        return false;
+        delete valueItem.item;
+        valueItem.item = tempItem;
+
+        if(tempItem == nullptr) {
+            return false;
+        }
     }
 
     return true;
