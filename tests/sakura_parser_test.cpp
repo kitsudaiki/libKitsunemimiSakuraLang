@@ -59,8 +59,7 @@ ParsingTest::parseTree_Test()
                                         errorMessage,
                                         true);
     SakuraGarden garden(true);
-    bool success = m_parser->parseTreeString(garden,
-                                             "sakura_parser_test.sakura",
+    bool success = m_parser->parseTreeString("sakura_parser_test.sakura",
                                              testTreeString,
                                              errorMessage);
 

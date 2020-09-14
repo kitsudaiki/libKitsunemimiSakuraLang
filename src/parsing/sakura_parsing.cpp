@@ -262,46 +262,6 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
 }
 
 /**
- * @brief parse single string
- *
- * @param garden reference to the sakura-garden-object to store all found data
- * @param name name of the parsed tree as identification
- * @param content content to parse
- * @param errorMessage reference to error-message
- *
- * @return true, if successful, else false
- */
-bool
-SakuraParsing::parseTreeString(SakuraGarden &garden,
-                               const std::string &name,
-                               const std::string &content,
-                               std::string &errorMessage)
-{
-    // precheck
-    TreeItem* check = garden.getTree(name);
-    if(check != nullptr)
-    {
-        errorMessage = "tree already registered with path: " + name;
-        return false;
-    }
-
-    // parse
-    TreeItem* parsetItem = parseStringToTree(content, "", errorMessage);
-    if(parsetItem == nullptr) {
-        return false;
-    }
-
-    // update content
-    parsetItem->unparsedConent = content;
-    parsetItem->relativePath = name;
-
-    // add parsed item to garden
-    garden.trees.insert(std::make_pair(name, parsetItem));
-
-    return true;
-}
-
-/**
  * @brief parse resource
  *
  * @param garden reference to the sakura-garden-object to store all found data

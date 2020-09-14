@@ -60,11 +60,6 @@ public:
                         const bfs::path &initialFilePath,
                         std::string &errorMessage);
 
-    bool parseTreeString(SakuraGarden &garden,
-                         const std::string &name,
-                         const std::string &content,
-                         std::string &errorMessage);
-
     bool parseRessourceString(SakuraGarden &garden,
                               const std::string &absolutePath,
                               const std::string &content,
