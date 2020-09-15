@@ -82,23 +82,24 @@ Blossom::validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        std::string &errorMessage)
 {
-    // if "*" is in the list of required key, there is more allowed as the list contains items
-    // for example the print-blossom allows all key
-    if(m_requiredKeys.contains("*") == false)
+    std::map<std::string, IO_ValueType> compareMap;
+    blossomItem.values.getCompareMap(compareMap);
+
+    if(allowUnmatched == false)
     {
         // check if all keys in the values of the blossom-item also exist in the required-key-list
-        std::map<std::string, ValueItem>::const_iterator it;
-        for(it = blossomItem.values.m_valueMap.begin();
-            it != blossomItem.values.m_valueMap.end();
-            it++)
+        std::map<std::string, IO_ValueType>::const_iterator compareIt;
+        for(compareIt = compareMap.begin();
+            compareIt != compareMap.end();
+            compareIt++)
         {
-            ValueItem tempItem = blossomItem.values.getValueItem(it->first);
-            if(tempItem.item == nullptr
-                    && tempItem.type == ValueItem::INPUT_PAIR_TYPE)
+            std::map<std::string, BlossomValidDef>::const_iterator defIt;
+            defIt = validationMap.find(compareIt->first);
+            if(defIt == validationMap.end())
             {
                 // build error-output
                 const std::string message = "variable \""
-                                            + it->first
+                                            + compareIt->first
                                             + "\" is not in the list of allowed keys";
                 errorMessage = createError(blossomItem,
                                            filePath,
@@ -110,52 +111,41 @@ Blossom::validateInput(BlossomItem &blossomItem,
     }
 
     // check that all keys in the required keys are also in the values of the blossom-item
-    std::map<std::string, DataItem*>::const_iterator it;
-    for(it = m_requiredKeys.m_map.begin();
-        it != m_requiredKeys.m_map.end();
-        it++)
+    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    for(defIt = validationMap.begin();
+        defIt != validationMap.end();
+        defIt++)
     {
-        if(it->first == "*") {
-            continue;
-        }
-
-        // if values of the blossom-item doesn't contain the key and the key is not optional,
-        // then create an error-message
-        if(blossomItem.values.contains(it->first) == false
-                && it->second->toValue()->getBool() == true)
+        if(defIt->second.isRequired == true)
         {
-            const std::string message = "variable \""
-                                        + it->first
-                                        + "\" is required, but is not set.";
-            errorMessage = createError(blossomItem,
-                                       filePath,
-                                       "validator",
-                                       message);
-            return false;
-        }
-    }
-
-    // check output
-    std::map<std::string, ValueItem>::const_iterator outputId;
-    for(outputId = blossomItem.values.m_valueMap.begin();
-        outputId != blossomItem.values.m_valueMap.end();
-        outputId++)
-    {
-        ValueItem tempItem = blossomItem.values.getValueItem(outputId->first);
-        if(m_hasOutput == false
-                && tempItem.type == ValueItem::OUTPUT_PAIR_TYPE)
-        {
-            // build error-output
-            const std::string message = "variable \""
-                                        + outputId->first
-                                        + "\" is declared as output-variable, "
-                                          "but the blossom has no "
-                                          "output, which could be written into a variable.";
-            errorMessage = createError(blossomItem,
-                                       filePath,
-                                       "validator",
-                                       message);
-            return false;
+            // search for values
+            std::map<std::string, IO_ValueType>::const_iterator compareIt;
+            compareIt = compareMap.find(defIt->first);
+            if(compareIt != compareMap.end())
+            {
+                if(defIt->second.type != compareIt->second)
+                {
+                    const std::string message = "variable \""
+                                                + defIt->first
+                                                + "\" has not the correct input/output type";
+                    errorMessage = createError(blossomItem,
+                                               filePath,
+                                               "validator",
+                                               message);
+                    return false;
+                }
+            }
+            else
+            {
+                const std::string message = "variable \""
+                                            + defIt->first
+                                            + "\" is required, but is not set.";
+                errorMessage = createError(blossomItem,
+                                           filePath,
+                                           "validator",
+                                           message);
+                return false;
+            }
         }
     }
 

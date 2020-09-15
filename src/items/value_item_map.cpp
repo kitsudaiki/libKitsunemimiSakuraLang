@@ -305,6 +305,39 @@ ValueItemMap::getValueItem(const std::string &key)
 }
 
 /**
+ * @brief get map for comparism in validator
+ *
+ * @param compareMap reference for the resulting map
+ */
+void
+ValueItemMap::getCompareMap(std::map<std::string, IO_ValueType> &compareMap)
+{
+    // copy items
+    std::map<std::string, ValueItem>::const_iterator it;
+    for(it = m_valueMap.begin();
+        it != m_valueMap.end();
+        it++)
+    {
+        if(it->second.type == ValueItem::INPUT_PAIR_TYPE) {
+            compareMap.emplace(it->first, INPUT_TYPE);
+        }
+
+        if(it->second.type == ValueItem::OUTPUT_PAIR_TYPE) {
+            compareMap.emplace(it->second.item->toString(), OUTPUT_TYPE);
+        }
+    }
+
+    // copy child-maps
+    std::map<std::string, ValueItemMap*>::const_iterator itChilds;
+    for(itChilds = m_childMaps.begin();
+        itChilds != m_childMaps.end();
+        itChilds++)
+    {
+        compareMap.emplace(itChilds->first, INPUT_TYPE);
+    }
+}
+
+/**
  * @brief size get number of object in the map
  *
  * @return number of object inside the map
