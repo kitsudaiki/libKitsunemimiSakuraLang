@@ -50,6 +50,26 @@ struct BlossomLeaf
     std::string terminalOutput = "";
 };
 //--------------------------------------------------------------------------------------------------
+enum IO_ValueType
+{
+    UNDEFINED_VALUE_TYPE = 0,
+    INPUT_TYPE = 1,
+    OUTPUT_TYPE = 2,
+};
+
+struct BlossomValidDef
+{
+    IO_ValueType type = UNDEFINED_VALUE_TYPE;
+    bool isRequired = false;
+
+    BlossomValidDef(IO_ValueType type, bool isRequired)
+    {
+        this->type = type;
+        this->isRequired = isRequired;
+    }
+};
+
+//--------------------------------------------------------------------------------------------------
 
 class Blossom
 {
@@ -60,8 +80,8 @@ public:
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf, std::string &errorMessage) = 0;
 
-    bool m_hasOutput = false;
-    DataMap m_requiredKeys;
+    std::map<std::string, BlossomValidDef> validationMap;
+    bool allowUnmatched = false;
 
 private:
     friend SakuraThread;
