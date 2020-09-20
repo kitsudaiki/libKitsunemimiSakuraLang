@@ -1,6 +1,18 @@
 # Changelog
 
+## [0.5.0] - 2020-09-20
+
+### Changed
+- updated interface of the library for easier handling
+- updated comments
+
+### Fixed
+- different little fixes that were found while cleanup
+
+
 ## [0.4.0] - 2020-09-06
+
+### Changed
 - moved the complete processing of the scripts from SakuraTree into this library here to make the scripts available for other projects
 
 
