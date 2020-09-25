@@ -197,7 +197,7 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
                              std::string &errorMessage)
 {
     // only debug-output
-    LOG_DEBUG("processBlossom: \n");
+    LOG_DEBUG("process blossom:");
     LOG_DEBUG("    name: " + blossomItem.blossomName);
 
     // process values by filling with information of the parent-object
@@ -268,8 +268,6 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
                                   const std::string &filePath,
                                   std::string &errorMessage)
 {
-    LOG_DEBUG("processBlossomGroup");
-
     // convert name as jinja2-string
     std::string convertResult = "";
     Jinja2::Jinja2Converter* converter = Jinja2::Jinja2Converter::getInstance();
@@ -282,6 +280,8 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
         errorMessage = createError("jinja2-converter", errorMessage);
         return false;
     }
+
+    LOG_DEBUG("process blossom group: " + convertResult);
 
     // print blossom-group
     blossomGroupItem.id = convertResult;
@@ -296,6 +296,8 @@ SakuraThread::processBlossomGroup(BlossomGroupItem &blossomGroupItem,
         TreeItem* tempItem = m_interface->m_garden->getRessource(blossomItem->blossomType);
         if(tempItem != nullptr)
         {
+            LOG_DEBUG("process resouces: " + tempItem->id);
+
             const bool ret = runSubtreeCall(tempItem,
                                             blossomGroupItem.values,
                                             filePath,
@@ -336,7 +338,7 @@ bool
 SakuraThread::processTree(TreeItem* treeItem,
                           std::string &errorMessage)
 {
-    LOG_DEBUG("processTree");
+    LOG_DEBUG("process tree: " + treeItem->id);
 
     // check if there are uninitialized items in the tree
     const std::vector<std::string> uninitItems = checkItems(m_parentValues);
@@ -374,19 +376,20 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
                              const std::string &filePath,
                              std::string &errorMessage)
 {
-    LOG_DEBUG("processSubtree");
-
     // get sakura-file based on the required path
     Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->m_garden;
     const bfs::path relPath = garden->getRelativePath(filePath, subtreeItem->nameOrPath);
-    SakuraItem* newSubtree = garden->getTree(relPath.string(), garden->rootPath);
 
+    // get and check tree
+    TreeItem* newSubtree = garden->getTree(relPath.string(), garden->rootPath);
     if(newSubtree == nullptr)
     {
         errorMessage = createError("subtree-processing",
                                    "subtree doesn't exist: " + subtreeItem->nameOrPath);
         return false;
     }
+
+    LOG_DEBUG("process subtree: " + newSubtree->id + " in path " + newSubtree->relativePath);
 
     const bool ret = runSubtreeCall(newSubtree,
                                     subtreeItem->values,
@@ -411,8 +414,6 @@ SakuraThread::processIf(IfBranching* ifCondition,
                         const std::string &filePath,
                         std::string &errorMessage)
 {
-    LOG_DEBUG("processIf");
-
     // initialize
     bool ifMatch = false;
     ValueItem valueItem;
@@ -480,8 +481,6 @@ SakuraThread::processForEach(ForEachBranching* forEachItem,
                              const std::string &filePath,
                              std::string &errorMessage)
 {
-    LOG_DEBUG("processForEach");
-
     // initialize the array, over twhich the loop should iterate
     if(fillInputValueItemMap(forEachItem->iterateArray, m_parentValues, errorMessage) == false)
     {
@@ -535,8 +534,6 @@ SakuraThread::processFor(ForBranching* forItem,
                          const std::string &filePath,
                          std::string &errorMessage)
 {
-    LOG_DEBUG("processFor");
-
     // get start-value
     if(fillValueItem(forItem->start, m_parentValues, errorMessage) == false)
     {
@@ -603,8 +600,6 @@ SakuraThread::processSequeniellPart(SequentiellPart* subtree,
                                     const std::string &filePath,
                                     std::string &errorMessage)
 {
-    LOG_DEBUG("processSequeniellPart");
-
     for(SakuraItem* item : subtree->childs)
     {
         if(processSakuraItem(item, filePath, errorMessage) == false) {
@@ -629,8 +624,6 @@ SakuraThread::processParallelPart(ParallelPart* parallelPart,
                                   const std::string &filePath,
                                   std::string &errorMessage)
 {
-    LOG_DEBUG("processParallelPart");
-
     SequentiellPart* parts = dynamic_cast<SequentiellPart*>(parallelPart->childs);
 
     const bool result = m_interface->m_queue->spawnParallelSubtrees(parts->childs,
@@ -659,8 +652,6 @@ SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
                              const std::string &filePath,
                              std::string &errorMessage)
 {
-    LOG_DEBUG("runSubtreeCall");
-
     // fill values
     const bool fillResult = fillInputValueItemMap(values, m_parentValues, errorMessage);
     if(fillResult == false)

@@ -32,6 +32,7 @@
 #include <libKitsunemimiPersistence/files/text_file.h>
 #include <libKitsunemimiPersistence/files/file_methods.h>
 #include <libKitsunemimiPersistence/files/binary_file.h>
+#include <libKitsunemimiPersistence/logger/logger.h>
 
 using Kitsunemimi::Persistence::readFile;
 
@@ -97,6 +98,8 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
                               const bfs::path &initialFilePath,
                               std::string &errorMessage)
 {
+    LOG_DEBUG("start parsing all files in " + initialFilePath.string());
+
     // precheck
     if(bfs::is_regular_file(initialFilePath) == false)
     {
@@ -215,6 +218,8 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
                                std::string &errorMessage)
 {
     const bfs::path filePath = rootPath / relativePath;
+
+    LOG_DEBUG("parse file " + filePath.string());
 
     // read file
     std::string fileContent = "";
