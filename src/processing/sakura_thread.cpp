@@ -680,7 +680,7 @@ SakuraThread::runSubtreeCall(SakuraItem* newSubtree,
     overrideItems(m_parentValues, newSubtree->values, ALL);
 
     // process tree-item
-    if( processSakuraItem(newSubtree, filePath, errorMessage) == false) {
+    if(processSakuraItem(newSubtree, filePath, errorMessage) == false) {
         return false;
     }
 
