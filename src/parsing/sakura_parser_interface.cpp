@@ -156,7 +156,7 @@ SakuraParserInterface::error(const Kitsunemimi::Sakura::location& location,
 
     // build error-message
     std::string errorString = "";
-    m_errorMessage.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
+    m_errorMessage.addRow(std::vector<std::string>{"component", "parser"});
     m_errorMessage.addRow(std::vector<std::string>{"source", "while parsing sakura-file"});
     m_errorMessage.addRow(std::vector<std::string>{"message", message});
     m_errorMessage.addRow(std::vector<std::string>{"line-number", std::to_string(linenumber)});

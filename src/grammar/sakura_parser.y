@@ -458,18 +458,36 @@ item_set:
         ValueItem newItem;
         newItem.item = new DataValue(empty);
 
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
+
         $1->insert($3, newItem);
         $$ = $1;
     }
 |
     item_set  "-" regiterable_identifier "=" value_item
     {
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
+
         $1->insert($3, $5);
         $$ = $1;
     }
 |
     item_set  "-" regiterable_identifier "=" "{" item_set "}"
     {
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"",  true);
+            return 1;
+        }
+
         $1->insert($3, $6);
         $$ = $1;
     }
@@ -479,6 +497,12 @@ item_set:
         ValueItem newItem;
         newItem.item = $5;
 
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
+
         $1->insert($3, newItem);
         $$ = $1;
     }
@@ -487,9 +511,7 @@ item_set:
     {
         if(driver.isKeyRegistered($5) == false)
         {
-            driver.error(yyla.location,
-                         "undefined identifier \"" + $5 + "\"",
-                         true);
+            driver.error(yyla.location, "undefined identifier \"" + $5 + "\"", true);
             return 1;
         }
 
@@ -498,6 +520,12 @@ item_set:
         newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
+        if($1->contains($5))
+        {
+            driver.error(yyla.location, "name already used: \"" + $5 + "\"", true);
+            return 1;
+        }
+
         $1->insert($5, newItem);
         $$ = $1;
     }
@@ -505,6 +533,12 @@ item_set:
     item_set  "-" "identifier" compare_type value_item
     {
         ValueItem newItem = $5;
+
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
 
         if($4 == "==") {
             newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
@@ -525,18 +559,38 @@ item_set:
         ValueItem newItem;
         newItem.item = new DataValue(empty);
 
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
+
         $$->insert($2, newItem);
     }
 |
     "-" regiterable_identifier "=" value_item
     {
         $$ = new ValueItemMap();
+
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
+
         $$->insert($2, $4);
     }
 |
     "-" regiterable_identifier "=" "{" item_set "}"
     {
         $$ = new ValueItemMap();
+
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
+
         $$->insert($2, $5);
     }
 |
@@ -546,6 +600,12 @@ item_set:
 
         ValueItem newItem;
         newItem.item = $4;
+
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
 
         $$->insert($2, newItem);
     }
@@ -567,6 +627,12 @@ item_set:
         newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
+        if($$->contains($4))
+        {
+            driver.error(yyla.location, "name already used: \"" + $4 + "\"", true);
+            return 1;
+        }
+
         $$->insert($4, newItem);
     }
 |
@@ -575,6 +641,12 @@ item_set:
         $$ = new ValueItemMap();
 
         ValueItem newItem = $4;
+
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
 
         if($3 == "==") {
             newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
