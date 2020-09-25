@@ -363,8 +363,6 @@ bool
 fillOutputValueItemMap(ValueItemMap &items,
                        DataMap &output)
 {
-    bool found = false;
-
     std::map<std::string, ValueItem>::iterator it;
     for(it = items.m_valueMap.begin();
         it != items.m_valueMap.end();
@@ -384,11 +382,10 @@ fillOutputValueItemMap(ValueItemMap &items,
             valueItem.item = tempItem->copy();
             valueItem.type = ValueItem::OUTPUT_PAIR_TYPE;
             it->second = valueItem;
-            found = true;
         }
     }
 
-    return found;
+    return true;
 }
 
 /**
