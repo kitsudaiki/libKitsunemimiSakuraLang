@@ -396,9 +396,10 @@ fillOutputValueItemMap(ValueItemMap &items,
  * @param override map with the new incoming information
  * @param type type of override
  */
-void overrideItems(DataMap &original,
-                   const DataMap &override,
-                   OverrideType type)
+void
+overrideItems(DataMap &original,
+              const DataMap &override,
+              OverrideType type)
 {
     if(type == ONLY_EXISTING)
     {
