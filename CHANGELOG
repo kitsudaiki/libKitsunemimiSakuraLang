@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1] - 2020-09-26
+
+### Fixed
+- fixed name-conflicts in blossom- and subtree-calls by adding new validation in parser
+- fix resource- and subtree-calls, which had failed when they had no output
+
+
 ## [0.5.0] - 2020-09-20
 
 ### Changed
