@@ -47,14 +47,14 @@ Kitsunemimi::Sakura::SakuraLangInterface* SakuraLangInterface::m_instance = null
  *
  * @param enableDebug set to true to enable the debug-output of the parser
  */
-SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
+SakuraLangInterface::SakuraLangInterface(const uint16_t numberOfThreads,
+                                         const bool enableDebug)
 {
     m_validator = new Validator();
     m_parser = new SakuraParsing(enableDebug);
     m_garden = new SakuraGarden();
     m_queue = new SubtreeQueue();
-    // TODO: make number of threads configurable
-    m_threadPoos = new ThreadPool(6, this);
+    m_threadPoos = new ThreadPool(numberOfThreads, this);
 }
 
 /**

@@ -102,7 +102,8 @@ private:
     friend SakuraThread;
     friend Validator;
 
-    SakuraLangInterface(const bool enableDebug = false);
+    SakuraLangInterface(const uint16_t numberOfThreads = 6,
+                        const bool enableDebug = false);
 
     static SakuraLangInterface* m_instance;
 
