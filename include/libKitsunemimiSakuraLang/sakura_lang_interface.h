@@ -51,6 +51,7 @@ class BlossomGroupItem;
 class BlossomItem;
 class BlossomLeaf;
 class Validator;
+class SakuraParsing;
 
 namespace bfs = boost::filesystem;
 
@@ -64,7 +65,7 @@ public:
     bool triggerTree(const std::string &id,
                      const DataMap &initialValues,
                      std::string &errorMessage);
-    bool runTree(const std::string &name,
+    bool runTree(const std::string &id,
                  const std::string &treeContent,
                  const DataMap &initialValues,
                  std::string &errorMessage);
@@ -81,7 +82,7 @@ public:
                         const std::string &itemName);
 
     // add
-    bool addTree(const std::string &name,
+    bool addTree(const std::string &id,
                  const std::string &treeContent,
                  std::string &errorMessage);
     bool addTemplate(const std::string &id,
@@ -90,8 +91,9 @@ public:
                  Kitsunemimi::DataBuffer* data);
 
     // getter
-    const std::string getTemplate(const std::string &relativePath);
-    DataBuffer* getFile(const std::string &relativePath);
+    const std::string getTemplate(const std::string &id);
+    DataBuffer* getFile(const std::string &id);
+
     const bfs::path getRelativePath(const bfs::path &blossomFilePath,
                                     const bfs::path &blossomInternalRelPath);
 
@@ -103,6 +105,8 @@ private:
     SakuraLangInterface(const bool enableDebug = false);
 
     static SakuraLangInterface* m_instance;
+
+    SakuraParsing* m_parser = nullptr;
 
     // internally used objects
     SakuraGarden* m_garden = nullptr;

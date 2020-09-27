@@ -25,6 +25,8 @@
 #include <sakura_garden.h>
 #include <validator.h>
 
+#include <parsing/sakura_parsing.h>
+
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
 
@@ -47,7 +49,8 @@ Kitsunemimi::Sakura::SakuraLangInterface* SakuraLangInterface::m_instance = null
  */
 SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
 {
-    m_garden = new SakuraGarden(enableDebug);
+    m_parser = new SakuraParsing(enableDebug);
+    m_garden = new SakuraGarden();
     m_queue = new SubtreeQueue();
     // TODO: make number of threads configurable
     m_threadPoos = new ThreadPool(6, this);
@@ -124,7 +127,7 @@ SakuraLangInterface::triggerTree(const std::string &id,
  * @return
  */
 bool
-SakuraLangInterface::runTree(const std::string &name,
+SakuraLangInterface::runTree(const std::string &id,
                              const std::string &treeContent,
                              const DataMap &initialValues,
                              std::string &errorMessage)
@@ -132,10 +135,10 @@ SakuraLangInterface::runTree(const std::string &name,
     m_lock.lock();
 
     // get initial tree-item
-    TreeItem* tree = m_garden->parseString(name, treeContent, errorMessage);
+    TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
     if(tree == nullptr)
     {
-        errorMessage = "Failed to parse " + name;
+        errorMessage = "Failed to parse " + id;
         m_lock.unlock();
         return false;
     }
@@ -148,123 +151,8 @@ SakuraLangInterface::runTree(const std::string &name,
     }
 
     m_lock.unlock();
-    return true;
-}
-
-/**
- * @brief process set of sakura-files
- *
- * @param inputPath path to the initial sakura-file or directory with the root.sakura file
- * @param initialValues map-item with initial values to override the items of the initial tree-item
- * @param dryRun set to true to only parse and check the files, without executing them
- * @param errorMessage reference for error-message
- *
- * @return true, if successfule, else false
- */
-bool
-SakuraLangInterface::readFiles(const std::string &inputPath,
-                                  std::string &errorMessage)
-{
-    // precheck input
-    if(bfs::is_regular_file(inputPath) == false
-            && bfs::is_directory(inputPath) == false)
-    {
-        errorMessage = "Not a regular file or directory as input-path " + inputPath;
-        return false;
-    }
-
-    // set default-file in case that a directory instead of a file was selected
-    std::string treeFile = inputPath;
-    if(bfs::is_directory(treeFile)) {
-        treeFile = treeFile + "/root.sakura";
-    }
-
-    m_lock.lock();
-
-    // parse all files
-    if(m_garden->parseFiles(treeFile, errorMessage) == false)
-    {
-        errorMessage = "failed to add trees\n    " + errorMessage;
-        m_lock.unlock();
-        return false;
-    }
-
-    m_lock.unlock();
 
     return true;
-}
-
-/**
- * @brief SakuraLangInterface::addTree
- * @param name
- * @param treeContent
- * @param errorMessage
- * @return
- */
-bool
-SakuraLangInterface::addTree(const std::string &name,
-                             const std::string &treeContent,
-                             std::string &errorMessage)
-{
-    m_lock.lock();
-
-    // get initial tree-item
-    TreeItem* tree = m_garden->parseString(name, treeContent, errorMessage);
-    if(tree == nullptr)
-    {
-        errorMessage = "Failed to parse " + name;
-        m_lock.unlock();
-        return false;
-    }
-
-    // TODO: check if id already used
-    m_garden->trees.insert(std::make_pair(name, tree));
-
-    m_lock.unlock();
-
-    return true;
-}
-
-/**
- * @brief get template-string
- *
- * @param relativePath relative path of the template as identification
- *
- * @return template as string or empty string, if no template found for the given path
- */
-const std::string
-SakuraLangInterface::getTemplate(const std::string &relativePath)
-{
-    return m_garden->getTemplate(relativePath);
-}
-
-/**
- * @brief get file as data-buffer
- *
- * @param relativePath relative path of the file as identification
- *
- * @return file as data-buffer or nullptr, if no file found for the given path
- */
-DataBuffer*
-SakuraLangInterface::getFile(const std::string &relativePath)
-{
-    return m_garden->getFile(relativePath);
-}
-
-/**
- * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
- *        root-path.
- *
- * @param blossomFilePath absolut path of the file of the blossom
- * @param blossomInternalRelPath relative path, which is called inside of the blossom
- *
- * @return path, which is relative to the root-path.
- */
-const bfs::path
-SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
-                                     const bfs::path &blossomInternalRelPath)
-{
-    return m_garden->getRelativePath(blossomFilePath, blossomInternalRelPath);
 }
 
 /**
@@ -364,6 +252,35 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
 }
 
 /**
+ * @brief SakuraLangInterface::addTree
+ * @param id
+ * @param treeContent
+ * @param errorMessage
+ * @return
+ */
+bool
+SakuraLangInterface::addTree(const std::string &id,
+                             const std::string &treeContent,
+                             std::string &errorMessage)
+{
+    m_lock.lock();
+
+    // get initial tree-item
+    TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
+    if(tree == nullptr)
+    {
+        errorMessage = "Failed to parse " + id;
+        m_lock.unlock();
+        return false;
+    }
+
+    const bool result = m_garden->addTree(id, tree);
+    m_lock.unlock();
+
+    return result;
+}
+
+/**
  * @brief SakuraLangInterface::addTemplate
  * @param id
  * @param templateContent
@@ -374,19 +291,18 @@ SakuraLangInterface::addTemplate(const std::string &id,
                                  const std::string &templateContent)
 {
     m_lock.lock();
-
-    // TODO: check if id already used
-    m_garden->templates.insert(std::make_pair(id, templateContent));
-
+    const bool result = m_garden->addTemplate(id, templateContent);
     m_lock.unlock();
 
-    return true;
+    return result;
 }
 
 /**
- * @brief SakuraLangInterface::addFile
- * @param id
- * @param data
+ * @brief add new file to internal storage
+ *
+ * @param id id of the new file
+ * @param data file-content as data-buffer
+ *
  * @return
  */
 bool
@@ -394,13 +310,95 @@ SakuraLangInterface::addFile(const std::string &id,
                              DataBuffer* data)
 {
     m_lock.lock();
+    const bool result = m_garden->addFile(id, data);
+    m_lock.unlock();
 
-    // TODO: check if id already used
-    m_garden->files.insert(std::make_pair(id, data));
+    return result;
+}
+
+/**
+ * @brief process set of sakura-files
+ *
+ * @param inputPath path to the initial sakura-file or directory with the root.sakura file
+ * @param initialValues map-item with initial values to override the items of the initial tree-item
+ * @param dryRun set to true to only parse and check the files, without executing them
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
+ */
+bool
+SakuraLangInterface::readFiles(const std::string &inputPath,
+                                  std::string &errorMessage)
+{
+    // precheck input
+    if(bfs::is_regular_file(inputPath) == false
+            && bfs::is_directory(inputPath) == false)
+    {
+        errorMessage = "Not a regular file or directory as input-path " + inputPath;
+        return false;
+    }
+
+    // set default-file in case that a directory instead of a file was selected
+    std::string treeFile = inputPath;
+    if(bfs::is_directory(treeFile)) {
+        treeFile = treeFile + "/root.sakura";
+    }
+
+    m_lock.lock();
+
+    // parse all files
+    if(m_parser->parseTreeFiles(*m_garden, inputPath, errorMessage) == false)
+    {
+        errorMessage = "failed to add trees\n    " + errorMessage;
+        m_lock.unlock();
+        return false;
+    }
 
     m_lock.unlock();
 
     return true;
+}
+
+/**
+ * @brief get template-string
+ *
+ * @param id of the template
+ *
+ * @return template as string or empty string, if no template found for the given path
+ */
+const std::string
+SakuraLangInterface::getTemplate(const std::string &id)
+{
+    return m_garden->getTemplate(id);
+}
+
+/**
+ * @brief get file as data-buffer
+ *
+ * @param id id of the file
+ *
+ * @return file as data-buffer or nullptr, if no file found for the given path
+ */
+DataBuffer*
+SakuraLangInterface::getFile(const std::string &id)
+{
+    return m_garden->getFile(id);
+}
+
+/**
+ * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
+ *        root-path.
+ *
+ * @param blossomFilePath absolut path of the file of the blossom
+ * @param blossomInternalRelPath relative path, which is called inside of the blossom
+ *
+ * @return path, which is relative to the root-path.
+ */
+const bfs::path
+SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
+                                     const bfs::path &blossomInternalRelPath)
+{
+    return m_garden->getRelativePath(blossomFilePath, blossomInternalRelPath);
 }
 
 /**

@@ -219,8 +219,8 @@ Validator::checkAllItems(SakuraLangInterface* interface,
                          std::string &errorMessage)
 {
     std::map<std::string, TreeItem*>::const_iterator mapIt;
-    for(mapIt = interface->m_garden->trees.begin();
-        mapIt != interface->m_garden->trees.end();
+    for(mapIt = interface->m_garden->m_trees.begin();
+        mapIt != interface->m_garden->m_trees.end();
         mapIt++)
     {
         if(checkSakuraItem(interface,

@@ -23,7 +23,6 @@
 #include "sakura_garden.h"
 
 #include <items/sakura_items.h>
-#include <parsing/sakura_parsing.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
@@ -37,85 +36,13 @@ namespace Sakura
 
 /**
  * @brief constructor
- *
- * @param enableDebug true to enable debugging of the parser
  */
-SakuraGarden::SakuraGarden(const bool enableDebug)
-{
-    m_parser = new SakuraParsing(enableDebug);
-}
+SakuraGarden::SakuraGarden() {}
 
 /**
  * @brief destructor
  */
-SakuraGarden::~SakuraGarden()
-{
-    delete m_parser;
-}
-
-/**
- * @brief parse and add new tree
- *
- * @param treePath absolut file-path
- * @param errorMessage reference for error-message
- *
- * @return true, if successful, else false
- */
-bool
-SakuraGarden::parseFiles(const bfs::path &treePath,
-                         std::string &errorMessage)
-{
-    // parse all files and convert the into
-    const bool treeParseResult = m_parser->parseTreeFiles(*this, treePath, errorMessage);
-    if(treeParseResult == false) {
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * @brief add a tree as resource
- *
- * @param content string to parse and add
- * @param treePath absolut file-path
- * @param errorMessage reference for error-message
- *
- * @return true, if successful, else false
- */
-bool
-SakuraGarden::addResource(const std::string &content,
-                          const bfs::path &treePath,
-                          std::string &errorMessage)
-{
-    // parse all files and convert the into
-    const bool treeParseResult = m_parser->parseRessourceString(*this,
-                                                                treePath.string(),
-                                                                content,
-                                                                errorMessage);
-    if(treeParseResult == false) {
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * @brief parse single string
- *
- * @param name name for identification in debug and error-output
- * @param content string to parse
- * @param errorMessage reference for error-message
- *
- * @return parsed tree-item, if successful, else nullptr
- */
-TreeItem*
-SakuraGarden::parseString(const std::string &name,
-                          const std::string &content,
-                          std::string &errorMessage)
-{
-    return m_parser->parseTreeString(name, content, errorMessage);
-}
+SakuraGarden::~SakuraGarden() {}
 
 /**
  * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
@@ -143,6 +70,94 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
 }
 
 /**
+ * @brief SakuraGarden::addTree
+ * @param id
+ * @param tree
+ * @return
+ */
+bool
+SakuraGarden::addTree(const std::string &id,
+                      TreeItem* tree)
+{
+    std::map<std::string, TreeItem*>::const_iterator it;
+    it = m_trees.find(id);
+
+    if(it != m_trees.end())
+    {
+        m_trees.insert(std::make_pair(id, tree));
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief SakuraGarden::addResource
+ * @param id
+ * @param resource
+ * @return
+ */
+bool
+SakuraGarden::addResource(const std::string &id,
+                          TreeItem* resource)
+{
+    std::map<std::string, TreeItem*>::const_iterator it;
+    it = m_resources.find(id);
+
+    if(it != m_resources.end())
+    {
+        m_resources.insert(std::make_pair(id, resource));
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief SakuraGarden::addTemplate
+ * @param id
+ * @param templateContent
+ * @return
+ */
+bool
+SakuraGarden::addTemplate(const std::string &id,
+                          const std::string &templateContent)
+{
+    std::map<std::string, std::string>::const_iterator it;
+    it = m_templates.find(id);
+
+    if(it != m_templates.end())
+    {
+        m_templates.insert(std::make_pair(id, templateContent));
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief SakuraGarden::addFile
+ * @param id
+ * @param fileContent
+ * @return
+ */
+bool
+SakuraGarden::addFile(const std::string &id,
+                      DataBuffer* fileContent)
+{
+    std::map<std::string, DataBuffer*>::const_iterator it;
+    it = m_files.find(id);
+
+    if(it != m_files.end())
+    {
+        m_files.insert(std::make_pair(id, fileContent));
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * @brief request a resource
  *
  * @param id name of the resource
@@ -153,8 +168,8 @@ TreeItem*
 SakuraGarden::getRessource(const std::string &id)
 {
     std::map<std::string, TreeItem*>::const_iterator it;
-    it = resources.find(id);
-    if(it != resources.end()) {
+    it = m_resources.find(id);
+    if(it != m_resources.end()) {
         return dynamic_cast<TreeItem*>(it->second->copy());
     }
 
@@ -176,8 +191,8 @@ SakuraGarden::getTree(std::string id)
     }
 
     std::map<std::string, TreeItem*>::const_iterator it;
-    it = trees.find(id);
-    if(it != trees.end()) {
+    it = m_trees.find(id);
+    if(it != m_trees.end()) {
         return dynamic_cast<TreeItem*>(it->second->copy());
     }
 
@@ -195,9 +210,9 @@ const std::string
 SakuraGarden::getTemplate(const std::string &id)
 {
     std::map<std::string, std::string>::const_iterator it;
-    it = templates.find(id);
+    it = m_templates.find(id);
 
-    if(it != templates.end()) {
+    if(it != m_templates.end()) {
         return it->second;
     }
 
@@ -215,9 +230,9 @@ Kitsunemimi::DataBuffer*
 SakuraGarden::getFile(const std::string &id)
 {
     std::map<std::string, Kitsunemimi::DataBuffer*>::const_iterator it;
-    it = files.find(id);
+    it = m_files.find(id);
 
-    if(it != files.end()) {
+    if(it != m_files.end()) {
         return it->second;
     }
 
