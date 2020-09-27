@@ -70,89 +70,101 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
 }
 
 /**
- * @brief SakuraGarden::addTree
- * @param id
- * @param tree
- * @return
+ * @brief add new tree
+ *
+ * @param id id of the new tree
+ * @param tree new tree
+ *
+ * @return false, if id already exist, else true
  */
 bool
 SakuraGarden::addTree(const std::string &id,
                       TreeItem* tree)
 {
+    // check if already exist
     std::map<std::string, TreeItem*>::const_iterator it;
     it = m_trees.find(id);
-
-    if(it != m_trees.end())
-    {
-        m_trees.insert(std::make_pair(id, tree));
-        return true;
+    if(it != m_trees.end()) {
+        return false;
     }
+
+    // add
+    m_trees.insert(std::make_pair(id, tree));
 
     return false;
 }
 
 /**
- * @brief SakuraGarden::addResource
- * @param id
- * @param resource
- * @return
+ * @brief add new resource
+ *
+ * @param id id of the new resource
+ * @param resource new resource
+ *
+ * @return false, if id already exist, else true
  */
 bool
 SakuraGarden::addResource(const std::string &id,
                           TreeItem* resource)
 {
+    // check if already exist
     std::map<std::string, TreeItem*>::const_iterator it;
     it = m_resources.find(id);
-
-    if(it != m_resources.end())
-    {
-        m_resources.insert(std::make_pair(id, resource));
+    if(it != m_resources.end()) {
         return true;
     }
+
+    // add
+    m_resources.insert(std::make_pair(id, resource));
 
     return false;
 }
 
 /**
- * @brief SakuraGarden::addTemplate
- * @param id
- * @param templateContent
- * @return
+ * @brief add new template
+ *
+ * @param id id of the new template
+ * @param templateContent content of the template
+ *
+ * @return false, if id already exist, else true
  */
 bool
 SakuraGarden::addTemplate(const std::string &id,
                           const std::string &templateContent)
 {
+    // check if already exist
     std::map<std::string, std::string>::const_iterator it;
     it = m_templates.find(id);
-
-    if(it != m_templates.end())
-    {
-        m_templates.insert(std::make_pair(id, templateContent));
+    if(it != m_templates.end()) {
         return true;
     }
+
+    // add
+    m_templates.insert(std::make_pair(id, templateContent));
 
     return false;
 }
 
 /**
- * @brief SakuraGarden::addFile
- * @param id
- * @param fileContent
- * @return
+ * @brief add new file
+ *
+ * @param id id of the new file
+ * @param fileContent file-conent
+ *
+ * @return false, if id already exist, else true
  */
 bool
 SakuraGarden::addFile(const std::string &id,
                       DataBuffer* fileContent)
 {
+    // check if already exist
     std::map<std::string, DataBuffer*>::const_iterator it;
     it = m_files.find(id);
-
-    if(it != m_files.end())
-    {
-        m_files.insert(std::make_pair(id, fileContent));
+    if(it != m_files.end()) {
         return true;
     }
+
+    // add
+    m_files.insert(std::make_pair(id, fileContent));
 
     return false;
 }

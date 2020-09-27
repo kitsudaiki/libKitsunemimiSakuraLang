@@ -83,11 +83,13 @@ SakuraLangInterface::~SakuraLangInterface()
 }
 
 /**
- * @brief SakuraLangInterface::triggerTree
- * @param id
- * @param initialValues
- * @param errorMessage
- * @return
+ * @brief trigger existing tree
+ *
+ * @param id id of the tree to trigger
+ * @param initialValues input-values for the tree
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::triggerTree(const std::string &id,
@@ -120,12 +122,14 @@ SakuraLangInterface::triggerTree(const std::string &id,
 }
 
 /**
- * @brief SakuraLangInterface::runTree
- * @param name
- * @param treeContent
- * @param initialValues
- * @param errorMessage
- * @return
+ * @brief parse and run a tree
+ *
+ * @param id id of the tree to parse and run
+ * @param treeContent content of the tree-which should be parsed
+ * @param initialValues input-values for the tree
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::runTree(const std::string &id,
@@ -145,7 +149,9 @@ SakuraLangInterface::runTree(const std::string &id,
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false) {
+    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false)
+    {
+        m_lock.unlock();
         return false;
     }
 
@@ -258,11 +264,13 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
 }
 
 /**
- * @brief SakuraLangInterface::addTree
- * @param id
- * @param treeContent
- * @param errorMessage
- * @return
+ * @brief add new tree
+ *
+ * @param id id of the new tree
+ * @param treeContent content of the new tree, which should be parsed
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::addTree(const std::string &id,
@@ -287,10 +295,12 @@ SakuraLangInterface::addTree(const std::string &id,
 }
 
 /**
- * @brief SakuraLangInterface::addTemplate
- * @param id
- * @param templateContent
- * @return
+ * @brief add new template
+ *
+ * @param id id of the new template
+ * @param templateContent content of the template
+ *
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::addTemplate(const std::string &id,
@@ -309,7 +319,7 @@ SakuraLangInterface::addTemplate(const std::string &id,
  * @param id id of the new file
  * @param data file-content as data-buffer
  *
- * @return
+ * @return true, if successfule, else false
  */
 bool
 SakuraLangInterface::addFile(const std::string &id,
