@@ -26,30 +26,27 @@
 #include <string>
 #include <map>
 
-#include <items/sakura_items.h>
-
 namespace Kitsunemimi
 {
 namespace Sakura
 {
 class SakuraLangInterface;
+class BlossomItem;
+class SakuraItem;
 
 class Validator
 {
 public:
-    bool checkBlossomItem(SakuraLangInterface *interface,
-                          BlossomItem &blossomItem,
+    Validator();
+    ~Validator();
+
+    bool checkBlossomItem(BlossomItem &blossomItem,
                           const std::string &filePath,
                           std::string &errorMessage);
 
-    bool checkSakuraItem(SakuraLangInterface *interface,
-                         SakuraItem* sakuraItem,
+    bool checkSakuraItem(SakuraItem* sakuraItem,
                          const std::string &filePath,
                          std::string &errorMessage);
-
-    bool checkAllItems(SakuraLangInterface *interface,
-                       std::string &errorMessage);
-
 };
 
 } // namespace Sakura

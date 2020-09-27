@@ -112,6 +112,7 @@ private:
     SakuraGarden* m_garden = nullptr;
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
+    Validator* m_validator = nullptr;
     std::mutex m_lock;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;

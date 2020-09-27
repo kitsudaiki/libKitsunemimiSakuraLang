@@ -18,6 +18,16 @@ LIBS += -L../../libKitsunemimiPersistence/src/debug -lKitsunemimiPersistence
 LIBS += -L../../libKitsunemimiPersistence/src/release -lKitsunemimiPersistence
 INCLUDEPATH += ../../libKitsunemimiPersistence/include
 
+LIBS += -L../../libKitsunemimiJinja2/src -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/debug -lKitsunemimiJinja2
+LIBS += -L../../libKitsunemimiJinja2/src/release -lKitsunemimiJinja2
+INCLUDEPATH += ../../libKitsunemimiJinja2/include
+
+LIBS += -L../../libKitsunemimiJson/src -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/debug -lKitsunemimiJson
+LIBS += -L../../libKitsunemimiJson/src/release -lKitsunemimiJson
+INCLUDEPATH += ../../libKitsunemimiJson/include
+
 LIBS +=  -lboost_filesystem -lboost_system
 
 SOURCES += \

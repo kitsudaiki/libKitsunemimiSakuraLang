@@ -24,7 +24,10 @@
 
 #include <items/sakura_items.h>
 #include <sakura_garden.h>
+#include <validator.h>
 #include <parsing/sakura_parser_interface.h>
+
+#include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
@@ -46,7 +49,8 @@ namespace Sakura
  */
 SakuraParsing::SakuraParsing(const bool debug)
 {
-    m_parser = new SakuraParserInterface(debug, this);
+    m_validator = new Validator();
+    m_parserInterface = new SakuraParserInterface(debug, this);
 }
 
 /**
@@ -54,7 +58,7 @@ SakuraParsing::SakuraParsing(const bool debug)
  */
 SakuraParsing::~SakuraParsing()
 {
-    delete m_parser;
+    delete m_parserInterface;
 }
 
 /**
@@ -151,15 +155,18 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
         }
 
         // parse file
-        SakuraItem* parsed = parseSingleFile(currentRelPath,
-                                             rootPath,
-                                             errorMessage);
-        if(parsed == nullptr) {
+        TreeItem* parsedTree = parseSingleFile(currentRelPath, rootPath, errorMessage);
+        if(parsedTree == nullptr) {
+            return false;
+        }
+
+        // validate new tree
+        if(m_validator->checkSakuraItem(parsedTree, filePath.string(), errorMessage) == false) {
             return false;
         }
 
         // add parsed sakura-file to results
-        if(garden.addTree(currentRelPath, dynamic_cast<TreeItem*>(parsed)) == false)
+        if(garden.addTree(currentRelPath, dynamic_cast<TreeItem*>(parsedTree)) == false)
         {
             TableItem errorOutput;
             initErrorOutput(errorOutput);
@@ -547,16 +554,16 @@ SakuraParsing::parseStringToTree(const std::string &content,
                                  const std::string &filePath,
                                  std::string &errorMessage)
 {
-    const bool parserResult = m_parser->parse(content, filePath);
+    const bool parserResult = m_parserInterface->parse(content, filePath);
 
     if(parserResult == false)
     {
-        TableItem errorOutput = m_parser->getErrorMessage();
+        TableItem errorOutput = m_parserInterface->getErrorMessage();
         errorMessage = errorOutput.toString();
         return nullptr;
     }
 
-    return dynamic_cast<TreeItem*>(m_parser->getOutput());
+    return dynamic_cast<TreeItem*>(m_parserInterface->getOutput());
 }
 
 /**

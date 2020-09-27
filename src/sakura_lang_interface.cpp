@@ -49,6 +49,7 @@ Kitsunemimi::Sakura::SakuraLangInterface* SakuraLangInterface::m_instance = null
  */
 SakuraLangInterface::SakuraLangInterface(const bool enableDebug)
 {
+    m_validator = new Validator();
     m_parser = new SakuraParsing(enableDebug);
     m_garden = new SakuraGarden();
     m_queue = new SubtreeQueue();
@@ -140,6 +141,11 @@ SakuraLangInterface::runTree(const std::string &id,
     {
         errorMessage = "Failed to parse " + id;
         m_lock.unlock();
+        return false;
+    }
+
+    // validator parsed tree
+    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false) {
         return false;
     }
 

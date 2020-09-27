@@ -38,7 +38,6 @@ class DataBuffer;
 namespace Sakura
 {
 class TreeItem;
-class Validator;
 
 class SakuraGarden
 {
@@ -64,8 +63,6 @@ public:
     std::string rootPath = "";
 
 private:
-    friend Validator;
-
     std::map<std::string, TreeItem*> m_trees;
     std::map<std::string, TreeItem*> m_resources;
     std::map<std::string, std::string> m_templates;

@@ -43,6 +43,7 @@ namespace Sakura
 class TreeItem;
 class SakuraItem;
 class SakuraGarden;
+class Validator;
 
 class SakuraParserInterface;
 
@@ -68,7 +69,8 @@ public:
     void addFileToQueue(bfs::path relativePath);
 
 private:
-    SakuraParserInterface* m_parser = nullptr;
+    SakuraParserInterface* m_parserInterface = nullptr;
+    Validator* m_validator = nullptr;
     std::deque<std::string> m_fileQueue;
     std::vector<std::string> m_collectedDirectories;
     bfs::path m_rootPath;
