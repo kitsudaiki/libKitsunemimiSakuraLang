@@ -61,22 +61,15 @@ public:
 
     ~SakuraLangInterface();
 
-    // processing
-    bool processFiles(const std::string &inputPath,
-                      const DataMap &initialValues,
-                      const bool dryRun,
-                      std::string &errorMessage);
-    bool processString(const std::string &name,
-                       const std::string &inputString,
-                       const DataMap &initialValues,
-                       const bool dryRun,
-                       std::string &errorMessage);
-
-    // getter
-    const std::string getTemplate(const std::string &relativePath);
-    DataBuffer* getFile(const std::string &relativePath);
-    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
-                                    const bfs::path &blossomInternalRelPath);
+    bool triggerTree(const std::string &id,
+                     const DataMap &initialValues,
+                     std::string &errorMessage);
+    bool runTree(const std::string &name,
+                 const std::string &treeContent,
+                 const DataMap &initialValues,
+                 std::string &errorMessage);
+    bool readFiles(const std::string &inputPath,
+                   std::string &errorMessage);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,
@@ -86,6 +79,22 @@ public:
                     Blossom *newBlossom);
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
+
+    // add
+    bool addTree(const std::string &name,
+                 const std::string &treeContent,
+                 std::string &errorMessage);
+    bool addTemplate(const std::string &id,
+                     const std::string &templateContent);
+    bool addFile(const std::string &id,
+                 Kitsunemimi::DataBuffer* data);
+
+    // getter
+    const std::string getTemplate(const std::string &relativePath);
+    DataBuffer* getFile(const std::string &relativePath);
+    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
+                                    const bfs::path &blossomInternalRelPath);
+
 
 private:
     friend SakuraThread;
@@ -105,7 +114,6 @@ private:
 
     bool runProcess(TreeItem *tree,
                     const DataMap &initialValues,
-                    const bool dryRun,
                     std::string &errorMessage);
 
     // output

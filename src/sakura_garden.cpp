@@ -62,8 +62,8 @@ SakuraGarden::~SakuraGarden()
  * @return true, if successful, else false
  */
 bool
-SakuraGarden::addTree(const bfs::path &treePath,
-                      std::string &errorMessage)
+SakuraGarden::parseFiles(const bfs::path &treePath,
+                         std::string &errorMessage)
 {
     // parse all files and convert the into
     const bool treeParseResult = m_parser->parseTreeFiles(*this, treePath, errorMessage);
@@ -143,39 +143,6 @@ SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
 }
 
 /**
- * @brief get a fully parsed tree
- *
- * @param relativePath relative path of the tree (Default: empty string)
- * @param rootPath root-path of the requested tree
- *
- * @return requested pointer to tree-item
- */
-TreeItem*
-SakuraGarden::getTree(const std::string &relativePath,
-                      const std::string &rootPath)
-{
-    // build complete file-path
-    bfs::path completePath = relativePath;
-    if(relativePath != "") {
-        completePath = bfs::path(rootPath) / relativePath;
-    }
-
-    // get tree-item based on the path
-    if(bfs::is_directory(completePath))
-    {
-        if(relativePath == "") {
-            return getTree(bfs::path("root.sakura").string());
-        } else {
-            return getTree((bfs::path(relativePath) / bfs::path("root.sakura")).string());
-        }
-    }
-    else
-    {
-        return getTree(relativePath);
-    }
-}
-
-/**
  * @brief request a resource
  *
  * @param id name of the resource
@@ -187,12 +154,8 @@ SakuraGarden::getRessource(const std::string &id)
 {
     std::map<std::string, TreeItem*>::const_iterator it;
     it = resources.find(id);
-
-    if(it != resources.end())
-    {
-        TreeItem* result = dynamic_cast<TreeItem*>(it->second->copy());
-        assert(result != nullptr);
-        return result;
+    if(it != resources.end()) {
+        return dynamic_cast<TreeItem*>(it->second->copy());
     }
 
     return nullptr;
@@ -206,16 +169,16 @@ SakuraGarden::getRessource(const std::string &id)
  * @return copy of the tree-item, if id exist, else nullptr
  */
 TreeItem*
-SakuraGarden::getTree(const std::string &id)
+SakuraGarden::getTree(std::string id)
 {
+    if(id != "") {
+       id = "root.sakura";
+    }
+
     std::map<std::string, TreeItem*>::const_iterator it;
     it = trees.find(id);
-
-    if(it != trees.end())
-    {
-        TreeItem* result = dynamic_cast<TreeItem*>(it->second->copy());
-        assert(result != nullptr);
-        return result;
+    if(it != trees.end()) {
+        return dynamic_cast<TreeItem*>(it->second->copy());
     }
 
     return nullptr;

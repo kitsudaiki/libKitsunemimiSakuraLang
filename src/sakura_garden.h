@@ -50,7 +50,7 @@ public:
                                     const bfs::path &blossomInternalRelPath);
 
     // add
-    bool addTree(const bfs::path &treePath,
+    bool parseFiles(const bfs::path &treePath,
                  std::string &errorMessage);
     bool addResource(const std::string &content,
                      const bfs::path &treePath,
@@ -61,9 +61,7 @@ public:
                           std::string &errorMessage);
 
     // get
-    TreeItem* getTree(const std::string &relativePath,
-                      const std::string &rootPath);
-    TreeItem* getTree(const std::string &id);
+    TreeItem* getTree(std::string id);
     TreeItem* getRessource(const std::string &id);
     const std::string getTemplate(const std::string &id);
     DataBuffer* getFile(const std::string &id);

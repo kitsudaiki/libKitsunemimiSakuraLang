@@ -381,7 +381,7 @@ SakuraThread::processSubtree(SubtreeItem* subtreeItem,
     const bfs::path relPath = garden->getRelativePath(filePath, subtreeItem->nameOrPath);
 
     // get and check tree
-    TreeItem* newSubtree = garden->getTree(relPath.string(), garden->rootPath);
+    TreeItem* newSubtree = garden->getTree(relPath.string());
     if(newSubtree == nullptr)
     {
         errorMessage = createError("subtree-processing",
