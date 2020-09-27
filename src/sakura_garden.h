@@ -38,47 +38,35 @@ class DataBuffer;
 namespace Sakura
 {
 class TreeItem;
-class SakuraParsing;
 
 class SakuraGarden
 {
 public:
-    SakuraGarden(const bool enableDebug);
+    SakuraGarden();
     ~SakuraGarden();
 
     const bfs::path getRelativePath(const bfs::path &blossomFilePath,
                                     const bfs::path &blossomInternalRelPath);
-
     // add
-    bool addTree(const bfs::path &treePath,
-                 std::string &errorMessage);
-    bool addResource(const std::string &content,
-                     const bfs::path &treePath,
-                     std::string &errorMessage);
-
-    TreeItem* parseString(const std::string &name,
-                          const std::string &content,
-                          std::string &errorMessage);
+    bool addTree(const std::string &id, TreeItem* tree);
+    bool addResource(const std::string &id, TreeItem* resource);
+    bool addTemplate(const std::string &id, const std::string &templateContent);
+    bool addFile(const std::string &id, Kitsunemimi::DataBuffer* fileContent);
 
     // get
-    TreeItem* getTree(const std::string &relativePath,
-                      const std::string &rootPath);
-    TreeItem* getTree(const std::string &id);
+    TreeItem* getTree(std::string id);
     TreeItem* getRessource(const std::string &id);
     const std::string getTemplate(const std::string &id);
     DataBuffer* getFile(const std::string &id);
 
-
     // object-handling
     std::string rootPath = "";
-    std::map<std::string, TreeItem*> trees;
-    std::map<std::string, TreeItem*> resources;
-    std::map<std::string, std::string> templates;
-    std::map<std::string, Kitsunemimi::DataBuffer*> files;
 
 private:
-    SakuraParsing* m_parser = nullptr;
-
+    std::map<std::string, TreeItem*> m_trees;
+    std::map<std::string, TreeItem*> m_resources;
+    std::map<std::string, std::string> m_templates;
+    std::map<std::string, Kitsunemimi::DataBuffer*> m_files;
 };
 
 } // namespace Sakura

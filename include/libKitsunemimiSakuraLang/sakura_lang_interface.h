@@ -51,6 +51,7 @@ class BlossomGroupItem;
 class BlossomItem;
 class BlossomLeaf;
 class Validator;
+class SakuraParsing;
 
 namespace bfs = boost::filesystem;
 
@@ -61,22 +62,15 @@ public:
 
     ~SakuraLangInterface();
 
-    // processing
-    bool processFiles(const std::string &inputPath,
-                      const DataMap &initialValues,
-                      const bool dryRun,
-                      std::string &errorMessage);
-    bool processString(const std::string &name,
-                       const std::string &inputString,
-                       const DataMap &initialValues,
-                       const bool dryRun,
-                       std::string &errorMessage);
-
-    // getter
-    const std::string getTemplate(const std::string &relativePath);
-    DataBuffer* getFile(const std::string &relativePath);
-    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
-                                    const bfs::path &blossomInternalRelPath);
+    bool triggerTree(const std::string &id,
+                     const DataMap &initialValues,
+                     std::string &errorMessage);
+    bool runTree(const std::string &id,
+                 const std::string &treeContent,
+                 const DataMap &initialValues,
+                 std::string &errorMessage);
+    bool readFiles(const std::string &inputPath,
+                   std::string &errorMessage);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,
@@ -87,25 +81,45 @@ public:
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
 
+    // add
+    bool addTree(const std::string &id,
+                 const std::string &treeContent,
+                 std::string &errorMessage);
+    bool addTemplate(const std::string &id,
+                     const std::string &templateContent);
+    bool addFile(const std::string &id,
+                 Kitsunemimi::DataBuffer* data);
+
+    // getter
+    const std::string getTemplate(const std::string &id);
+    DataBuffer* getFile(const std::string &id);
+
+    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
+                                    const bfs::path &blossomInternalRelPath);
+
+
 private:
     friend SakuraThread;
     friend Validator;
 
-    SakuraLangInterface(const bool enableDebug = false);
+    SakuraLangInterface(const uint16_t numberOfThreads = 6,
+                        const bool enableDebug = false);
 
     static SakuraLangInterface* m_instance;
+
+    SakuraParsing* m_parser = nullptr;
 
     // internally used objects
     SakuraGarden* m_garden = nullptr;
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
+    Validator* m_validator = nullptr;
     std::mutex m_lock;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
     bool runProcess(TreeItem *tree,
                     const DataMap &initialValues,
-                    const bool dryRun,
                     std::string &errorMessage);
 
     // output

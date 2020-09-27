@@ -24,7 +24,10 @@
 
 #include <items/sakura_items.h>
 #include <sakura_garden.h>
+#include <validator.h>
 #include <parsing/sakura_parser_interface.h>
+
+#include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 #include <libKitsunemimiCommon/common_items/data_items.h>
@@ -46,7 +49,8 @@ namespace Sakura
  */
 SakuraParsing::SakuraParsing(const bool debug)
 {
-    m_parser = new SakuraParserInterface(debug, this);
+    m_validator = new Validator();
+    m_parserInterface = new SakuraParserInterface(debug, this);
 }
 
 /**
@@ -54,7 +58,7 @@ SakuraParsing::SakuraParsing(const bool debug)
  */
 SakuraParsing::~SakuraParsing()
 {
-    delete m_parser;
+    delete m_parserInterface;
 }
 
 /**
@@ -129,9 +133,7 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
         m_fileQueue.pop_front();
 
         // check if already parsed
-        std::map<std::string, TreeItem*>::iterator it;
-        it = garden.trees.find(currentRelPath);
-        if(it != garden.trees.end()) {
+        if(garden.getTree(currentRelPath) != nullptr) {
             continue;
         }
 
@@ -153,15 +155,26 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
         }
 
         // parse file
-        SakuraItem* parsed = parseSingleFile(currentRelPath,
-                                             rootPath,
-                                             errorMessage);
-        if(parsed == nullptr) {
+        TreeItem* parsedTree = parseSingleFile(currentRelPath, rootPath, errorMessage);
+        if(parsedTree == nullptr) {
+            return false;
+        }
+
+        // validate new tree
+        if(m_validator->checkSakuraItem(parsedTree, filePath.string(), errorMessage) == false) {
             return false;
         }
 
         // add parsed sakura-file to results
-        garden.trees.insert(std::make_pair(currentRelPath, dynamic_cast<TreeItem*>(parsed)));
+        if(garden.addTree(currentRelPath, dynamic_cast<TreeItem*>(parsedTree)) == false)
+        {
+            TableItem errorOutput;
+            initErrorOutput(errorOutput);
+            errorOutput.addRow({"source", "while reading trees"});
+            errorOutput.addRow({"message", "id already used: " + currentRelPath});
+            errorMessage = errorOutput.toString();
+            return false;
+        }
 
         // get additional files
         const bfs::path dirPath = filePath.parent_path();
@@ -287,9 +300,7 @@ SakuraParsing::parseRessourceString(SakuraGarden &garden,
         return false;
     }
 
-    garden.resources.insert(std::make_pair(parsetItem->id, parsetItem));
-
-    return true;
+    return garden.addResource(parsetItem->id, parsetItem);
 }
 
 /**
@@ -423,7 +434,15 @@ SakuraParsing::getFilesInDir(SakuraGarden &garden,
                     return false;
                 }
 
-                garden.files.insert(std::make_pair(relPath.string(), buffer));
+                if(garden.addFile(relPath.string(), buffer) == false)
+                {
+                    TableItem errorOutput;
+                    initErrorOutput(errorOutput);
+                    errorOutput.addRow({"source", "while reading files"});
+                    errorOutput.addRow({"message", "id already used: " + relPath.string()});
+                    errorMessage = errorOutput.toString();
+                    return false;
+                }
             }
             //--------------------------------------------------------------------------------------
             if(type == "resources")
@@ -457,7 +476,15 @@ SakuraParsing::getFilesInDir(SakuraGarden &garden,
                     return false;
                 }
 
-                garden.resources.insert(std::make_pair(parsedTree->id, parsedTree));
+                if(garden.addResource(parsedTree->id, parsedTree) == false)
+                {
+                    TableItem errorOutput;
+                    initErrorOutput(errorOutput);
+                    errorOutput.addRow({"source", "while parsing ressource-files"});
+                    errorOutput.addRow({"message", "id already used: " + parsedTree->id});
+                    errorMessage = errorOutput.toString();
+                    return false;
+                }
             }
             //--------------------------------------------------------------------------------------
             if(type == "templates")
@@ -476,7 +503,15 @@ SakuraParsing::getFilesInDir(SakuraGarden &garden,
                     return false;
                 }
 
-                garden.templates.insert(std::make_pair(relPath.string(), fileContent));
+                if(garden.addTemplate(relPath.string(), fileContent) == false)
+                {
+                    TableItem errorOutput;
+                    initErrorOutput(errorOutput);
+                    errorOutput.addRow({"source", "while reading template-files"});
+                    errorOutput.addRow({"message", "id already used: " + relPath.string()});
+                    errorMessage = errorOutput.toString();
+                    return false;
+                }
             }
             //--------------------------------------------------------------------------------------
         }
@@ -519,16 +554,16 @@ SakuraParsing::parseStringToTree(const std::string &content,
                                  const std::string &filePath,
                                  std::string &errorMessage)
 {
-    const bool parserResult = m_parser->parse(content, filePath);
+    const bool parserResult = m_parserInterface->parse(content, filePath);
 
     if(parserResult == false)
     {
-        TableItem errorOutput = m_parser->getErrorMessage();
+        TableItem errorOutput = m_parserInterface->getErrorMessage();
         errorMessage = errorOutput.toString();
         return nullptr;
     }
 
-    return dynamic_cast<TreeItem*>(m_parser->getOutput());
+    return dynamic_cast<TreeItem*>(m_parserInterface->getOutput());
 }
 
 /**
