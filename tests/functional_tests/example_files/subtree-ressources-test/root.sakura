@@ -1,0 +1,18 @@
+["resource-subtree-test"]
+- test_text = "this is a test"
+- output_resource = ""
+- output_subtree = ""
+
+
+test_resource("call test-ressource")
+- test_text = test_text
+- test_text >> output_resource
+
+
+subtree("next/subtree.sakura")
+- test_text = test_text
+- test_text >> output_subtree
+
+
+assert("check result")
+- output_resource == output_subtree

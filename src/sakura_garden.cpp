@@ -91,7 +91,7 @@ SakuraGarden::addTree(const std::string &id,
     // add
     m_trees.insert(std::make_pair(id, tree));
 
-    return false;
+    return true;
 }
 
 /**
@@ -110,13 +110,13 @@ SakuraGarden::addResource(const std::string &id,
     std::map<std::string, TreeItem*>::const_iterator it;
     it = m_resources.find(id);
     if(it != m_resources.end()) {
-        return true;
+        return false;
     }
 
     // add
     m_resources.insert(std::make_pair(id, resource));
 
-    return false;
+    return true;
 }
 
 /**
@@ -135,13 +135,13 @@ SakuraGarden::addTemplate(const std::string &id,
     std::map<std::string, std::string>::const_iterator it;
     it = m_templates.find(id);
     if(it != m_templates.end()) {
-        return true;
+        return false;
     }
 
     // add
     m_templates.insert(std::make_pair(id, templateContent));
 
-    return false;
+    return true;
 }
 
 /**
@@ -160,11 +160,32 @@ SakuraGarden::addFile(const std::string &id,
     std::map<std::string, DataBuffer*>::const_iterator it;
     it = m_files.find(id);
     if(it != m_files.end()) {
-        return true;
+        return false;
     }
 
     // add
     m_files.insert(std::make_pair(id, fileContent));
+
+    return true;
+}
+
+/**
+ * @brief SakuraGarden::containsTree
+ * @param id
+ * @return
+ */
+bool
+SakuraGarden::containsTree(std::string id)
+{
+    if(id == "") {
+       id = "root.sakura";
+    }
+
+    std::map<std::string, TreeItem*>::const_iterator it;
+    it = m_trees.find(id);
+    if(it != m_trees.end()) {
+        return true;
+    }
 
     return false;
 }
@@ -198,7 +219,7 @@ SakuraGarden::getRessource(const std::string &id)
 TreeItem*
 SakuraGarden::getTree(std::string id)
 {
-    if(id != "") {
+    if(id == "") {
        id = "root.sakura";
     }
 

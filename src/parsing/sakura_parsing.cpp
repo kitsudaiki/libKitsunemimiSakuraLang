@@ -133,7 +133,7 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
         m_fileQueue.pop_front();
 
         // check if already parsed
-        if(garden.getTree(currentRelPath) != nullptr) {
+        if(garden.containsTree(currentRelPath)) {
             continue;
         }
 
@@ -198,7 +198,7 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
 }
 
 /**
- * @brief add subtree to processing-queue
+ * @brief add subtree to parsing-queue. This function is used in sakura_parser.y
  *
  * @param relativePath relative path of the file to add
  */
