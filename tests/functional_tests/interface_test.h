@@ -1,9 +1,9 @@
-/**
- * @file        sakura_parser_test.h
+﻿/**
+ * @file       interface_test.h
  *
- * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
+ * @author     Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
- * @copyright   Apache License Version 2.0
+ * @copyright  Apache License Version 2.0
  *
  *      Copyright 2019 Tobias Anker
  *
@@ -20,32 +20,43 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURA_PARSER_TEST_H
-#define SAKURA_PARSER_TEST_H
+#ifndef SESSION_TEST_H
+#define SESSION_TEST_H
+
+#include <iostream>
+
 
 #include <libKitsunemimiCommon/test_helper/compare_test_helper.h>
 
 namespace Kitsunemimi
 {
+class DataBuffer;
 namespace Sakura
 {
-class SakuraParsing;
 
-class ParsingTest
+class Interface_Test
         : public Kitsunemimi::CompareTestHelper
 {
 public:
-    ParsingTest();
+    Interface_Test();
+
+    void blossomMethods_test();
+    void addAndGet_test();
+    void runAndTrigger_test();
+
+    template<typename  T>
+    void compare(T isValue, T shouldValue)
+    {
+        TEST_EQUAL(isValue, shouldValue);
+    }
 
 private:
-    void initTestCase();
-    void parseTree_Test();
-    void cleanupTestCase();
-
-    SakuraParsing* m_parser = nullptr;
+    const std::string getTestTree();
+    const std::string getTestTemplate();
+    DataBuffer* getTestFile();
 };
 
-}  // namespace Sakura
-}  // namespace Kitsunemimi
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SAKURA_PARSER_TEST_H
+#endif // SESSION_TEST_H

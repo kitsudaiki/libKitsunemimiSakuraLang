@@ -53,6 +53,9 @@ public:
     bool addTemplate(const std::string &id, const std::string &templateContent);
     bool addFile(const std::string &id, Kitsunemimi::DataBuffer* fileContent);
 
+    // check
+    bool containsTree(std::string id);
+
     // get
     TreeItem* getTree(std::string id);
     TreeItem* getRessource(const std::string &id);

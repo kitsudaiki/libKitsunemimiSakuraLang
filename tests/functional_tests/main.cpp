@@ -1,9 +1,9 @@
 /**
- * @file        main.cpp
+ * @file    main.cpp
  *
- * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
+ * @author  Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
- * @copyright   Apache License Version 2.0
+ * @copyright  Apache License Version 2.0
  *
  *      Copyright 2019 Tobias Anker
  *
@@ -20,10 +20,16 @@
  *      limitations under the License.
  */
 
-#include <iostream>
-#include <sakura_parser_test.h>
+#include <libKitsunemimiPersistence/logger/logger.h>
+
+#include <interface_test.h>
+
+using Kitsunemimi::Persistence::initConsoleLogger;
+
 
 int main()
 {
-    Kitsunemimi::Sakura::ParsingTest();
+    initConsoleLogger(true);
+
+    Kitsunemimi::Sakura::Interface_Test();
 }

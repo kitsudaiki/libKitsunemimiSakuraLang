@@ -288,6 +288,13 @@ SakuraLangInterface::addTree(const std::string &id,
         return false;
     }
 
+    // validator parsed tree
+    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false)
+    {
+        m_lock.unlock();
+        return false;
+    }
+
     const bool result = m_garden->addTree(id, tree);
     m_lock.unlock();
 
