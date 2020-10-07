@@ -40,8 +40,8 @@ class Interface_Test
 public:
     Interface_Test();
 
-    void addAndGet_test();
     void blossomMethods_test();
+    void addAndGet_test();
     void runAndTrigger_test();
 
     template<typename  T>

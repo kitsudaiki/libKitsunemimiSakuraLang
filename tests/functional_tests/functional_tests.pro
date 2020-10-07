@@ -28,18 +28,7 @@ LIBS += -L../../../libKitsunemimiJson/src/debug -lKitsunemimiJson
 LIBS += -L../../../libKitsunemimiJson/src/release -lKitsunemimiJson
 INCLUDEPATH += ../../../libKitsunemimiJson/include
 
-LIBS += -L../../../libKitsunemimiIni/src -lKitsunemimiIni
-LIBS += -L../../../libKitsunemimiIni/src/debug -lKitsunemimiIni
-LIBS += -L../../../libKitsunemimiIni/src/release -lKitsunemimiIni
-INCLUDEPATH += ../../../libKitsunemimiIni/include
 
-LIBS += -L../../../libKitsunemimiConfig/src -lKitsunemimiConfig
-LIBS += -L../../../libKitsunemimiConfig/src/debug -lKitsunemimiConfig
-LIBS += -L../../../libKitsunemimiConfig/src/release -lKitsunemimiConfig
-INCLUDEPATH += ../../../libKitsunemimiConfig/include
-
-
-LIBS +=  -lssl -lcrypt
 LIBS +=  -lboost_filesystem -lboost_system
 
 

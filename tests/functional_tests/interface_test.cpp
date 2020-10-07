@@ -29,7 +29,6 @@
 
 #include <libKitsunemimiPersistence/files/text_file.h>
 #include <libKitsunemimiCommon/buffer/data_buffer.h>
-#include <libKitsunemimiConfig/config_handler.h>
 
 namespace Kitsunemimi
 {
@@ -42,9 +41,42 @@ namespace Sakura
 Interface_Test::Interface_Test() :
     Kitsunemimi::CompareTestHelper("Interface_Test")
 {
-    addAndGet_test();
     blossomMethods_test();
+    addAndGet_test();
     runAndTrigger_test();
+}
+
+/**
+ * @brief Interface_Test::blossomMethods_test
+ */
+void
+Interface_Test::blossomMethods_test()
+{
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    TestBlossom* newBlossom = new TestBlossom(this);
+
+    // test addBlossom
+    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), true);
+    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), false);
+
+    // test doesBlossomExist
+    TEST_EQUAL(interface->doesBlossomExist("test1", "test2"), true);
+    TEST_EQUAL(interface->doesBlossomExist("test1", "fail"), false);
+    TEST_EQUAL(interface->doesBlossomExist("fail", "test2"), false);
+
+    // test getBlossom
+    bool isNullptr = false;
+    Blossom* returnBlossom = interface->getBlossom("test1", "test2");
+    isNullptr = returnBlossom == nullptr;
+    TEST_EQUAL(isNullptr, false);
+
+    if(isNullptr) {
+        return;
+    }
+
+    TestBlossom* convertedBlossom = dynamic_cast<TestBlossom*>(returnBlossom);
+    isNullptr = convertedBlossom == nullptr;
+    TEST_EQUAL(isNullptr, false);
 }
 
 /**
@@ -82,39 +114,6 @@ Interface_Test::addAndGet_test()
     }
 
     TEST_EQUAL(returnBuffer->bufferPosition, getTestFile()->bufferPosition);
-}
-
-/**
- * @brief Interface_Test::blossomMethods_test
- */
-void
-Interface_Test::blossomMethods_test()
-{
-    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
-    TestBlossom* newBlossom = new TestBlossom(this);
-
-    // test addBlossom
-    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), true);
-    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), false);
-
-    // test doesBlossomExist
-    TEST_EQUAL(interface->doesBlossomExist("test1", "test2"), true);
-    TEST_EQUAL(interface->doesBlossomExist("test1", "fail"), false);
-    TEST_EQUAL(interface->doesBlossomExist("fail", "test2"), false);
-
-    // test getBlossom
-    bool isNullptr = false;
-    Blossom* returnBlossom = interface->getBlossom("test1", "test2");
-    isNullptr = returnBlossom == nullptr;
-    TEST_EQUAL(isNullptr, false);
-
-    if(isNullptr) {
-        return;
-    }
-
-    TestBlossom* convertedBlossom = dynamic_cast<TestBlossom*>(returnBlossom);
-    isNullptr = convertedBlossom == nullptr;
-    TEST_EQUAL(isNullptr, false);
 }
 
 /**
