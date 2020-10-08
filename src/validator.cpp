@@ -205,5 +205,33 @@ Validator::checkSakuraItem(SakuraItem* sakuraItem,
     return false;
 }
 
+/**
+ * @brief check all blossom-items of all parsed trees
+ *
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if check successful, else false
+ */
+bool
+Validator::checkAllItems(std::string &errorMessage)
+{
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+
+    std::map<std::string, TreeItem*>::const_iterator mapIt;
+    for(mapIt = interface->m_garden->m_trees.begin();
+        mapIt != interface->m_garden->m_trees.end();
+        mapIt++)
+    {
+        if(checkSakuraItem(mapIt->second,
+                           mapIt->second->relativePath,
+                           errorMessage) == false)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 } // namespace Sakura
 } // namespace Kitsunemimi

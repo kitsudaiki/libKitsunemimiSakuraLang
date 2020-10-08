@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file        validator.h
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
@@ -47,6 +47,7 @@ public:
     bool checkSakuraItem(SakuraItem* sakuraItem,
                          const std::string &filePath,
                          std::string &errorMessage);
+    bool checkAllItems(std::string &errorMessage);
 };
 
 } // namespace Sakura

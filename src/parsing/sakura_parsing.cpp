@@ -160,11 +160,6 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
             return false;
         }
 
-        // validate new tree
-        if(m_validator->checkSakuraItem(parsedTree, filePath.string(), errorMessage) == false) {
-            return false;
-        }
-
         // add parsed sakura-file to results
         if(garden.addTree(currentRelPath, dynamic_cast<TreeItem*>(parsedTree)) == false)
         {
