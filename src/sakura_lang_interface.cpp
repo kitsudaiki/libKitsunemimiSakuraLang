@@ -372,7 +372,15 @@ SakuraLangInterface::readFiles(const std::string &inputPath,
     // parse all files
     if(m_parser->parseTreeFiles(*m_garden, inputPath, errorMessage) == false)
     {
-        errorMessage = "failed to add trees\n    " + errorMessage;
+        errorMessage = "failed to add trees\n" + errorMessage;
+        m_lock.unlock();
+        return false;
+    }
+
+    // check parsed trees
+    if(m_validator->checkAllItems(errorMessage) == false)
+    {
+        errorMessage = "validation failed\n" + errorMessage;
         m_lock.unlock();
         return false;
     }
