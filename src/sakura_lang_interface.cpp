@@ -98,8 +98,13 @@ SakuraLangInterface::triggerTree(const std::string &id,
 {
     m_lock.lock();
 
+    std::string newId = id;
+    if(bfs::is_directory(newId)) {
+        newId = "root.sakura";
+    }
+
     // get initial tree-item
-    TreeItem* tree = m_garden->getTree(id);
+    TreeItem* tree = m_garden->getTree(newId);
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + id;
@@ -351,7 +356,7 @@ SakuraLangInterface::addFile(const std::string &id,
  */
 bool
 SakuraLangInterface::readFiles(const std::string &inputPath,
-                                  std::string &errorMessage)
+                               std::string &errorMessage)
 {
     // precheck input
     if(bfs::is_regular_file(inputPath) == false
