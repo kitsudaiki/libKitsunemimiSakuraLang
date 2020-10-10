@@ -128,13 +128,16 @@ Interface_Test::runAndTrigger_test()
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 
     // test triggerTree
-    TEST_EQUAL(interface->triggerTree("test-tree", inputValues, errorMessage), true);
-    TEST_EQUAL(interface->triggerTree("fail", inputValues, errorMessage), false);
+    DataMap result;
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, errorMessage), true);
+    TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
+    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, errorMessage), false);
     DataMap falseMap;
-    TEST_EQUAL(interface->triggerTree("test-tree", falseMap, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, errorMessage), false);
 
     // test runTree
-    TEST_EQUAL(interface->runTree("run-test", getTestTree(), inputValues, errorMessage), true);
+    TEST_EQUAL(interface->runTree(result, "run-test", getTestTree(), inputValues, errorMessage), true);
+    TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
 }
 
 /**
@@ -146,10 +149,12 @@ Interface_Test::getTestTree()
 {
     const std::string tree = "[\"test\"]\n"
                              "- input = \"{{}}\"\n"
+                             "- test_output = \"\"\n"
                              "\n"
                              "test1(\"this is a test\")\n"
                              "->test2:\n"
-                             "   - input = input\n";
+                             "   - input = input\n"
+                             "   - output >> test_output\n";
     return tree;
 }
 

@@ -85,6 +85,7 @@ SakuraLangInterface::~SakuraLangInterface()
 /**
  * @brief trigger existing tree
  *
+ * @param map with resulting items
  * @param id id of the tree to trigger
  * @param initialValues input-values for the tree
  * @param errorMessage reference for error-message
@@ -92,7 +93,8 @@ SakuraLangInterface::~SakuraLangInterface()
  * @return true, if successfule, else false
  */
 bool
-SakuraLangInterface::triggerTree(const std::string &id,
+SakuraLangInterface::triggerTree(DataMap &result,
+                                 const std::string &id,
                                  const DataMap &initialValues,
                                  std::string &errorMessage)
 {
@@ -108,7 +110,8 @@ SakuraLangInterface::triggerTree(const std::string &id,
     }
 
     // process sakura-file with initial values
-    if(runProcess(tree,
+    if(runProcess(result,
+                  tree,
                   initialValues,
                   errorMessage) == false)
     {
@@ -124,6 +127,7 @@ SakuraLangInterface::triggerTree(const std::string &id,
 /**
  * @brief parse and run a tree
  *
+ * @param map with resulting items
  * @param id id of the tree to parse and run
  * @param treeContent content of the tree-which should be parsed
  * @param initialValues input-values for the tree
@@ -132,7 +136,8 @@ SakuraLangInterface::triggerTree(const std::string &id,
  * @return true, if successfule, else false
  */
 bool
-SakuraLangInterface::runTree(const std::string &id,
+SakuraLangInterface::runTree(DataMap& result,
+                             const std::string &id,
                              const std::string &treeContent,
                              const DataMap &initialValues,
                              std::string &errorMessage)
@@ -156,7 +161,10 @@ SakuraLangInterface::runTree(const std::string &id,
     }
 
     // process sakura-file with initial values
-    if(runProcess(tree, initialValues, errorMessage) == false)
+    if(runProcess(result,
+                  tree,
+                  initialValues,
+                  errorMessage) == false)
     {
         m_lock.unlock();
         return false;
@@ -435,6 +443,7 @@ SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
 /**
  * @brief start processing by spawning the first subtree-object
  *
+ * @param resultingItems map for resulting items
  * @param item subtree to spawn
  * @param initialValues initial set of values to override the same named values within the initial
  *                      called tree-item
@@ -443,7 +452,8 @@ SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(TreeItem* tree,
+SakuraLangInterface::runProcess(DataMap &resultingItems,
+                                TreeItem* tree,
                                 const DataMap &initialValues,
                                 std::string &errorMessage)
 {
@@ -464,7 +474,8 @@ SakuraLangInterface::runProcess(TreeItem* tree,
     childs.push_back(tree);
     std::vector<std::string> hierarchy;
 
-    const bool result = m_queue->spawnParallelSubtrees(childs,
+    const bool result = m_queue->spawnParallelSubtrees(resultingItems,
+                                                       childs,
                                                        "",
                                                        hierarchy,
                                                        initialValues,

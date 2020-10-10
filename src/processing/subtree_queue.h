@@ -124,7 +124,8 @@ public:
 
     void addSubtreeObject(SubtreeObject* newObject);
 
-    bool spawnParallelSubtrees(const std::vector<SakuraItem *> &childs,
+    bool spawnParallelSubtrees(DataMap &resultingItems,
+                               const std::vector<SakuraItem *> &childs,
                                const std::string &filePath,
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,

@@ -62,10 +62,12 @@ public:
 
     ~SakuraLangInterface();
 
-    bool triggerTree(const std::string &id,
+    bool triggerTree(DataMap& result,
+                     const std::string &id,
                      const DataMap &initialValues,
                      std::string &errorMessage);
-    bool runTree(const std::string &id,
+    bool runTree(DataMap& result,
+                 const std::string &id,
                  const std::string &treeContent,
                  const DataMap &initialValues,
                  std::string &errorMessage);
@@ -118,7 +120,7 @@ private:
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(TreeItem *tree,
+    bool runProcess(DataMap &resultingItems, TreeItem *tree,
                     const DataMap &initialValues,
                     std::string &errorMessage);
 
