@@ -125,6 +125,7 @@ Interface_Test::runAndTrigger_test()
     std::string errorMessage = "";
     DataMap inputValues;
     inputValues.insert("input", new DataValue(42));
+    inputValues.insert("test_output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 
     // test triggerTree

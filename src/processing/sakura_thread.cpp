@@ -78,7 +78,7 @@ SakuraThread::run()
                                                       errorMessage);
                 // handle result
                 if(result) {
-                    overrideItems(m_currentSubtree->items, m_parentValues, ALL);
+                    overrideItems(m_currentSubtree->items, m_parentValues, ONLY_EXISTING);
                 } else {
                     m_currentSubtree->activeCounter->registerError(errorMessage);
                 }
