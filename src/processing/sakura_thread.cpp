@@ -78,7 +78,7 @@ SakuraThread::run()
                                                       errorMessage);
                 // handle result
                 if(result) {
-                    overrideItems(m_currentSubtree->items, m_parentValues, ONLY_EXISTING);
+                    overrideItems(m_currentSubtree->items, m_parentValues, ALL);
                 } else {
                     m_currentSubtree->activeCounter->registerError(errorMessage);
                 }
@@ -235,9 +235,8 @@ SakuraThread::processBlossom(BlossomItem &blossomItem,
 
     convertValueMap(blossomLeaf.input, blossomItem.values);
 
+    // process blossom
     const bool ret = blossom->growBlossom(blossomLeaf, errorMessage);
-
-    // check result
     if(ret == false) {
         return false;
     }
@@ -626,7 +625,9 @@ SakuraThread::processParallelPart(ParallelPart* parallelPart,
 {
     SequentiellPart* parts = dynamic_cast<SequentiellPart*>(parallelPart->childs);
 
-    const bool result = m_interface->m_queue->spawnParallelSubtrees(parts->childs,
+    DataMap resultingItems;
+    const bool result = m_interface->m_queue->spawnParallelSubtrees(resultingItems,
+                                                                    parts->childs,
                                                                     filePath,
                                                                     m_hierarchy,
                                                                     m_parentValues,

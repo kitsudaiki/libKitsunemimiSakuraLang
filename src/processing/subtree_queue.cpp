@@ -131,6 +131,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
 /**
  * @brief run multiple different subtrees in parallel threads
  *
+ * @param resultingItems map for resulting items
  * @param childs vector with subtrees, where each subtree should be executed by another thread
  * @param filePath path of the file, where the subtree belongs to
  * @param hierarchy actual hierarchy for terminal output
@@ -142,7 +143,8 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
+SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
+                                    const std::vector<SakuraItem*> &childs,
                                     const std::string &filePath,
                                     const std::vector<std::string> &hierarchy,
                                     const DataMap &parentValues,
@@ -174,10 +176,16 @@ SubtreeQueue::spawnParallelSubtrees(const std::vector<SakuraItem*> &childs,
         spawnedObjects.push_back(object);
     }
 
-    const bool result = waitUntilFinish(activeCounter, errorMessage);
+    const bool ret = waitUntilFinish(activeCounter, errorMessage);
+
+    // write result back for output
+    if(spawnedObjects.size() == 1) {
+        overrideItems(resultingItems, spawnedObjects.at(0)->items, ALL);
+    }
+
     clearSpawnedObjects(spawnedObjects);
 
-    return result;
+    return ret;
 }
 
 
