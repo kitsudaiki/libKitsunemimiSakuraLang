@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 2020-10-11
+
+### Added
+- add functionallity to return results back to the interface-class, which was necessary for libKitsunemimiSakuraMessaging to return results over network. This resulted in some API-breaking changes.
+
+
 ## [0.6.0] - 2020-10-08
 
 ### Changed
