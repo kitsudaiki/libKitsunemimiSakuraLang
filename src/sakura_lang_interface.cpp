@@ -281,7 +281,7 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
  * @return true, if successfule, else false
  */
 bool
-SakuraLangInterface::addTree(const std::string &id,
+SakuraLangInterface::addTree(std::string id,
                              const std::string &treeContent,
                              std::string &errorMessage)
 {
@@ -303,6 +303,9 @@ SakuraLangInterface::addTree(const std::string &id,
         return false;
     }
 
+    if(id == "") {
+        id = tree->id;
+    }
     const bool result = m_garden->addTree(id, tree);
     m_lock.unlock();
 

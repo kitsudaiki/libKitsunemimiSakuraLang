@@ -84,7 +84,7 @@ public:
                         const std::string &itemName);
 
     // add
-    bool addTree(const std::string &id,
+    bool addTree(std::string id,
                  const std::string &treeContent,
                  std::string &errorMessage);
     bool addTemplate(const std::string &id,
