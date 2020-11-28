@@ -60,10 +60,7 @@ ThreadPool::~ThreadPool()
 void
 ThreadPool::clearChildThreads()
 {
-    for(SakuraThread* childThread : m_childThreads)
-    {
-        childThread->stopThread();
-        childThread->waitForFinish();
+    for(SakuraThread* childThread : m_childThreads) {
         delete childThread;
     }
     m_childThreads.clear();
