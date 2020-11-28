@@ -64,7 +64,7 @@ public:
 
     bool triggerTree(DataMap& result,
                      const std::string &id,
-                     const DataMap &initialValues,
+                     DataMap &initialValues,
                      std::string &errorMessage);
     bool runTree(DataMap& result,
                  const std::string &id,

@@ -95,9 +95,11 @@ SakuraLangInterface::~SakuraLangInterface()
 bool
 SakuraLangInterface::triggerTree(DataMap &result,
                                  const std::string &id,
-                                 const DataMap &initialValues,
+                                 DataMap &initialValues,
                                  std::string &errorMessage)
 {
+    LOG_DEBUG("trigger tree");
+
     m_lock.lock();
 
     // get initial tree-item
@@ -108,6 +110,8 @@ SakuraLangInterface::triggerTree(DataMap &result,
         m_lock.unlock();
         return false;
     }
+
+    overrideItems(initialValues, tree->values, ONLY_NON_EXISTING);
 
     // process sakura-file with initial values
     if(runProcess(result,
