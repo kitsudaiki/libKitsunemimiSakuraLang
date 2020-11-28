@@ -416,6 +416,21 @@ overrideItems(DataMap &original,
             }
         }
     }
+    if(type == ONLY_NON_EXISTING)
+    {
+        std::map<std::string, DataItem*>::const_iterator overrideIt;
+        for(overrideIt = override.m_map.begin();
+            overrideIt != override.m_map.end();
+            overrideIt++)
+        {
+            std::map<std::string, DataItem*>::iterator originalIt;
+            originalIt = original.m_map.find(overrideIt->first);
+
+            if(originalIt == original.m_map.end()) {
+                original.insert(overrideIt->first, overrideIt->second->copy(), true);
+            }
+        }
+    }
     else if(type == ALL)
     {
         std::map<std::string, DataItem*>::const_iterator overrideIt;
@@ -452,6 +467,21 @@ overrideItems(DataMap &original,
             originalIt = original.m_map.find(overrideIt->first);
 
             if(originalIt != original.m_map.end()) {
+                original.insert(overrideIt->first, overrideIt->second.item->copy(), true);
+            }
+        }
+    }
+    else if(type == ONLY_NON_EXISTING)
+    {
+        std::map<std::string, ValueItem>::const_iterator overrideIt;
+        for(overrideIt = override.m_valueMap.begin();
+            overrideIt != override.m_valueMap.end();
+            overrideIt++)
+        {
+            std::map<std::string, DataItem*>::iterator originalIt;
+            originalIt = original.m_map.find(overrideIt->first);
+
+            if(originalIt == original.m_map.end()) {
                 original.insert(overrideIt->first, overrideIt->second.item->copy(), true);
             }
         }
