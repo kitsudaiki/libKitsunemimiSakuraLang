@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.1] - 2020-11-29
+
+### Added
+- possibility to trigger trees by id instead of file-path
+
+### Changed
+- update override-files for the case to override non-existing values
+- when trigger a tree, the initial values will be filled with empty values for each not set value
+
+
 ## [0.7.0] - 2020-10-11
 
 ### Added
