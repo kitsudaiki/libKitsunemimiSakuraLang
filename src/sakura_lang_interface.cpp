@@ -34,6 +34,8 @@
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
 #include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiPersistence/files/text_file.h>
+#include <libKitsunemimiPersistence/files/file_methods.h>
 
 namespace Kitsunemimi
 {
@@ -131,7 +133,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
 /**
  * @brief parse and run a tree
  *
- * @param map with resulting items
+ * @param result map with resulting items
  * @param id id of the tree to parse and run
  * @param treeContent content of the tree-which should be parsed
  * @param initialValues input-values for the tree
@@ -358,8 +360,6 @@ SakuraLangInterface::addFile(const std::string &id,
  * @brief process set of sakura-files
  *
  * @param inputPath path to the initial sakura-file or directory with the root.sakura file
- * @param initialValues map-item with initial values to override the items of the initial tree-item
- * @param dryRun set to true to only parse and check the files, without executing them
  * @param errorMessage reference for error-message
  *
  * @return true, if successfule, else false
@@ -401,6 +401,46 @@ SakuraLangInterface::readFiles(const std::string &inputPath,
     }
 
     m_lock.unlock();
+
+    return true;
+}
+
+/**
+ * @brief simple read all files within a directory and register by id instead of path
+ *
+ * @param directoryPath path to directory with sakura-files to read
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
+ */
+bool
+SakuraLangInterface::readFilesInDir(const std::string &directoryPath,
+                                    std::string &errorMessage)
+{
+    // get list the all files
+    std::vector<std::string> sakuraFiles;
+    if(Kitsunemimi::Persistence::listFiles(sakuraFiles, directoryPath) == false)
+    {
+        errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
+        return false;
+    }
+
+    // iterate over all files and parse them
+    for(const std::string &filePath : sakuraFiles)
+    {
+        std::string content = "";
+        if(Kitsunemimi::Persistence::readFile(content, filePath, errorMessage) == false)
+        {
+            errorMessage = "reading sakura-files failed with error: " + errorMessage;
+            return false;
+        }
+
+        if(addTree("", content, errorMessage) == false)
+        {
+            errorMessage = "parsing sakura-files failed with error: " + errorMessage;
+            return false;
+        }
+    }
 
     return true;
 }

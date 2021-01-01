@@ -61,11 +61,7 @@ public:
                         const bfs::path &initialFilePath,
                         std::string &errorMessage);
 
-    bool parseRessourceString(SakuraGarden &garden,
-                              const std::string &absolutePath,
-                              const std::string &content,
-                              std::string &errorMessage);
-
+    // for internal usage
     void addFileToQueue(bfs::path relativePath);
 
 private:

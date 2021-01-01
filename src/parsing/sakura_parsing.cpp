@@ -126,6 +126,7 @@ SakuraParsing::parseTreeFiles(SakuraGarden &garden,
     m_rootPath = rootPath;
     m_fileQueue.push_back(fileName.string());
 
+    // process all files in queue
     while(m_fileQueue.size() > 0)
     {
         // get path from queue
@@ -272,30 +273,6 @@ SakuraParsing::parseSingleFile(const bfs::path &relativePath,
     tempTree->rootPath = rootPath.string();
 
     return tempTree;
-}
-
-/**
- * @brief parse resource
- *
- * @param garden reference to the sakura-garden-object to store all found data
- * @param absolutePath absolute path of the resource-file
- * @param content conentn of the resource
- * @param errorMessage reference to error-message
- *
- * @return true, if successful, else false
- */
-bool
-SakuraParsing::parseRessourceString(SakuraGarden &garden,
-                                    const std::string &absolutePath,
-                                    const std::string &content,
-                                    std::string &errorMessage)
-{
-    TreeItem* parsetItem = parseStringToTree(content, absolutePath, errorMessage);
-    if(parsetItem == nullptr) {
-        return false;
-    }
-
-    return garden.addResource(parsetItem->id, parsetItem);
 }
 
 /**

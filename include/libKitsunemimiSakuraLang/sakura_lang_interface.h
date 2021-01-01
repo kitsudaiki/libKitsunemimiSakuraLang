@@ -73,6 +73,8 @@ public:
                  std::string &errorMessage);
     bool readFiles(const std::string &inputPath,
                    std::string &errorMessage);
+    bool readFilesInDir(const std::string &directoryPath,
+                        std::string &errorMessage);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,
