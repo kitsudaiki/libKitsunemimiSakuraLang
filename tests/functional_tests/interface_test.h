@@ -30,7 +30,7 @@
 
 namespace Kitsunemimi
 {
-class DataBuffer;
+struct DataBuffer;
 namespace Sakura
 {
 

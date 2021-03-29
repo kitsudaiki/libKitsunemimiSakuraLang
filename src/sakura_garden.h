@@ -33,7 +33,7 @@ namespace bfs = boost::filesystem;
 
 namespace Kitsunemimi
 {
-class DataBuffer;
+struct DataBuffer;
 
 namespace Sakura
 {

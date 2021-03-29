@@ -14,7 +14,7 @@ Documentation for latest master-version:
 
 https://gitlab.com/kitsudaiki/libKitsunemimiSakuraLang-Documentation/builds/artifacts/master/browse?job=build
 
-Documentation version 0.7.0 (only syntax-documentation):
+Documentation version 0.7.x (only syntax-documentation):
 
 https://files.kitsunemimi.moe/docs/libKitsunemimiSakuraLang-Documentation_0_7_0.pdf
 
@@ -43,7 +43,7 @@ IMPORTANT: All my projects are only tested on Linux.
 
 Repository-Name | Version-Tag | Download-Path
 --- | --- | ---
-libKitsunemimiCommon | v0.16.1 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
+libKitsunemimiCommon | v0.18.0 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
 libKitsunemimiPersistence | v0.10.1 |  https://github.com/kitsudaiki/libKitsunemimiPersistence.git
 libKitsunemimiJson | v0.10.5 |  https://github.com/kitsudaiki/libKitsunemimiJson.git
 libKitsunemimiJinja2 | v0.8.0 |  https://github.com/kitsudaiki/libKitsunemimiJinja2.git
