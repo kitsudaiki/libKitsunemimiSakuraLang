@@ -34,7 +34,7 @@
 
 namespace Kitsunemimi
 {
-class DataBuffer;
+struct DataBuffer;
 namespace Jinja2 {
 class Jinja2Converter;
 }
