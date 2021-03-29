@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.2] - 2021-03-29
+
+### Added
+- new simple function for plain reading files from a directory
+
+### Fixed
+- fixed some compiler-warings
+
+
 ## [0.7.1] - 2020-11-29
 
 ### Added
