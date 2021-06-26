@@ -41,7 +41,6 @@ class Jinja2Converter;
 namespace Sakura
 {
 class SakuraGarden;
-class SakuraItem;
 class TreeItem;
 class ThreadPool;
 class SubtreeQueue;
@@ -51,7 +50,8 @@ class BlossomGroupItem;
 class BlossomItem;
 class BlossomLeaf;
 class Validator;
-class SakuraParsing;
+class SakuraParserInterface;
+class SakuraFileCollector;
 
 namespace bfs = boost::filesystem;
 
@@ -66,13 +66,6 @@ public:
                      const std::string &id,
                      DataMap &initialValues,
                      std::string &errorMessage);
-    bool runTree(DataMap& result,
-                 const std::string &id,
-                 const std::string &treeContent,
-                 const DataMap &initialValues,
-                 std::string &errorMessage);
-    bool readFiles(const std::string &inputPath,
-                   std::string &errorMessage);
     bool readFilesInDir(const std::string &directoryPath,
                         std::string &errorMessage);
 
@@ -93,6 +86,9 @@ public:
                      const std::string &templateContent);
     bool addFile(const std::string &id,
                  Kitsunemimi::DataBuffer* data);
+    bool addResource(std::string id,
+                     const std::string &content,
+                     std::string &errorMessage);
 
     // getter
     const std::string getTemplate(const std::string &id);
@@ -111,13 +107,14 @@ private:
 
     static SakuraLangInterface* m_instance;
 
-    SakuraParsing* m_parser = nullptr;
+    SakuraParserInterface* m_parser = nullptr;
 
     // internally used objects
     SakuraGarden* m_garden = nullptr;
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
     Validator* m_validator = nullptr;
+    SakuraFileCollector* m_fileCollector = nullptr;
     std::mutex m_lock;
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;

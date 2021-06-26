@@ -24,8 +24,9 @@
 
 #include <sakura_garden.h>
 #include <validator.h>
+#include <sakura_file_collector.h>
 
-#include <parsing/sakura_parsing.h>
+#include <parsing/sakura_parser_interface.h>
 
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
@@ -34,8 +35,7 @@
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
 #include <libKitsunemimiPersistence/logger/logger.h>
-#include <libKitsunemimiPersistence/files/text_file.h>
-#include <libKitsunemimiPersistence/files/file_methods.h>
+
 
 namespace Kitsunemimi
 {
@@ -53,7 +53,8 @@ SakuraLangInterface::SakuraLangInterface(const uint16_t numberOfThreads,
                                          const bool enableDebug)
 {
     m_validator = new Validator();
-    m_parser = new SakuraParsing(enableDebug);
+    m_fileCollector = new SakuraFileCollector(this);
+    m_parser = new SakuraParserInterface(enableDebug);
     m_garden = new SakuraGarden();
     m_queue = new SubtreeQueue();
     m_threadPoos = new ThreadPool(numberOfThreads, this);
@@ -114,57 +115,6 @@ SakuraLangInterface::triggerTree(DataMap &result,
     }
 
     overrideItems(initialValues, tree->values, ONLY_NON_EXISTING);
-
-    // process sakura-file with initial values
-    if(runProcess(result,
-                  tree,
-                  initialValues,
-                  errorMessage) == false)
-    {
-        m_lock.unlock();
-        return false;
-    }
-
-    m_lock.unlock();
-
-    return true;
-}
-
-/**
- * @brief parse and run a tree
- *
- * @param result map with resulting items
- * @param id id of the tree to parse and run
- * @param treeContent content of the tree-which should be parsed
- * @param initialValues input-values for the tree
- * @param errorMessage reference for error-message
- *
- * @return true, if successfule, else false
- */
-bool
-SakuraLangInterface::runTree(DataMap& result,
-                             const std::string &id,
-                             const std::string &treeContent,
-                             const DataMap &initialValues,
-                             std::string &errorMessage)
-{
-    m_lock.lock();
-
-    // get initial tree-item
-    TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
-    if(tree == nullptr)
-    {
-        errorMessage = "Failed to parse " + id;
-        m_lock.unlock();
-        return false;
-    }
-
-    // validator parsed tree
-    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false)
-    {
-        m_lock.unlock();
-        return false;
-    }
 
     // process sakura-file with initial values
     if(runProcess(result,
@@ -357,52 +307,44 @@ SakuraLangInterface::addFile(const std::string &id,
 }
 
 /**
- * @brief process set of sakura-files
+ * @brief add new ressource
  *
- * @param inputPath path to the initial sakura-file or directory with the root.sakura file
+ * @param id id of the new ressource
+ * @param content content of the new ressource, which should be parsed
  * @param errorMessage reference for error-message
  *
  * @return true, if successfule, else false
  */
 bool
-SakuraLangInterface::readFiles(const std::string &inputPath,
-                               std::string &errorMessage)
+SakuraLangInterface::addResource(std::string id,
+                                 const std::string &content,
+                                 std::string &errorMessage)
 {
-    // precheck input
-    if(bfs::is_regular_file(inputPath) == false
-            && bfs::is_directory(inputPath) == false)
-    {
-        errorMessage = "Not a regular file or directory as input-path " + inputPath;
-        return false;
-    }
-
-    // set default-file in case that a directory instead of a file was selected
-    std::string treeFile = inputPath;
-    if(bfs::is_directory(treeFile)) {
-        treeFile = treeFile + "/root.sakura";
-    }
-
     m_lock.lock();
 
-    // parse all files
-    if(m_parser->parseTreeFiles(*m_garden, inputPath, errorMessage) == false)
+    // get initial tree-item
+    TreeItem* ressource = m_parser->parseTreeString(id, content, errorMessage);
+    if(ressource == nullptr)
     {
-        errorMessage = "failed to add trees\n" + errorMessage;
+        errorMessage = "Failed to parse " + id;
         m_lock.unlock();
         return false;
     }
 
-    // check parsed trees
-    if(m_validator->checkAllItems(errorMessage) == false)
+    // validator parsed tree
+    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false)
     {
-        errorMessage = "validation failed\n" + errorMessage;
         m_lock.unlock();
         return false;
     }
 
+    if(id == "") {
+        id = ressource->id;
+    }
+    const bool result = m_garden->addResource(id, ressource);
     m_lock.unlock();
 
-    return true;
+    return result;
 }
 
 /**
@@ -417,32 +359,7 @@ bool
 SakuraLangInterface::readFilesInDir(const std::string &directoryPath,
                                     std::string &errorMessage)
 {
-    // get list the all files
-    std::vector<std::string> sakuraFiles;
-    if(Kitsunemimi::Persistence::listFiles(sakuraFiles, directoryPath) == false)
-    {
-        errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
-        return false;
-    }
-
-    // iterate over all files and parse them
-    for(const std::string &filePath : sakuraFiles)
-    {
-        std::string content = "";
-        if(Kitsunemimi::Persistence::readFile(content, filePath, errorMessage) == false)
-        {
-            errorMessage = "reading sakura-files failed with error: " + errorMessage;
-            return false;
-        }
-
-        if(addTree("", content, errorMessage) == false)
-        {
-            errorMessage = "parsing sakura-files failed with error: " + errorMessage;
-            return false;
-        }
-    }
-
-    return true;
+    return m_fileCollector->readFilesInDir(directoryPath, errorMessage);
 }
 
 /**

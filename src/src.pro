@@ -34,6 +34,7 @@ INCLUDEPATH += $$PWD \
 HEADERS += \
     ../include/libKitsunemimiSakuraLang/blossom.h \
     ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h \
+    sakura_file_collector.h \
     sakura_garden.h \
     items/sakura_items.h \
     items/value_item_map.h \
@@ -41,7 +42,6 @@ HEADERS += \
     items/item_methods.h \
     items/value_item_functions.h \
     parsing/sakura_parser_interface.h \
-    parsing/sakura_parsing.h \
     processing/sakura_thread.h \
     processing/subtree_queue.h \
     processing/thread_pool.h \
@@ -49,12 +49,12 @@ HEADERS += \
 
 SOURCES += \
     items/item_methods.cpp \
+    sakura_file_collector.cpp \
     sakura_garden.cpp \
     items/sakura_items.cpp \
     items/value_item_functions.cpp \
     items/value_item_map.cpp \
     parsing/sakura_parser_interface.cpp \
-    parsing/sakura_parsing.cpp \
     blossom.cpp \
     processing/sakura_thread.cpp \
     processing/subtree_queue.cpp \
@@ -112,3 +112,8 @@ bisonheader.CONFIG += target_predeps
 bisonheader.CONFIG += target_predeps no_link
 
 QMAKE_EXTRA_COMPILERS += bisonheader
+
+
+unix {
+    INCLUDEPATH += /usr/lib/gcc/x86_64-linux-gnu/9/include
+}

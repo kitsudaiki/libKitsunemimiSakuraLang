@@ -22,7 +22,6 @@
 
 #include <parsing/sakura_parser_interface.h>
 #include <sakura_parser.h>
-#include <parsing/sakura_parsing.h>
 #include <items/sakura_items.h>
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
@@ -48,11 +47,9 @@ using Kitsunemimi::splitStringByDelimiter;
  * @param traceParsing true to enable debug-output of the parser
  * @param sakuraParsing pointer to SakuraParsing-object to write the result back
  */
-SakuraParserInterface::SakuraParserInterface(const bool traceParsing,
-                                             SakuraParsing* sakuraParsing)
+SakuraParserInterface::SakuraParserInterface(const bool traceParsing)
 {
     m_traceParsing = traceParsing;
-    m_sakuraParsing = sakuraParsing;
 }
 
 /**
@@ -247,6 +244,44 @@ SakuraParserInterface::removeQuotes(const std::string &input)
     }
 
     return input;
+}
+
+
+/**
+ * @brief parse single string without storing into sakura-garden
+ *
+ * @param name name for identification in debug and error-output
+ * @param content string to parse
+ * @param errorMessage reference to error-message
+ *
+ * @return parsed tree-item, if successfule, else nullptr
+ */
+TreeItem*
+SakuraParserInterface::parseTreeString(const std::string &name,
+                                       const std::string &content,
+                                       std::string &errorMessage)
+{
+    // parse
+    const bool parserResult = parse(content, "");
+
+    if(parserResult == false)
+    {
+        TableItem errorOutput = getErrorMessage();
+        errorMessage = errorOutput.toString();
+        return nullptr;
+    }
+
+    TreeItem* parsetItem = dynamic_cast<TreeItem*>(getOutput());
+
+    if(parsetItem == nullptr) {
+        return nullptr;
+    }
+
+    // update content
+    parsetItem->unparsedConent = content;
+    parsetItem->relativePath = name;
+
+    return parsetItem;
 }
 
 } // namespace Sakura

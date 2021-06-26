@@ -37,15 +37,18 @@ namespace Sakura
 {
 class location;
 class SakuraItem;
-class SakuraParsing;
+class TreeItem;
 
 class SakuraParserInterface
 {
 
 public:
-    SakuraParserInterface(const bool traceParsing,
-                          SakuraParsing* sakuraParsing);
+    SakuraParserInterface(const bool traceParsing);
     ~SakuraParserInterface();
+
+    TreeItem* parseTreeString(const std::string &name,
+                              const std::string &content,
+                              std::string &errorMessage);
 
     // connection the the scanner and parser
     void scan_begin(const std::string &inputString);
@@ -67,7 +70,6 @@ public:
     std::vector<std::string> m_registeredKeys;
     bool isKeyRegistered(const std::string &key);
 
-    SakuraParsing* m_sakuraParsing = nullptr;
 private:
     bool m_traceParsing = false;
     std::string m_inputString = "";
