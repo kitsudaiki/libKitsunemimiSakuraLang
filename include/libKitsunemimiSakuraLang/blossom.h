@@ -79,13 +79,16 @@ public:
 
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf, std::string &errorMessage) = 0;
-
-    std::map<std::string, BlossomValidDef> validationMap;
     bool allowUnmatched = false;
 
+    bool registerField(const std::string &name,
+                       const IO_ValueType type,
+                       const bool required);
 private:
     friend SakuraThread;
     friend Validator;
+
+    std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      std::string &errorMessage);
