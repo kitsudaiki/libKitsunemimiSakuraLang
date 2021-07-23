@@ -89,6 +89,7 @@ SakuraGarden::addTree(const std::string &id,
     }
 
     // add
+    LOG_DEBUG("register new tree with id: " + id);
     m_trees.insert(std::make_pair(id, tree));
 
     return true;
@@ -114,6 +115,7 @@ SakuraGarden::addResource(const std::string &id,
     }
 
     // add
+    LOG_DEBUG("register new ressource with id: " + id);
     m_resources.insert(std::make_pair(id, resource));
 
     return true;
@@ -139,6 +141,7 @@ SakuraGarden::addTemplate(const std::string &id,
     }
 
     // add
+    LOG_DEBUG("register new template with id: " + id);
     m_templates.insert(std::make_pair(id, templateContent));
 
     return true;
@@ -164,6 +167,7 @@ SakuraGarden::addFile(const std::string &id,
     }
 
     // add
+    LOG_DEBUG("register new file with id: " + id);
     m_files.insert(std::make_pair(id, fileContent));
 
     return true;
