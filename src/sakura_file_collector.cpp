@@ -139,6 +139,7 @@ SakuraFileCollector::collectFiles(const bfs::path &rootPath,
 /**
  * @brief collect resources within a directory
  *
+ * @param rootPath initial path of the file collecting process
  * @param dirPath directory-path where to search for resources
  * @param errorMessage reference to error-message
  *
@@ -165,6 +166,7 @@ SakuraFileCollector::collectResources(const bfs::path &rootPath,
 /**
  * @brief collect templates within a directory
  *
+ * @param rootPath initial path of the file collecting process
  * @param dirPath directory-path where to search for templates
  * @param errorMessage reference to error-message
  *
@@ -191,6 +193,7 @@ SakuraFileCollector::collectTemplates(const bfs::path &rootPath,
 /**
  * @brief iterate over all files and directory within the current directory
  *
+ * @param rootPath initial path of the file collecting process
  * @param directory directory-path to iterate over
  * @param type type to search for
  * @param errorMessage reference to error-message
