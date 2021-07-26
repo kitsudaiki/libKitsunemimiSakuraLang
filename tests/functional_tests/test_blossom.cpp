@@ -12,8 +12,8 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
     : Blossom()
 {
     m_sessionTest = sessionTest;
-    validationMap.emplace("input", BlossomValidDef(IO_ValueType::INPUT_TYPE, true));
-    validationMap.emplace("output", BlossomValidDef(IO_ValueType::OUTPUT_TYPE, true));
+    registerField("input", INPUT_TYPE, true);
+    registerField("output", OUTPUT_TYPE, true);
 }
 
 bool

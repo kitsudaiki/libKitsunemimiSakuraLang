@@ -41,6 +41,31 @@ Blossom::Blossom() {}
 Blossom::~Blossom() {}
 
 /**
+ * @brief register field for validation of incoming messages
+ *
+ * @param name name of the filed to identifiy value
+ * @param type INPUT_TYPE or OUTPUT_TYPE
+ * @param required false, to make field optional, true to make it required
+ *
+ * @return false, if already name already registered, else true
+ */
+bool
+Blossom::registerField(const std::string &name,
+                       const IO_ValueType type,
+                       const bool required)
+{
+    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end()) {
+        return false;
+    }
+
+    validationMap.emplace(name, BlossomValidDef(type, required));
+
+    return true;
+}
+
+/**
  * @brief execute blossom
  *
  * @param blossomLeaf leaf-object for values-handling while processing

@@ -135,10 +135,6 @@ Interface_Test::runAndTrigger_test()
     TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, errorMessage), false);
     DataMap falseMap;
     TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, errorMessage), false);
-
-    // test runTree
-    TEST_EQUAL(interface->runTree(result, "run-test", getTestTree(), inputValues, errorMessage), true);
-    TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
 }
 
 /**
