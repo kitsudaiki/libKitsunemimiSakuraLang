@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0] - 2021-037-30
+
+### Changed
+- reworked the collecting of sakura-files to be more minimal, because the old version also had some advantages, but the code was totally dirty and hard to maintain
+- change the registration in the validation-map for better usability
+
+
 ## [0.7.2] - 2021-03-29
 
 ### Added
