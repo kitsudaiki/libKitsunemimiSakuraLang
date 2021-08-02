@@ -66,6 +66,9 @@ public:
         std::vector<std::string> hirarchy;
 
         std::string filePath = "";
+
+        std::vector<SubtreeObject*> parallelObjects;
+        SubtreeObject* next;
     };
 
     void addSubtreeObject(SubtreeObject* newObject);
@@ -75,9 +78,7 @@ public:
                                const std::string &filePath,
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,
-                               std::string &errorMessage,
-                               const uint64_t endPos = 1,
-                               const uint64_t startPos = 0);
+                               std::string &errorMessage);
     bool spawnParallelSubtreesLoop(SakuraItem* subtree,
                                    ValueItemMap postProcessing,
                                    const std::string &filePath,
@@ -88,8 +89,6 @@ public:
                                    std::string &errorMessage,
                                    uint64_t endPos,
                                    const uint64_t startPos = 0);
-
-
 
     SubtreeObject* getSubtreeObject();
 

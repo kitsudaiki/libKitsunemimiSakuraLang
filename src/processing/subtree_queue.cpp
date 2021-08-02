@@ -137,8 +137,6 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
  * @param hierarchy actual hierarchy for terminal output
  * @param parentValues data-map with parent-values
  * @param errorMessage reference for error-message
- * @param endPos end position in array or counter end
- * @param startPos start position in array or counter start
  *
  * @return true, if successful, else false
  */
@@ -148,22 +146,19 @@ SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
                                     const std::string &filePath,
                                     const std::vector<std::string> &hierarchy,
                                     const DataMap &parentValues,
-                                    std::string &errorMessage,
-                                    const uint64_t endPos,
-                                    const uint64_t startPos)
+                                    std::string &errorMessage)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
-    // TODO: check that startPos and endPos are not outside of the childs
-
-    // create and initialize all threads
     ActiveCounter* activeCounter = new ActiveCounter();
-    activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
-    std::vector<SubtreeObject*> spawnedObjects;
+    activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
+
+    SubtreeObject* currentObject = new SubtreeObject();
+    currentObject->activeCounter = activeCounter;
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
-    for(uint64_t i = startPos; i < endPos; i++)
+    for(uint64_t i = 0; i < childs.size(); i++)
     {
         SubtreeObject* object = new SubtreeObject();
         object->subtree = childs.at(i)->copy();
@@ -173,17 +168,17 @@ SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
         object->filePath = filePath;
 
         addSubtreeObject(object);
-        spawnedObjects.push_back(object);
+        currentObject->parallelObjects.push_back(object);
     }
 
     const bool ret = waitUntilFinish(activeCounter, errorMessage);
 
     // write result back for output
-    if(spawnedObjects.size() == 1) {
-        overrideItems(resultingItems, spawnedObjects.at(0)->items, ALL);
+    if(currentObject->parallelObjects.size() >= 1) {
+        overrideItems(resultingItems, currentObject->parallelObjects.at(0)->items, ALL);
     }
 
-    clearSpawnedObjects(spawnedObjects);
+    clearSpawnedObjects(currentObject->parallelObjects);
 
     return ret;
 }
@@ -209,8 +204,6 @@ SubtreeQueue::getSubtreeObject()
 
     return subtree;
 }
-
-
 
 /**
  * @brief wait until all spawned tasks are finished

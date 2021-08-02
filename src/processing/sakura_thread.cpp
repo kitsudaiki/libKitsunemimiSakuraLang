@@ -632,8 +632,7 @@ SakuraThread::processParallelPart(ParallelPart* parallelPart,
                                                                     filePath,
                                                                     m_hierarchy,
                                                                     m_parentValues,
-                                                                    errorMessage,
-                                                                    parts->childs.size());
+                                                                    errorMessage);
 
     return result;
 }
