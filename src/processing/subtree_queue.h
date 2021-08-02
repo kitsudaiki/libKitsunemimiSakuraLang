@@ -74,7 +74,6 @@ public:
     void addSubtreeObject(SubtreeObject* newObject);
 
     bool spawnParallelSubtrees(SubtreeObject* currentObject,
-                               DataMap &resultingItems,
                                const std::vector<SakuraItem *> &childs,
                                std::string &errorMessage);
     bool spawnParallelSubtreesLoop(SubtreeObject* currentObject,

@@ -114,12 +114,14 @@ SakuraLangInterface::triggerTree(DataMap &result,
         return false;
     }
 
-    overrideItems(initialValues, tree->values, ONLY_NON_EXISTING);
+    SubtreeObject* currentObj = new SubtreeObject();
+    currentObj->items = initialValues;
+
+    overrideItems(currentObj->items, tree->values, ONLY_NON_EXISTING);
 
     // process sakura-file with initial values
-    if(runProcess(result,
+    if(runProcess(currentObj,
                   tree,
-                  initialValues,
                   errorMessage) == false)
     {
         m_lock.unlock();
@@ -127,6 +129,8 @@ SakuraLangInterface::triggerTree(DataMap &result,
     }
 
     m_lock.unlock();
+
+    result = currentObj->items;
 
     return true;
 }
@@ -416,13 +420,13 @@ SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(DataMap &resultingItems,
+SakuraLangInterface::runProcess(SubtreeObject* queueObject,
                                 TreeItem* tree,
-                                const DataMap &initialValues,
                                 std::string &errorMessage)
 {
     // check if input-values match with the first tree
-    const std::vector<std::string> failedInput = checkInput(tree->values, initialValues);
+    const std::vector<std::string> failedInput = checkInput(tree->values,
+                                                            queueObject->items);
     if(failedInput.size() > 0)
     {
         errorMessage = "Following input-values are not valid for the initial tress:\n";
@@ -437,11 +441,7 @@ SakuraLangInterface::runProcess(DataMap &resultingItems,
     std::vector<SakuraItem*> childs;
     childs.push_back(tree);
 
-    SubtreeObject* currentObject = new SubtreeObject();
-    currentObject->items = initialValues;
-
-    const bool result = m_queue->spawnParallelSubtrees(currentObject,
-                                                       resultingItems,
+    const bool result = m_queue->spawnParallelSubtrees(queueObject,
                                                        childs,
                                                        errorMessage);
 

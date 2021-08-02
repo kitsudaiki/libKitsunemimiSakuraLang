@@ -140,7 +140,6 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
  */
 bool
 SubtreeQueue::spawnParallelSubtrees(SubtreeObject* currentObject,
-                                    DataMap &resultingItems,
                                     const std::vector<SakuraItem*> &childs,
                                     std::string &errorMessage)
 {
@@ -168,8 +167,11 @@ SubtreeQueue::spawnParallelSubtrees(SubtreeObject* currentObject,
     const bool ret = waitUntilFinish(activeCounter, errorMessage);
 
     // write result back for output
-    if(currentObject->parallelObjects.size() >= 1) {
-        overrideItems(resultingItems, currentObject->parallelObjects.at(0)->items, ALL);
+    if(currentObject->parallelObjects.size() >= 1)
+    {
+        overrideItems(currentObject->items,
+                      currentObject->parallelObjects.at(0)->items,
+                      ALL);
     }
 
     clearSpawnedObjects(currentObject->parallelObjects);

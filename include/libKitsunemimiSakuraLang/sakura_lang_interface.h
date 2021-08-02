@@ -52,6 +52,7 @@ class BlossomLeaf;
 class Validator;
 class SakuraParserInterface;
 class SakuraFileCollector;
+struct SubtreeObject;
 
 namespace bfs = boost::filesystem;
 
@@ -119,8 +120,8 @@ private:
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(DataMap &resultingItems, TreeItem *tree,
-                    const DataMap &initialValues,
+    bool runProcess(SubtreeObject* queueObject,
+                    TreeItem *tree,
                     std::string &errorMessage);
 
     // output

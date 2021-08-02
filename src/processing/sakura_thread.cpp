@@ -629,10 +629,7 @@ SakuraThread::processParallelPart(SubtreeObject* queueObject,
                                   std::string &errorMessage)
 {
     SequentiellPart* parts = dynamic_cast<SequentiellPart*>(parallelPart->childs);
-
-    DataMap resultingItems;
     const bool result = m_interface->m_queue->spawnParallelSubtrees(queueObject,
-                                                                    resultingItems,
                                                                     parts->childs,
                                                                     errorMessage);
 
