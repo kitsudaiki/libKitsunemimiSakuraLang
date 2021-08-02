@@ -35,6 +35,7 @@ namespace Kitsunemimi
 namespace Sakura
 {
 class SakuraItem;
+struct ActiveCounter;
 
 typedef std::chrono::microseconds chronoMicroSec;
 typedef std::chrono::milliseconds chronoMilliSec;
@@ -47,61 +48,6 @@ class SubtreeQueue
 {
 public:
     SubtreeQueue();
-
-    /**
-     * @brief The ActiveCounter struct is only a simple thread-save counter. This counter should be
-     *        increased, after the subtree was fully processed. All subtree-queue objects,
-     *        which have the same source and belong to each other, share the same instance
-     *        of this counter. With this, the source-thread should be able to check, that all its
-     *        spawn subtree-objects have finished their task before increasing this counter.
-     */
-    struct ActiveCounter
-    {
-        std::mutex lock;
-        uint32_t isCounter = 0;
-        uint32_t shouldCount = 0;
-        bool success = true;
-        std::string outputMessage = "";
-
-        ActiveCounter() {}
-
-        /**
-         * @brief increase the counter
-         */
-        void increaseCounter()
-        {
-            lock.lock();
-            isCounter++;
-            lock.unlock();
-        }
-
-        /**
-         * @brief check, that the counter has reached the expected value
-         *
-         * @return true, if counter has reached the expected value, else false
-         */
-        bool isEqual()
-        {
-            bool result = false;
-            lock.lock();
-            result = isCounter == shouldCount;
-            lock.unlock();
-            return result;
-        }
-
-        /**
-         * @brief register error in one of the spawned threads to inform the other threads
-         *
-         * @param errorMessage error-message
-         */
-        void registerError(const std::string &errorMessage)
-        {
-            lock.lock();
-            success = false;
-            outputMessage = errorMessage;
-            lock.unlock();
-        }
-    };
 
     /**
      * @brief The SubtreeObject struct is basically a container to encapsulate a task. It contains

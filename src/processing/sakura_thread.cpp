@@ -27,6 +27,7 @@
 
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
+#include <processing/active_counter.h>
 
 #include <libKitsunemimiSakuraLang/blossom.h>
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>

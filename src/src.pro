@@ -34,6 +34,7 @@ INCLUDEPATH += $$PWD \
 HEADERS += \
     ../include/libKitsunemimiSakuraLang/blossom.h \
     ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h \
+    processing/active_counter.h \
     sakura_file_collector.h \
     sakura_garden.h \
     items/sakura_items.h \
