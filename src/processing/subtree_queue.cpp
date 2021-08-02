@@ -42,7 +42,7 @@ SubtreeQueue::SubtreeQueue() {}
  * @param newObject the new subtree-object, which should be added to the queue
  */
 void
-SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
+SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 {
     m_lock.lock();
     m_queue.push(newObject);
@@ -66,7 +66,7 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
+SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         SakuraItem* subtreeItem,
                                         ValueItemMap postProcessing,
                                         const std::string &tempVarName,
@@ -77,18 +77,18 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
 {
     ActiveCounter* activeCounter = new ActiveCounter();
     activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
-    currentObject->activeCounter = activeCounter;
+    plan->activeCounter = activeCounter;
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
         // encapsulate the content of the loop together with the values and the counter-object
         // as an subtree-object and add it to the subtree-queue
-        SubtreeObject* object = new SubtreeObject();
+        GrowthPlan* object = new GrowthPlan();
         object->completeSubtree = subtreeItem->copy();
-        object->items = currentObject->items;
-        object->hirarchy = currentObject->hirarchy;
+        object->items = plan->items;
+        object->hirarchy = plan->hirarchy;
         object->activeCounter = activeCounter;
-        object->filePath = currentObject->filePath;
+        object->filePath = plan->filePath;
 
         // add the counter-variable as new value to be accessable within the loop
         if(array != nullptr) {
@@ -97,8 +97,8 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
             object->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
         }
 
-        addSubtreeObject(object);
-        currentObject->parallelObjects.push_back(object);
+        addGrowthPlan(object);
+        plan->parallelObjects.push_back(object);
     }
 
     bool result = waitUntilFinish(activeCounter, errorMessage);
@@ -108,7 +108,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
     {
         std::string errorMessage = "";
         if(fillInputValueItemMap(postProcessing,
-                                 currentObject->parallelObjects.at(static_cast<uint32_t>(i))->items,
+                                 plan->parallelObjects.at(static_cast<uint32_t>(i))->items,
                                  errorMessage) == false)
         {
             errorMessage = createError("subtree-processing",
@@ -118,10 +118,10 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
         }
     }
 
-    overrideItems(currentObject->items, postProcessing, ONLY_EXISTING);
+    overrideItems(plan->items, postProcessing, ONLY_EXISTING);
 
-    clearSpawnedObjects(currentObject->parallelObjects);
-    //TODO: delete currentObject and its content
+    clearSpawnedObjects(plan->parallelObjects);
+    //TODO: delete plan and its content
 
     return result;
 }
@@ -139,7 +139,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtrees(SubtreeObject* currentObject,
+SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
                                     const std::vector<SakuraItem*> &childs,
                                     std::string &errorMessage)
 {
@@ -147,50 +147,50 @@ SubtreeQueue::spawnParallelSubtrees(SubtreeObject* currentObject,
 
     ActiveCounter* activeCounter = new ActiveCounter();
     activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
-    currentObject->activeCounter = activeCounter;
+    plan->activeCounter = activeCounter;
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
     for(uint64_t i = 0; i < childs.size(); i++)
     {
-        SubtreeObject* object = new SubtreeObject();
+        GrowthPlan* object = new GrowthPlan();
         object->completeSubtree = childs.at(i)->copy();
-        object->hirarchy = currentObject->hirarchy;
-        object->items = currentObject->items;
+        object->hirarchy = plan->hirarchy;
+        object->items = plan->items;
         object->activeCounter = activeCounter;
-        object->filePath = currentObject->filePath;
+        object->filePath = plan->filePath;
 
-        addSubtreeObject(object);
-        currentObject->parallelObjects.push_back(object);
+        addGrowthPlan(object);
+        plan->parallelObjects.push_back(object);
     }
 
     const bool ret = waitUntilFinish(activeCounter, errorMessage);
 
     // write result back for output
-    if(currentObject->parallelObjects.size() >= 1)
+    if(plan->parallelObjects.size() >= 1)
     {
-        overrideItems(currentObject->items,
-                      currentObject->parallelObjects.at(0)->items,
+        overrideItems(plan->items,
+                      plan->parallelObjects.at(0)->items,
                       ALL);
     }
 
-    clearSpawnedObjects(currentObject->parallelObjects);
+    clearSpawnedObjects(plan->parallelObjects);
 
-    //TODO: delete currentObject and its content
+    //TODO: delete plan and its content
 
     return ret;
 }
 
 
 /**
- * @brief getSubtreeObject take ta object from the queue and delete it from the queue
+ * @brief getGrowthPlan take ta object from the queue and delete it from the queue
  *
  * @return first object in the queue or an empty-object, if nothing is in the queue
  */
-SubtreeObject*
-SubtreeQueue::getSubtreeObject()
+GrowthPlan*
+SubtreeQueue::getGrowthPlan()
 {
-    SubtreeObject* subtree = nullptr;
+    GrowthPlan* subtree = nullptr;
 
     m_lock.lock();
     if(m_queue.empty() == false)
@@ -235,12 +235,12 @@ SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter,
  * @param vector with spawned queue-objects
  */
 void
-SubtreeQueue::clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects)
+SubtreeQueue::clearSpawnedObjects(std::vector<GrowthPlan*> &spawnedObjects)
 {
     ActiveCounter* activeCounter = nullptr;
 
     // free allocated resources
-    for(SubtreeObject* obj : spawnedObjects)
+    for(GrowthPlan* obj : spawnedObjects)
     {
         activeCounter = obj->activeCounter;
         delete obj->completeSubtree;

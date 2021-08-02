@@ -51,43 +51,43 @@ private:
 
     void run();
 
-    bool processSakuraItem(SubtreeObject* queueObject,
+    bool processSakuraItem(GrowthPlan* plan,
                            SakuraItem* sakuraItem,
                            std::string &errorMessage);
 
-    bool processBlossom(SubtreeObject* queueObject,
+    bool processBlossom(GrowthPlan* plan,
                         BlossomItem &blossomItem,
                         std::string &errorMessage);
-    bool processBlossomGroup(SubtreeObject* queueObject,
+    bool processBlossomGroup(GrowthPlan* plan,
                              BlossomGroupItem &blossomGroupItem,
                              std::string &errorMessage);
-    bool processTree(SubtreeObject* queueObject,
+    bool processTree(GrowthPlan* plan,
                      TreeItem* treeItem,
                      std::string &errorMessage);
-    bool processSubtree(SubtreeObject* queueObject,
+    bool processSubtree(GrowthPlan* plan,
                         SubtreeItem* subtreeItem,
                         std::string &errorMessage);
-    bool processIf(SubtreeObject* queueObject,
+    bool processIf(GrowthPlan* plan,
                    IfBranching* ifCondition,
                    std::string &errorMessage);
-    bool processForEach(SubtreeObject* queueObject,
+    bool processForEach(GrowthPlan* plan,
                         ForEachBranching* forEachItem,
                         std::string &errorMessage);
-    bool processFor(SubtreeObject* queueObject,
+    bool processFor(GrowthPlan* plan,
                     ForBranching* forItem,
                     std::string &errorMessage);
-    bool processSequeniellPart(SubtreeObject* queueObject,
+    bool processSequeniellPart(GrowthPlan* plan,
                                SequentiellPart* subtree,
                                std::string &errorMessage);
-    bool processParallelPart(SubtreeObject* queueObject,
+    bool processParallelPart(GrowthPlan* plan,
                              ParallelPart* parallelPart,
                              std::string &errorMessage);
 
-    bool runSubtreeCall(SubtreeObject* queueObject,
+    bool runSubtreeCall(GrowthPlan* plan,
                         SakuraItem* newSubtree,
                         ValueItemMap &values,
                         std::string &errorMessage);
-    bool runLoop(SubtreeObject* queueObject,
+    bool runLoop(GrowthPlan* plan,
                  SakuraItem* loopContent,
                  const ValueItemMap &values,
                  const std::string &tempVarName,

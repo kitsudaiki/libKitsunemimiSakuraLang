@@ -45,11 +45,11 @@ typedef std::chrono::high_resolution_clock::time_point chronoTimePoint;
 typedef std::chrono::high_resolution_clock chronoClock;
 
 /**
- * @brief The SubtreeObject struct is basically a container to encapsulate a task. It contains
+ * @brief The GrowthPlan struct is basically a container to encapsulate a task. It contains
  *        all necessary information to process a subtree. These container are placed in the
  *        queue, from where they are taken by the worker-threads.
  */
-struct SubtreeObject
+struct GrowthPlan
 {
     // subtree, which should be processed by a worker-thread
     SakuraItem* completeSubtree = nullptr;
@@ -62,8 +62,8 @@ struct SubtreeObject
 
     std::string filePath = "";
 
-    std::vector<SubtreeObject*> parallelObjects;
-    SubtreeObject* next;
+    std::vector<GrowthPlan*> parallelObjects;
+    GrowthPlan* next;
 };
 
 class SubtreeQueue
@@ -71,12 +71,12 @@ class SubtreeQueue
 public:
     SubtreeQueue();
 
-    void addSubtreeObject(SubtreeObject* newObject);
+    void addGrowthPlan(GrowthPlan* newObject);
 
-    bool spawnParallelSubtrees(SubtreeObject* currentObject,
+    bool spawnParallelSubtrees(GrowthPlan* plan,
                                const std::vector<SakuraItem *> &childs,
                                std::string &errorMessage);
-    bool spawnParallelSubtreesLoop(SubtreeObject* currentObject,
+    bool spawnParallelSubtreesLoop(GrowthPlan* plan,
                                    SakuraItem* subtreeItem,
                                    ValueItemMap postProcessing,
                                    const std::string &tempVarName,
@@ -85,15 +85,15 @@ public:
                                    uint64_t endPos,
                                    const uint64_t startPos = 0);
 
-    SubtreeObject* getSubtreeObject();
+    GrowthPlan* getGrowthPlan();
 
 private:
     std::mutex m_lock;
-    std::queue<SubtreeObject*> m_queue;
+    std::queue<GrowthPlan*> m_queue;
 
     bool waitUntilFinish(ActiveCounter* activeCounter,
                          std::string &errorMessage);
-    void clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects);
+    void clearSpawnedObjects(std::vector<GrowthPlan*> &spawnedObjects);
 };
 
 } // namespace Sakura

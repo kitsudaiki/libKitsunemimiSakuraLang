@@ -61,35 +61,35 @@ SakuraThread::run()
     m_started = true;
     while(m_abort == false)
     {
-        SubtreeObject* queueObject = m_interface->m_queue->getSubtreeObject();
+        GrowthPlan* plan = m_interface->m_queue->getGrowthPlan();
 
-        if(queueObject != nullptr)
+        if(plan != nullptr)
         {
-            if(queueObject->completeSubtree != nullptr)
+            if(plan->completeSubtree != nullptr)
             {
                 // process input-values
                 DataMap baseItems;
 
                 overrideItems(baseItems,
-                              queueObject->completeSubtree->values,
+                              plan->completeSubtree->values,
                               ALL);
                 overrideItems(baseItems,
-                              queueObject->items,
+                              plan->items,
                               ALL);
 
                 // run the real task
                 std::string errorMessage = "";
-                const bool result = processSakuraItem(queueObject,
-                                                      queueObject->completeSubtree,
+                const bool result = processSakuraItem(plan,
+                                                      plan->completeSubtree,
                                                       errorMessage);
                 // handle result
                 if(result == false) {
-                    queueObject->activeCounter->registerError(errorMessage);
+                    plan->activeCounter->registerError(errorMessage);
                 }
 
                 // increase active-counter as last step, so the source subtree can check, if all
                 // spawned subtrees are finished
-                queueObject->activeCounter->increaseCounter();
+                plan->activeCounter->increaseCounter();
             }
         }
         else
@@ -110,13 +110,13 @@ SakuraThread::run()
  * @return true if successful, else false
  */
 bool
-SakuraThread::processSakuraItem(SubtreeObject* queueObject,
+SakuraThread::processSakuraItem(GrowthPlan* plan,
                                 SakuraItem* sakuraItem,
                                 std::string &errorMessage)
 {
     // case that another thread has failed
     // only the failing thread return the false as result
-    if(queueObject->activeCounter->success == false) {
+    if(plan->activeCounter->success == false) {
         return true;
     }
 
@@ -124,58 +124,58 @@ SakuraThread::processSakuraItem(SubtreeObject* queueObject,
     if(sakuraItem->getType() == SakuraItem::SEQUENTIELL_ITEM)
     {
         SequentiellPart* sequential = dynamic_cast<SequentiellPart*>(sakuraItem);
-        return processSequeniellPart(queueObject, sequential, errorMessage);
+        return processSequeniellPart(plan, sequential, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::TREE_ITEM)
     {
         TreeItem* subtreeItem = dynamic_cast<TreeItem*>(sakuraItem);
-        queueObject->hirarchy.push_back("TREE: " + subtreeItem->id);
-        const bool result = processTree(queueObject, subtreeItem, errorMessage);
-        queueObject->hirarchy.pop_back();
+        plan->hirarchy.push_back("TREE: " + subtreeItem->id);
+        const bool result = processTree(plan, subtreeItem, errorMessage);
+        plan->hirarchy.pop_back();
         return result;
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::SUBTREE_ITEM)
     {
         SubtreeItem* subtreeItem = dynamic_cast<SubtreeItem*>(sakuraItem);
-        return processSubtree(queueObject, subtreeItem, errorMessage);
+        return processSubtree(plan, subtreeItem, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::BLOSSOM_ITEM)
     {
         BlossomItem* blossomItem = dynamic_cast<BlossomItem*>(sakuraItem);
-        return processBlossom(queueObject, *blossomItem, errorMessage);
+        return processBlossom(plan, *blossomItem, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::BLOSSOM_GROUP_ITEM)
     {
         BlossomGroupItem* blossomGroupItem = dynamic_cast<BlossomGroupItem*>(sakuraItem);
-        return processBlossomGroup(queueObject, *blossomGroupItem, errorMessage);
+        return processBlossomGroup(plan, *blossomGroupItem, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::IF_ITEM)
     {
         IfBranching* ifBranching = dynamic_cast<IfBranching*>(sakuraItem);
-        return processIf(queueObject, ifBranching, errorMessage);
+        return processIf(plan, ifBranching, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::FOR_EACH_ITEM)
     {
         ForEachBranching* forEachBranching = dynamic_cast<ForEachBranching*>(sakuraItem);
-        return processForEach(queueObject, forEachBranching, errorMessage);
+        return processForEach(plan, forEachBranching, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::FOR_ITEM)
     {
         ForBranching* forBranching = dynamic_cast<ForBranching*>(sakuraItem);
-        return processFor(queueObject, forBranching, errorMessage);
+        return processFor(plan, forBranching, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::PARALLEL_ITEM)
     {
         ParallelPart* parallel = dynamic_cast<ParallelPart*>(sakuraItem);
-        return processParallelPart(queueObject, parallel, errorMessage);
+        return processParallelPart(plan, parallel, errorMessage);
     }
     //----------------------------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ SakuraThread::processSakuraItem(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processBlossom(SubtreeObject* queueObject,
+SakuraThread::processBlossom(GrowthPlan* plan,
                              BlossomItem &blossomItem,
                              std::string &errorMessage)
 {
@@ -205,11 +205,11 @@ SakuraThread::processBlossom(SubtreeObject* queueObject,
     LOG_DEBUG("    name: " + blossomItem.blossomName);
 
     // process values by filling with information of the parent-object
-    const bool result = fillInputValueItemMap(blossomItem.values, queueObject->items, errorMessage);
+    const bool result = fillInputValueItemMap(blossomItem.values, plan->items, errorMessage);
     if(result == false)
     {
         errorMessage = createError(blossomItem,
-                                   queueObject->filePath,
+                                   plan->filePath,
                                    "processing",
                                    "error while processing blossom items:\n    " + errorMessage);
         return false;
@@ -223,7 +223,7 @@ SakuraThread::processBlossom(SubtreeObject* queueObject,
     if(blossom == nullptr)
     {
         errorMessage = createError(blossomItem,
-                                   queueObject->filePath,
+                                   plan->filePath,
                                    "processing",
                                    "unknow blossom-type");
         return false;
@@ -232,9 +232,9 @@ SakuraThread::processBlossom(SubtreeObject* queueObject,
     BlossomLeaf blossomLeaf;
 
     // update blossom-leaf for processing
-    blossomLeaf.blossomPath = queueObject->filePath;
-    blossomLeaf.nameHirarchie = queueObject->hirarchy;
-    blossomLeaf.parentValues = &queueObject->items;
+    blossomLeaf.blossomPath = plan->filePath;
+    blossomLeaf.nameHirarchie = plan->hirarchy;
+    blossomLeaf.parentValues = &plan->items;
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomItem.blossomName);
 
     convertValueMap(blossomLeaf.input, blossomItem.values);
@@ -252,7 +252,7 @@ SakuraThread::processBlossom(SubtreeObject* queueObject,
     fillOutputValueItemMap(blossomItem.values, blossomLeaf.output);
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
-    overrideItems(queueObject->items, blossomItem.values, ONLY_EXISTING);
+    overrideItems(plan->items, blossomItem.values, ONLY_EXISTING);
 
     return true;
 }
@@ -267,7 +267,7 @@ SakuraThread::processBlossom(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
+SakuraThread::processBlossomGroup(GrowthPlan* plan,
                                   BlossomGroupItem &blossomGroupItem,
                                   std::string &errorMessage)
 {
@@ -276,7 +276,7 @@ SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
     Jinja2::Jinja2Converter* converter = Jinja2::Jinja2Converter::getInstance();
     const bool ret = converter->convert(convertResult,
                                         blossomGroupItem.id,
-                                        &queueObject->items,
+                                        &plan->items,
                                         errorMessage);
     if(ret == false)
     {
@@ -288,7 +288,7 @@ SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
 
     // print blossom-group
     blossomGroupItem.id = convertResult;
-    blossomGroupItem.nameHirarchie = queueObject->hirarchy;
+    blossomGroupItem.nameHirarchie = plan->hirarchy;
     blossomGroupItem.nameHirarchie.push_back("BLOSSOM-GROUP: " + blossomGroupItem.id);
     m_interface->printOutput(blossomGroupItem);
 
@@ -301,7 +301,7 @@ SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
         {
             LOG_DEBUG("process resouces: " + tempItem->id);
 
-            const bool ret = runSubtreeCall(queueObject,
+            const bool ret = runSubtreeCall(plan,
                                             tempItem,
                                             blossomGroupItem.values,
                                             errorMessage);
@@ -321,7 +321,7 @@ SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
                       blossomGroupItem.values,
                       ONLY_NON_EXISTING);
 
-        if(processBlossom(queueObject, *blossomItem, errorMessage) == false) {
+        if(processBlossom(plan, *blossomItem, errorMessage) == false) {
             return false;
         }
     }
@@ -338,14 +338,14 @@ SakuraThread::processBlossomGroup(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processTree(SubtreeObject* queueObject,
+SakuraThread::processTree(GrowthPlan* plan,
                           TreeItem* treeItem,
                           std::string &errorMessage)
 {
     LOG_DEBUG("process tree: " + treeItem->id);
 
     // check if there are uninitialized items in the tree
-    const std::vector<std::string> uninitItems = checkItems(queueObject->items);
+    const std::vector<std::string> uninitItems = checkItems(plan->items);
     if(uninitItems.size() > 0)
     {
         std::string message = "The following items are not initialized: \n";
@@ -358,13 +358,13 @@ SakuraThread::processTree(SubtreeObject* queueObject,
     }
 
     // process items of the tree
-    const std::string originalFilePath = queueObject->filePath;
-    queueObject->filePath = treeItem->rootPath + "/" + treeItem->relativePath;
-    if(processSakuraItem(queueObject, treeItem->childs, errorMessage) == false) {
+    const std::string originalFilePath = plan->filePath;
+    plan->filePath = treeItem->rootPath + "/" + treeItem->relativePath;
+    if(processSakuraItem(plan, treeItem->childs, errorMessage) == false) {
         return false;
     }
 
-    queueObject->filePath = originalFilePath;
+    plan->filePath = originalFilePath;
 
     return true;
 }
@@ -379,13 +379,13 @@ SakuraThread::processTree(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processSubtree(SubtreeObject* queueObject,
+SakuraThread::processSubtree(GrowthPlan* plan,
                              SubtreeItem* subtreeItem,
                              std::string &errorMessage)
 {
     // get sakura-file based on the required path
     Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->m_garden;
-    const bfs::path relPath = garden->getRelativePath(queueObject->filePath,
+    const bfs::path relPath = garden->getRelativePath(plan->filePath,
                                                       subtreeItem->nameOrPath);
 
     // get and check tree
@@ -399,7 +399,7 @@ SakuraThread::processSubtree(SubtreeObject* queueObject,
 
     LOG_DEBUG("process subtree: " + newSubtree->id + " in path " + newSubtree->relativePath);
 
-    const bool ret = runSubtreeCall(queueObject,
+    const bool ret = runSubtreeCall(plan,
                                     newSubtree,
                                     subtreeItem->values,
                                     errorMessage);
@@ -418,7 +418,7 @@ SakuraThread::processSubtree(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processIf(SubtreeObject* queueObject,
+SakuraThread::processIf(GrowthPlan* plan,
                         IfBranching* ifCondition,
                         std::string &errorMessage)
 {
@@ -427,7 +427,7 @@ SakuraThread::processIf(SubtreeObject* queueObject,
     ValueItem valueItem;
 
     // get left side of the comparism
-    if(fillValueItem(ifCondition->leftSide, queueObject->items, errorMessage) == false)
+    if(fillValueItem(ifCondition->leftSide, plan->items, errorMessage) == false)
     {
         errorMessage = createError("subtree-processing",
                                    "error processing if-condition:\n"
@@ -436,7 +436,7 @@ SakuraThread::processIf(SubtreeObject* queueObject,
     }
 
     // get right side of the comparism
-    if(fillValueItem(ifCondition->rightSide, queueObject->items, errorMessage) == false)
+    if(fillValueItem(ifCondition->rightSide, plan->items, errorMessage) == false)
     {
         errorMessage = createError("subtree-processing",
                                    "error processing if-condition:\n"
@@ -469,9 +469,9 @@ SakuraThread::processIf(SubtreeObject* queueObject,
 
     // based on the result, process the if-subtree or the else-subtree
     if(ifMatch) {
-        return processSakuraItem(queueObject, ifCondition->ifContent, errorMessage);
+        return processSakuraItem(plan, ifCondition->ifContent, errorMessage);
     } else {
-        return processSakuraItem(queueObject, ifCondition->elseContent, errorMessage);
+        return processSakuraItem(plan, ifCondition->elseContent, errorMessage);
     }
 }
 
@@ -485,12 +485,12 @@ SakuraThread::processIf(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processForEach(SubtreeObject* queueObject,
+SakuraThread::processForEach(GrowthPlan* plan,
                              ForEachBranching* forEachItem,
                              std::string &errorMessage)
 {
     // initialize the array, over twhich the loop should iterate
-    if(fillInputValueItemMap(forEachItem->iterateArray, queueObject->items, errorMessage) == false)
+    if(fillInputValueItemMap(forEachItem->iterateArray, plan->items, errorMessage) == false)
     {
         errorMessage = createError("subtree-processing",
                                    "error processing for-loop:\n"
@@ -504,7 +504,7 @@ SakuraThread::processForEach(SubtreeObject* queueObject,
     bool result = false;
     if(forEachItem->parallel == false)
     {
-        result = runLoop(queueObject,
+        result = runLoop(plan,
                          forEachItem->content,
                          forEachItem->values,
                          forEachItem->tempVarName,
@@ -514,7 +514,7 @@ SakuraThread::processForEach(SubtreeObject* queueObject,
     }
     else
     {
-        result = m_interface->m_queue->spawnParallelSubtreesLoop(queueObject,
+        result = m_interface->m_queue->spawnParallelSubtreesLoop(plan,
                                                                  forEachItem->content,
                                                                  forEachItem->values,
                                                                  forEachItem->tempVarName,
@@ -536,12 +536,12 @@ SakuraThread::processForEach(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processFor(SubtreeObject* queueObject,
+SakuraThread::processFor(GrowthPlan* plan,
                          ForBranching* forItem,
                          std::string &errorMessage)
 {
     // get start-value
-    if(fillValueItem(forItem->start, queueObject->items, errorMessage) == false)
+    if(fillValueItem(forItem->start, plan->items, errorMessage) == false)
     {
         errorMessage = createError("subtree-processing",
                                    "error processing for-loop:\n"
@@ -550,7 +550,7 @@ SakuraThread::processFor(SubtreeObject* queueObject,
     }
 
     // get end-value
-    if(fillValueItem(forItem->end, queueObject->items, errorMessage) == false)
+    if(fillValueItem(forItem->end, plan->items, errorMessage) == false)
     {
         errorMessage = createError("subtree-processing",
                                    "error processing for-loop:\n"
@@ -566,7 +566,7 @@ SakuraThread::processFor(SubtreeObject* queueObject,
     bool result = false;
     if(forItem->parallel == false)
     {
-        result = runLoop(queueObject,
+        result = runLoop(plan,
                          forItem->content,
                          forItem->values,
                          forItem->tempVarName,
@@ -577,7 +577,7 @@ SakuraThread::processFor(SubtreeObject* queueObject,
     }
     else
     {
-        result = m_interface->m_queue->spawnParallelSubtreesLoop(queueObject,
+        result = m_interface->m_queue->spawnParallelSubtreesLoop(plan,
                                                                  forItem->content,
                                                                  forItem->values,
                                                                  forItem->tempVarName,
@@ -600,13 +600,13 @@ SakuraThread::processFor(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processSequeniellPart(SubtreeObject* queueObject,
+SakuraThread::processSequeniellPart(GrowthPlan* plan,
                                     SequentiellPart* subtree,
                                     std::string &errorMessage)
 {
     for(SakuraItem* item : subtree->childs)
     {
-        if(processSakuraItem(queueObject, item, errorMessage) == false) {
+        if(processSakuraItem(plan, item, errorMessage) == false) {
             return false;
         }
     }
@@ -624,12 +624,12 @@ SakuraThread::processSequeniellPart(SubtreeObject* queueObject,
  * @return true if successful, else false
  */
 bool
-SakuraThread::processParallelPart(SubtreeObject* queueObject,
+SakuraThread::processParallelPart(GrowthPlan* plan,
                                   ParallelPart* parallelPart,
                                   std::string &errorMessage)
 {
     SequentiellPart* parts = dynamic_cast<SequentiellPart*>(parallelPart->childs);
-    const bool result = m_interface->m_queue->spawnParallelSubtrees(queueObject,
+    const bool result = m_interface->m_queue->spawnParallelSubtrees(plan,
                                                                     parts->childs,
                                                                     errorMessage);
 
@@ -647,13 +647,13 @@ SakuraThread::processParallelPart(SubtreeObject* queueObject,
  * @return true, if check successful, else false
  */
 bool
-SakuraThread::runSubtreeCall(SubtreeObject* queueObject,
+SakuraThread::runSubtreeCall(GrowthPlan* plan,
                              SakuraItem* newSubtree,
                              ValueItemMap &values,
                              std::string &errorMessage)
 {
     // fill values
-    const bool fillResult = fillInputValueItemMap(values, queueObject->items, errorMessage);
+    const bool fillResult = fillInputValueItemMap(values, plan->items, errorMessage);
     if(fillResult == false)
     {
         errorMessage = createError("subtree-processing",
@@ -663,26 +663,26 @@ SakuraThread::runSubtreeCall(SubtreeObject* queueObject,
     }
 
     // backup and reset parent
-    DataMap parentBackup = queueObject->items;
-    queueObject->items.clear();
+    DataMap parentBackup = plan->items;
+    plan->items.clear();
 
     // set values
     overrideItems(newSubtree->values, values, ALL);
-    overrideItems(queueObject->items, newSubtree->values, ALL);
+    overrideItems(plan->items, newSubtree->values, ALL);
 
     // process tree-item
-    if(processSakuraItem(queueObject, newSubtree, errorMessage) == false) {
+    if(processSakuraItem(plan, newSubtree, errorMessage) == false) {
         return false;
     }
 
     // write output back after restoring the parent-values to resume normally
-    if(fillOutputValueItemMap(newSubtree->values, queueObject->items) == false) {
+    if(fillOutputValueItemMap(newSubtree->values, plan->items) == false) {
         return false;
     }
 
     // write values back
-    queueObject->items = parentBackup;
-    overrideItems(queueObject->items, newSubtree->values, ONLY_EXISTING);
+    plan->items = parentBackup;
+    overrideItems(plan->items, newSubtree->values, ONLY_EXISTING);
 
     return true;
 }
@@ -703,7 +703,7 @@ SakuraThread::runSubtreeCall(SubtreeObject* queueObject,
  * @return true, if check successful, else false
  */
 bool
-SakuraThread::runLoop(SubtreeObject* queueObject,
+SakuraThread::runLoop(GrowthPlan* plan,
                       SakuraItem* loopContent,
                       const ValueItemMap &values,
                       const std::string &tempVarName,
@@ -713,21 +713,21 @@ SakuraThread::runLoop(SubtreeObject* queueObject,
                       const uint64_t startPos)
 {
     // backup the parent-values to avoid permanent merging with loop-internal values
-    DataMap preBalueBackup = queueObject->items;
-    overrideItems(queueObject->items, values, ALL);
+    DataMap preBalueBackup = plan->items;
+    overrideItems(plan->items, values, ALL);
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
         // add the counter-variable as new value to be accessable within the loop
         if(array != nullptr) {
-            queueObject->items.insert(tempVarName, array->get(i)->copy(), true);
+            plan->items.insert(tempVarName, array->get(i)->copy(), true);
         } else {
-            queueObject->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
+            plan->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
         }
 
         // process content
         SakuraItem* tempItem = loopContent->copy();
-        if(processSakuraItem(queueObject, tempItem, errorMessage) == false) {
+        if(processSakuraItem(plan, tempItem, errorMessage) == false) {
             return false;
         }
         delete tempItem;
@@ -735,9 +735,9 @@ SakuraThread::runLoop(SubtreeObject* queueObject,
 
     // restore the old parent values and update only the existing values with the one form the
     // loop. That way, variables like the counter-variable are not added to the parent.
-    DataMap postBalueBackup = queueObject->items;
-    queueObject->items = preBalueBackup;
-    overrideItems(queueObject->items, postBalueBackup, ONLY_EXISTING);
+    DataMap postBalueBackup = plan->items;
+    plan->items = preBalueBackup;
+    overrideItems(plan->items, postBalueBackup, ONLY_EXISTING);
 
     return true;
 }

@@ -114,7 +114,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
         return false;
     }
 
-    SubtreeObject* currentObj = new SubtreeObject();
+    GrowthPlan* currentObj = new GrowthPlan();
     currentObj->items = initialValues;
 
     overrideItems(currentObj->items, tree->values, ONLY_NON_EXISTING);
@@ -420,13 +420,13 @@ SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(SubtreeObject* queueObject,
+SakuraLangInterface::runProcess(GrowthPlan* plan,
                                 TreeItem* tree,
                                 std::string &errorMessage)
 {
     // check if input-values match with the first tree
     const std::vector<std::string> failedInput = checkInput(tree->values,
-                                                            queueObject->items);
+                                                            plan->items);
     if(failedInput.size() > 0)
     {
         errorMessage = "Following input-values are not valid for the initial tress:\n";
@@ -441,7 +441,7 @@ SakuraLangInterface::runProcess(SubtreeObject* queueObject,
     std::vector<SakuraItem*> childs;
     childs.push_back(tree);
 
-    const bool result = m_queue->spawnParallelSubtrees(queueObject,
+    const bool result = m_queue->spawnParallelSubtrees(plan,
                                                        childs,
                                                        errorMessage);
 

@@ -52,7 +52,7 @@ class BlossomLeaf;
 class Validator;
 class SakuraParserInterface;
 class SakuraFileCollector;
-struct SubtreeObject;
+struct GrowthPlan;
 
 namespace bfs = boost::filesystem;
 
@@ -120,7 +120,7 @@ private:
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(SubtreeObject* queueObject,
+    bool runProcess(GrowthPlan* plan,
                     TreeItem *tree,
                     std::string &errorMessage);
 
