@@ -79,11 +79,8 @@ public:
                                const std::vector<std::string> &hierarchy,
                                const DataMap &parentValues,
                                std::string &errorMessage);
-    bool spawnParallelSubtreesLoop(SakuraItem* subtree,
+    bool spawnParallelSubtreesLoop(SubtreeObject* currentObject,
                                    ValueItemMap postProcessing,
-                                   const std::string &filePath,
-                                   const std::vector<std::string> &hierarchy,
-                                   DataMap &parentValues,
                                    const std::string &tempVarName,
                                    DataArray* array,
                                    std::string &errorMessage,

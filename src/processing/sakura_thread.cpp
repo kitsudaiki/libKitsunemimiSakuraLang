@@ -506,15 +506,21 @@ SakuraThread::processForEach(ForEachBranching* forEachItem,
     }
     else
     {
-        result = m_interface->m_queue->spawnParallelSubtreesLoop(forEachItem->content,
+        SubtreeQueue::SubtreeObject* currentObj = new SubtreeQueue::SubtreeObject();
+        currentObj->filePath = filePath;
+        currentObj->items = m_parentValues;
+        currentObj->hirarchy = m_hierarchy;
+        currentObj->subtree = forEachItem->content;
+
+        result = m_interface->m_queue->spawnParallelSubtreesLoop(currentObj,
                                                                  forEachItem->values,
-                                                                 filePath,
-                                                                 m_hierarchy,
-                                                                 m_parentValues,
                                                                  forEachItem->tempVarName,
                                                                  array,
                                                                  errorMessage,
                                                                  array->size());
+
+        m_parentValues = currentObj->items;
+
     }
 
     return result;
@@ -571,16 +577,20 @@ SakuraThread::processFor(ForBranching* forItem,
     }
     else
     {
-        result = m_interface->m_queue->spawnParallelSubtreesLoop(forItem->content,
+        SubtreeQueue::SubtreeObject* currentObj = new SubtreeQueue::SubtreeObject();
+        currentObj->filePath = filePath;
+        currentObj->items = m_parentValues;
+        currentObj->hirarchy = m_hierarchy;
+        currentObj->subtree = forItem->content;
+
+        result = m_interface->m_queue->spawnParallelSubtreesLoop(currentObj,
                                                                  forItem->values,
-                                                                 filePath,
-                                                                 m_hierarchy,
-                                                                 m_parentValues,
                                                                  forItem->tempVarName,
                                                                  nullptr,
                                                                  errorMessage,
                                                                  endValue,
                                                                  startValue);
+        m_parentValues = currentObj->items;
     }
 
     return result;
