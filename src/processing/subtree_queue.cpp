@@ -67,6 +67,7 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  */
 bool
 SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
+                                        SakuraItem* subtreeItem,
                                         ValueItemMap postProcessing,
                                         const std::string &tempVarName,
                                         DataArray* array,
@@ -83,7 +84,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
         // encapsulate the content of the loop together with the values and the counter-object
         // as an subtree-object and add it to the subtree-queue
         SubtreeObject* object = new SubtreeObject();
-        object->subtree = currentObject->subtree->copy();
+        object->completeSubtree = subtreeItem->copy();
         object->items = currentObject->items;
         object->hirarchy = currentObject->hirarchy;
         object->activeCounter = activeCounter;
@@ -138,19 +139,15 @@ SubtreeQueue::spawnParallelSubtreesLoop(SubtreeObject* currentObject,
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
+SubtreeQueue::spawnParallelSubtrees(SubtreeObject* currentObject,
+                                    DataMap &resultingItems,
                                     const std::vector<SakuraItem*> &childs,
-                                    const std::string &filePath,
-                                    const std::vector<std::string> &hierarchy,
-                                    const DataMap &parentValues,
                                     std::string &errorMessage)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
     ActiveCounter* activeCounter = new ActiveCounter();
     activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
-
-    SubtreeObject* currentObject = new SubtreeObject();
     currentObject->activeCounter = activeCounter;
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
@@ -158,11 +155,11 @@ SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
     for(uint64_t i = 0; i < childs.size(); i++)
     {
         SubtreeObject* object = new SubtreeObject();
-        object->subtree = childs.at(i)->copy();
-        object->hirarchy = hierarchy;
-        object->items = parentValues;
+        object->completeSubtree = childs.at(i)->copy();
+        object->hirarchy = currentObject->hirarchy;
+        object->items = currentObject->items;
         object->activeCounter = activeCounter;
-        object->filePath = filePath;
+        object->filePath = currentObject->filePath;
 
         addSubtreeObject(object);
         currentObject->parallelObjects.push_back(object);
@@ -188,7 +185,7 @@ SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
  *
  * @return first object in the queue or an empty-object, if nothing is in the queue
  */
-SubtreeQueue::SubtreeObject*
+SubtreeObject*
 SubtreeQueue::getSubtreeObject()
 {
     SubtreeObject* subtree = nullptr;
@@ -244,7 +241,7 @@ SubtreeQueue::clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects)
     for(SubtreeObject* obj : spawnedObjects)
     {
         activeCounter = obj->activeCounter;
-        delete obj->subtree;
+        delete obj->completeSubtree;
         delete obj;
     }
 

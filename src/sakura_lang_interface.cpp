@@ -436,13 +436,13 @@ SakuraLangInterface::runProcess(DataMap &resultingItems,
 
     std::vector<SakuraItem*> childs;
     childs.push_back(tree);
-    std::vector<std::string> hierarchy;
 
-    const bool result = m_queue->spawnParallelSubtrees(resultingItems,
+    SubtreeObject* currentObject = new SubtreeObject();
+    currentObject->items = initialValues;
+
+    const bool result = m_queue->spawnParallelSubtrees(currentObject,
+                                                       resultingItems,
                                                        childs,
-                                                       "",
-                                                       hierarchy,
-                                                       initialValues,
                                                        errorMessage);
 
     return result;

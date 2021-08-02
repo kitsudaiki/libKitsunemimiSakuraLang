@@ -44,42 +44,41 @@ typedef std::chrono::seconds chronoSec;
 typedef std::chrono::high_resolution_clock::time_point chronoTimePoint;
 typedef std::chrono::high_resolution_clock chronoClock;
 
+/**
+ * @brief The SubtreeObject struct is basically a container to encapsulate a task. It contains
+ *        all necessary information to process a subtree. These container are placed in the
+ *        queue, from where they are taken by the worker-threads.
+ */
+struct SubtreeObject
+{
+    // subtree, which should be processed by a worker-thread
+    SakuraItem* completeSubtree = nullptr;
+    // map with all input-values for the subtree
+    DataMap items;
+    // shared counter-instance, which will be increased after the subtree was fully processed
+    ActiveCounter* activeCounter = nullptr;
+    // current position in the processing-hirarchy for status-output
+    std::vector<std::string> hirarchy;
+
+    std::string filePath = "";
+
+    std::vector<SubtreeObject*> parallelObjects;
+    SubtreeObject* next;
+};
+
 class SubtreeQueue
 {
 public:
     SubtreeQueue();
 
-    /**
-     * @brief The SubtreeObject struct is basically a container to encapsulate a task. It contains
-     *        all necessary information to process a subtree. These container are placed in the
-     *        queue, from where they are taken by the worker-threads.
-     */
-    struct SubtreeObject
-    {
-        // subtree, which should be processed by a worker-thread
-        SakuraItem* subtree = nullptr;
-        // map with all input-values for the subtree
-        DataMap items;
-        // shared counter-instance, which will be increased after the subtree was fully processed
-        ActiveCounter* activeCounter = nullptr;
-        // current position in the processing-hirarchy for status-output
-        std::vector<std::string> hirarchy;
-
-        std::string filePath = "";
-
-        std::vector<SubtreeObject*> parallelObjects;
-        SubtreeObject* next;
-    };
-
     void addSubtreeObject(SubtreeObject* newObject);
 
-    bool spawnParallelSubtrees(DataMap &resultingItems,
+    bool spawnParallelSubtrees(SubtreeObject* currentObject,
+                               DataMap &resultingItems,
                                const std::vector<SakuraItem *> &childs,
-                               const std::string &filePath,
-                               const std::vector<std::string> &hierarchy,
-                               const DataMap &parentValues,
                                std::string &errorMessage);
     bool spawnParallelSubtreesLoop(SubtreeObject* currentObject,
+                                   SakuraItem* subtreeItem,
                                    ValueItemMap postProcessing,
                                    const std::string &tempVarName,
                                    DataArray* array,
