@@ -35,6 +35,7 @@ namespace Kitsunemimi
 namespace Sakura
 {
 class SakuraItem;
+class GrowthPlan;
 struct ActiveCounter;
 
 typedef std::chrono::microseconds chronoMicroSec;
@@ -43,28 +44,6 @@ typedef std::chrono::nanoseconds chronoNanoSec;
 typedef std::chrono::seconds chronoSec;
 typedef std::chrono::high_resolution_clock::time_point chronoTimePoint;
 typedef std::chrono::high_resolution_clock chronoClock;
-
-/**
- * @brief The GrowthPlan struct is basically a container to encapsulate a task. It contains
- *        all necessary information to process a subtree. These container are placed in the
- *        queue, from where they are taken by the worker-threads.
- */
-struct GrowthPlan
-{
-    // subtree, which should be processed by a worker-thread
-    SakuraItem* completeSubtree = nullptr;
-    // map with all input-values for the subtree
-    DataMap items;
-    // shared counter-instance, which will be increased after the subtree was fully processed
-    ActiveCounter* activeCounter = nullptr;
-    // current position in the processing-hirarchy for status-output
-    std::vector<std::string> hirarchy;
-
-    std::string filePath = "";
-
-    std::vector<GrowthPlan*> parallelObjects;
-    GrowthPlan* next;
-};
 
 class SubtreeQueue
 {
@@ -91,9 +70,8 @@ private:
     std::mutex m_lock;
     std::queue<GrowthPlan*> m_queue;
 
-    bool waitUntilFinish(ActiveCounter* activeCounter,
+    bool waitUntilFinish(GrowthPlan* plan,
                          std::string &errorMessage);
-    void clearSpawnedObjects(std::vector<GrowthPlan*> &spawnedObjects);
 };
 
 } // namespace Sakura

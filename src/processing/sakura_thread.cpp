@@ -28,6 +28,7 @@
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
 #include <processing/active_counter.h>
+#include <processing/growth_plan.h>
 
 #include <libKitsunemimiSakuraLang/blossom.h>
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
@@ -84,12 +85,12 @@ SakuraThread::run()
                                                       errorMessage);
                 // handle result
                 if(result == false) {
-                    plan->activeCounter->registerError(errorMessage);
+                    plan->childActiveCounter->registerError(errorMessage);
                 }
 
                 // increase active-counter as last step, so the source subtree can check, if all
                 // spawned subtrees are finished
-                plan->activeCounter->increaseCounter();
+                plan->childActiveCounter->increaseCounter();
             }
         }
         else
@@ -116,7 +117,7 @@ SakuraThread::processSakuraItem(GrowthPlan* plan,
 {
     // case that another thread has failed
     // only the failing thread return the false as result
-    if(plan->activeCounter->success == false) {
+    if(plan->childActiveCounter->success == false) {
         return true;
     }
 

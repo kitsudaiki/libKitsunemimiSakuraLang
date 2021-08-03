@@ -35,6 +35,7 @@ HEADERS += \
     ../include/libKitsunemimiSakuraLang/blossom.h \
     ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h \
     processing/active_counter.h \
+    processing/growth_plan.h \
     sakura_file_collector.h \
     sakura_garden.h \
     items/sakura_items.h \
@@ -50,6 +51,7 @@ HEADERS += \
 
 SOURCES += \
     items/item_methods.cpp \
+    processing/growth_plan.cpp \
     sakura_file_collector.cpp \
     sakura_garden.cpp \
     items/sakura_items.cpp \
@@ -64,8 +66,8 @@ SOURCES += \
     sakura_lang_interface.cpp
 
 
-FLEXSOURCES = grammar/sakura_lexer.l
-BISONSOURCES = grammar/sakura_parser.y
+FLEXSOURCES = parsing/grammar/sakura_lexer.l
+BISONSOURCES = parsing/grammar/sakura_parser.y
 
 OTHER_FILES +=  \
     $$FLEXSOURCES \
@@ -113,8 +115,3 @@ bisonheader.CONFIG += target_predeps
 bisonheader.CONFIG += target_predeps no_link
 
 QMAKE_EXTRA_COMPILERS += bisonheader
-
-
-unix {
-    INCLUDEPATH += /usr/lib/gcc/x86_64-linux-gnu/9/include
-}

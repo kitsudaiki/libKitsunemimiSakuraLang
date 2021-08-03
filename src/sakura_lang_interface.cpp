@@ -30,6 +30,7 @@
 
 #include <processing/subtree_queue.h>
 #include <processing/thread_pool.h>
+#include <processing/growth_plan.h>
 
 #include <items/item_methods.h>
 
