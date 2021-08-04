@@ -75,8 +75,8 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
-    plan->activeCounterParentPart = new ActiveCounter();
-    plan->activeCounterParentPart->shouldCount = static_cast<uint32_t>(endPos - startPos);
+    plan->activeCounter = new ActiveCounter();
+    plan->activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
@@ -86,7 +86,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         object->completeSubtree = subtreeItem->copy();
         object->items = plan->items;
         object->hirarchy = plan->hirarchy;
-        object->activeCounterChildPart = plan->activeCounterParentPart;
+        object->parentPlan = plan;
         object->filePath = plan->filePath;
 
         // add the counter-variable as new value to be accessable within the loop
@@ -105,10 +105,12 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
     if(result)
     {
         // post-processing and cleanup
+        GrowthPlan* parent = nullptr;
         for(GrowthPlan* child : plan->parallelObjects)
         {
+            parent = child->parentPlan;
             std::string errorMessage = "";
-            if(fillInputValueItemMap(plan->postAggregation, child->items, errorMessage) == false)
+            if(fillInputValueItemMap(parent->postAggregation, child->items, errorMessage) == false)
             {
                 errorMessage = createError("subtree-processing",
                                            "error processing post-aggregation of for-loop:\n"
@@ -117,7 +119,9 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
             }
         }
 
-        overrideItems(plan->items, plan->postAggregation, ONLY_EXISTING);
+        if(parent != nullptr) {
+            overrideItems(parent->items, parent->postAggregation, ONLY_EXISTING);
+        }
     }
 
     plan->clearChilds();
@@ -144,8 +148,8 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
-    plan->activeCounterParentPart = new ActiveCounter();
-    plan->activeCounterParentPart->shouldCount = static_cast<uint32_t>(childs.size());
+    plan->activeCounter = new ActiveCounter();
+    plan->activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
@@ -155,7 +159,7 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         object->completeSubtree = childs.at(i)->copy();
         object->hirarchy = plan->hirarchy;
         object->items = plan->items;
-        object->activeCounterChildPart = plan->activeCounterParentPart;
+        object->parentPlan = plan;
         object->filePath = plan->filePath;
 
         addGrowthPlan(object);
@@ -212,14 +216,14 @@ SubtreeQueue::waitUntilFinish(GrowthPlan* plan,
                               std::string &errorMessage)
 {
     // wait until the created subtree was fully processed by the worker-threads
-    while(plan->activeCounterParentPart->isEqual() == false) {
+    while(plan->activeCounter->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
 
     // in case of on error, forward this error to the upper layer
-    const bool result = plan->activeCounterParentPart->success;
+    const bool result = plan->activeCounter->success;
     if(result == false) {
-        errorMessage = plan->activeCounterParentPart->outputMessage;
+        errorMessage = plan->activeCounter->outputMessage;
     }
 
     return result;

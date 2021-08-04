@@ -83,14 +83,18 @@ SakuraThread::run()
                 const bool result = processSakuraItem(plan,
                                                       plan->completeSubtree,
                                                       errorMessage);
-                // handle result
-                if(result == false) {
-                    plan->activeCounterChildPart->registerError(errorMessage);
-                }
 
-                // increase active-counter as last step, so the source subtree can check, if all
-                // spawned subtrees are finished
-                plan->activeCounterChildPart->increaseCounter();
+                // handle result
+                if(plan->parentPlan != nullptr)
+                {
+                    if(result == false) {
+                        plan->parentPlan->activeCounter->registerError(errorMessage);
+                    }
+
+                    // increase active-counter as last step, so the source subtree can check, if all
+                    // spawned subtrees are finished
+                    plan->parentPlan->activeCounter->increaseCounter();
+                }
             }
         }
         else
@@ -117,7 +121,9 @@ SakuraThread::processSakuraItem(GrowthPlan* plan,
 {
     // case that another thread has failed
     // only the failing thread return the false as result
-    if(plan->activeCounterChildPart->success == false) {
+    if(plan->parentPlan != nullptr
+            && plan->parentPlan->activeCounter->success == false)
+    {
         return true;
     }
 
