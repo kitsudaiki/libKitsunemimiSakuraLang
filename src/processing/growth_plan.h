@@ -18,13 +18,14 @@ public:
     // map with all input-values for the subtree
     DataMap items;
     // shared counter-instance, which will be increased after the subtree was fully processed
-    ActiveCounter* parentActiveCounter = nullptr;
-    ActiveCounter* childActiveCounter = nullptr;
+    ActiveCounter* activeCounterParentPart = nullptr;
+    ActiveCounter* activeCounterChildPart = nullptr;
     // current position in the processing-hirarchy for status-output
     std::vector<std::string> hirarchy;
     std::string filePath = "";
 
     std::vector<GrowthPlan*> parallelObjects;
+    ValueItemMap postAggregation;
 
     GrowthPlan();
     ~GrowthPlan();

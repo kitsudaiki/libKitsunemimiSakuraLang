@@ -69,15 +69,14 @@ SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 bool
 SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         SakuraItem* subtreeItem,
-                                        ValueItemMap postProcessing,
                                         const std::string &tempVarName,
                                         DataArray* array,
                                         std::string &errorMessage,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
-    plan->parentActiveCounter = new ActiveCounter();
-    plan->parentActiveCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
+    plan->activeCounterParentPart = new ActiveCounter();
+    plan->activeCounterParentPart->shouldCount = static_cast<uint32_t>(endPos - startPos);
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
@@ -87,7 +86,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         object->completeSubtree = subtreeItem->copy();
         object->items = plan->items;
         object->hirarchy = plan->hirarchy;
-        object->childActiveCounter = plan->parentActiveCounter;
+        object->activeCounterChildPart = plan->activeCounterParentPart;
         object->filePath = plan->filePath;
 
         // add the counter-variable as new value to be accessable within the loop
@@ -103,22 +102,23 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
 
     bool result = waitUntilFinish(plan, errorMessage);
 
-    // post-processing and cleanup
-    for(uint64_t i = 0; i < endPos - startPos; i++)
+    if(result)
     {
-        std::string errorMessage = "";
-        if(fillInputValueItemMap(postProcessing,
-                                 plan->parallelObjects.at(static_cast<uint32_t>(i))->items,
-                                 errorMessage) == false)
+        // post-processing and cleanup
+        for(GrowthPlan* child : plan->parallelObjects)
         {
-            errorMessage = createError("subtree-processing",
-                                       "error processing post-aggregation of for-loop:\n"
-                                       + errorMessage);
-            result = false;
+            std::string errorMessage = "";
+            if(fillInputValueItemMap(plan->postAggregation, child->items, errorMessage) == false)
+            {
+                errorMessage = createError("subtree-processing",
+                                           "error processing post-aggregation of for-loop:\n"
+                                           + errorMessage);
+                result = false;
+            }
         }
-    }
 
-    overrideItems(plan->items, postProcessing, ONLY_EXISTING);
+        overrideItems(plan->items, plan->postAggregation, ONLY_EXISTING);
+    }
 
     plan->clearChilds();
 
@@ -144,8 +144,8 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
-    plan->parentActiveCounter = new ActiveCounter();
-    plan->parentActiveCounter->shouldCount = static_cast<uint32_t>(childs.size());
+    plan->activeCounterParentPart = new ActiveCounter();
+    plan->activeCounterParentPart->shouldCount = static_cast<uint32_t>(childs.size());
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
@@ -155,7 +155,7 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         object->completeSubtree = childs.at(i)->copy();
         object->hirarchy = plan->hirarchy;
         object->items = plan->items;
-        object->childActiveCounter = plan->parentActiveCounter;
+        object->activeCounterChildPart = plan->activeCounterParentPart;
         object->filePath = plan->filePath;
 
         addGrowthPlan(object);
@@ -212,14 +212,14 @@ SubtreeQueue::waitUntilFinish(GrowthPlan* plan,
                               std::string &errorMessage)
 {
     // wait until the created subtree was fully processed by the worker-threads
-    while(plan->parentActiveCounter->isEqual() == false) {
+    while(plan->activeCounterParentPart->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
 
     // in case of on error, forward this error to the upper layer
-    const bool result = plan->parentActiveCounter->success;
+    const bool result = plan->activeCounterParentPart->success;
     if(result == false) {
-        errorMessage = plan->parentActiveCounter->outputMessage;
+        errorMessage = plan->activeCounterParentPart->outputMessage;
     }
 
     return result;

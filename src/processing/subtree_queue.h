@@ -57,7 +57,6 @@ public:
                                std::string &errorMessage);
     bool spawnParallelSubtreesLoop(GrowthPlan* plan,
                                    SakuraItem* subtreeItem,
-                                   ValueItemMap postProcessing,
                                    const std::string &tempVarName,
                                    DataArray* array,
                                    std::string &errorMessage,

@@ -85,12 +85,12 @@ SakuraThread::run()
                                                       errorMessage);
                 // handle result
                 if(result == false) {
-                    plan->childActiveCounter->registerError(errorMessage);
+                    plan->activeCounterChildPart->registerError(errorMessage);
                 }
 
                 // increase active-counter as last step, so the source subtree can check, if all
                 // spawned subtrees are finished
-                plan->childActiveCounter->increaseCounter();
+                plan->activeCounterChildPart->increaseCounter();
             }
         }
         else
@@ -117,7 +117,7 @@ SakuraThread::processSakuraItem(GrowthPlan* plan,
 {
     // case that another thread has failed
     // only the failing thread return the false as result
-    if(plan->childActiveCounter->success == false) {
+    if(plan->activeCounterChildPart->success == false) {
         return true;
     }
 
@@ -515,9 +515,9 @@ SakuraThread::processForEach(GrowthPlan* plan,
     }
     else
     {
+        plan->postAggregation = forEachItem->values;
         result = m_interface->m_queue->spawnParallelSubtreesLoop(plan,
                                                                  forEachItem->content,
-                                                                 forEachItem->values,
                                                                  forEachItem->tempVarName,
                                                                  array,
                                                                  errorMessage,
@@ -578,9 +578,9 @@ SakuraThread::processFor(GrowthPlan* plan,
     }
     else
     {
+        plan->postAggregation = forItem->values;
         result = m_interface->m_queue->spawnParallelSubtreesLoop(plan,
                                                                  forItem->content,
-                                                                 forItem->values,
                                                                  forItem->tempVarName,
                                                                  nullptr,
                                                                  errorMessage,

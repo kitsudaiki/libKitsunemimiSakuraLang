@@ -14,8 +14,8 @@ GrowthPlan::~GrowthPlan()
     if(completeSubtree != nullptr) {
         delete completeSubtree;
     }
-    if(parentActiveCounter != nullptr) {
-        delete parentActiveCounter;
+    if(activeCounterParentPart != nullptr) {
+        delete activeCounterParentPart;
     }
 
     clearChilds();
