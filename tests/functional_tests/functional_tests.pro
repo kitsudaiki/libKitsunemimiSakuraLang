@@ -34,9 +34,11 @@ LIBS +=  -lboost_filesystem -lboost_system
 
 SOURCES += \
     main.cpp \
+    standalone_blossom.cpp \
     test_blossom.cpp \
     interface_test.cpp
 
 HEADERS += \
+    standalone_blossom.h \
     test_blossom.h \
     interface_test.h

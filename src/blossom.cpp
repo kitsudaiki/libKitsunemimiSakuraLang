@@ -96,6 +96,64 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
 /**
  * @brief validate given input with the required and allowed values of the selected blossom
  *
+ * @param input given input values
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successful, else false
+ */
+bool
+Blossom::validateInput(DataMap &input,
+                       std::string &errorMessage)
+{
+    if(allowUnmatched == false)
+    {
+        // check if all keys in the values of the blossom-item also exist in the required-key-list
+        std::map<std::string, DataItem*>::const_iterator compareIt;
+        for(compareIt = input.m_map.begin();
+            compareIt != input.m_map.end();
+            compareIt++)
+        {
+            std::map<std::string, BlossomValidDef>::const_iterator defIt;
+            defIt = validationMap.find(compareIt->first);
+            if(defIt == validationMap.end())
+            {
+                // build error-output
+                const std::string message = "variable \""
+                                            + compareIt->first
+                                            + "\" is not in the list of allowed keys";
+                errorMessage = createError("validator", message);
+                return false;
+            }
+        }
+    }
+
+    // check that all keys in the required keys are also in the values of the blossom-item
+    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    for(defIt = validationMap.begin();
+        defIt != validationMap.end();
+        defIt++)
+    {
+        if(defIt->second.isRequired == true)
+        {
+            // search for values
+            const bool ret = input.contains(defIt->first);
+            if(ret == false)
+            {
+                const std::string message = "variable \""
+                                            + defIt->first
+                                            + "\" is required, but is not set.";
+                errorMessage = createError("validator", message);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @brief validate given input with the required and allowed values of the selected blossom
+ *
  * @param blossomItem blossom-item with given values
  * @param filePath file-path where the blossom belongs to, only used for error-output
  * @param errorMessage reference for error-message

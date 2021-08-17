@@ -23,6 +23,7 @@
 #include "interface_test.h"
 
 #include <test_blossom.h>
+#include <standalone_blossom.h>
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 #include <libKitsunemimiSakuraLang/blossom.h>
@@ -43,7 +44,8 @@ Interface_Test::Interface_Test() :
 {
     blossomMethods_test();
     addAndGet_test();
-    runAndTrigger_test();
+    runAndTriggerTree_test();
+    runAndTriggerBlossom_test();
 }
 
 /**
@@ -53,11 +55,13 @@ void
 Interface_Test::blossomMethods_test()
 {
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
-    TestBlossom* newBlossom = new TestBlossom(this);
+    TestBlossom* testBlossom = new TestBlossom(this);
+    StandaloneBlossom* standaloneBlossom = new StandaloneBlossom(this);
 
     // test addBlossom
-    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), true);
-    TEST_EQUAL(interface->addBlossom("test1", "test2", newBlossom), false);
+    TEST_EQUAL(interface->addBlossom("test1", "test2", testBlossom), true);
+    TEST_EQUAL(interface->addBlossom("test1", "test2", testBlossom), false);
+    TEST_EQUAL(interface->addBlossom("special", "standalone", standaloneBlossom), true);
 
     // test doesBlossomExist
     TEST_EQUAL(interface->doesBlossomExist("test1", "test2"), true);
@@ -117,10 +121,10 @@ Interface_Test::addAndGet_test()
 }
 
 /**
- * @brief runTest
+ * @brief runAndTriggerTree_test
  */
 void
-Interface_Test::runAndTrigger_test()
+Interface_Test::runAndTriggerTree_test()
 {
     std::string errorMessage = "";
     DataMap inputValues;
@@ -135,6 +139,27 @@ Interface_Test::runAndTrigger_test()
     TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, errorMessage), false);
     DataMap falseMap;
     TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, errorMessage), false);
+}
+
+/**
+ * @brief runAndTriggerBlossom_test
+ */
+void
+Interface_Test::runAndTriggerBlossom_test()
+{
+    std::string errorMessage = "";
+    DataMap inputValues;
+    inputValues.insert("input", new DataValue(42));
+    inputValues.insert("output", new DataValue(""));
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+
+    // test triggerBlossom
+    DataMap result;
+    TEST_EQUAL(interface->triggerBlossom(result, "standalone", inputValues, errorMessage), true);
+    TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
+    TEST_EQUAL(interface->triggerBlossom(result, "fail", inputValues, errorMessage), false);
+    DataMap falseMap;
+    TEST_EQUAL(interface->triggerBlossom(result, "standalone", falseMap, errorMessage), false);
 }
 
 /**

@@ -32,6 +32,7 @@ namespace Sakura
 class BlossomItem;
 class SakuraThread;
 class Validator;
+class SakuraLangInterface;
 
 //--------------------------------------------------------------------------------------------------
 struct BlossomLeaf
@@ -87,12 +88,14 @@ protected:
 private:
     friend SakuraThread;
     friend Validator;
+    friend SakuraLangInterface;
 
     std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      std::string &errorMessage);
-
+    bool validateInput(DataMap &input,
+                       std::string &errorMessage);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        std::string &errorMessage);
