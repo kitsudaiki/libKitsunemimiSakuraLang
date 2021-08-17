@@ -48,51 +48,48 @@ public:
 private:
     bool m_started = false;
     SakuraLangInterface* m_interface;
-    SubtreeQueue::SubtreeObject* m_currentSubtree = nullptr;
-
-    DataMap m_parentValues;
-    std::vector<std::string> m_hierarchy;
 
     void run();
 
-    bool processSakuraItem(SakuraItem* sakuraItem,
-                           const std::string &filePath,
+    bool processSakuraItem(GrowthPlan* plan,
+                           SakuraItem* sakuraItem,
                            std::string &errorMessage);
 
-    bool processBlossom(BlossomItem &blossomItem,
-                        const std::string &filePath,
+    bool processBlossom(GrowthPlan* plan,
+                        BlossomItem &blossomItem,
                         std::string &errorMessage);
-    bool processBlossomGroup(BlossomGroupItem &blossomGroupItem,
-                             const std::string &filePath,
+    bool processBlossomGroup(GrowthPlan* plan,
+                             BlossomGroupItem &blossomGroupItem,
                              std::string &errorMessage);
-    bool processTree(TreeItem* treeItem,
+    bool processTree(GrowthPlan* plan,
+                     TreeItem* treeItem,
                      std::string &errorMessage);
-    bool processSubtree(SubtreeItem* subtreeItem,
-                        const std::string &filePath,
+    bool processSubtree(GrowthPlan* plan,
+                        SubtreeItem* subtreeItem,
                         std::string &errorMessage);
-    bool processIf(IfBranching* ifCondition,
-                   const std::string &filePath,
+    bool processIf(GrowthPlan* plan,
+                   IfBranching* ifCondition,
                    std::string &errorMessage);
-    bool processForEach(ForEachBranching* forEachItem,
-                        const std::string &filePath,
+    bool processForEach(GrowthPlan* plan,
+                        ForEachBranching* forEachItem,
                         std::string &errorMessage);
-    bool processFor(ForBranching* forItem,
-                    const std::string &filePath,
+    bool processFor(GrowthPlan* plan,
+                    ForBranching* forItem,
                     std::string &errorMessage);
-    bool processSequeniellPart(SequentiellPart* subtree,
-                               const std::string &filePath,
+    bool processSequeniellPart(GrowthPlan* plan,
+                               SequentiellPart* subtree,
                                std::string &errorMessage);
-    bool processParallelPart(ParallelPart* parallelPart,
-                             const std::string &filePath,
+    bool processParallelPart(GrowthPlan* plan,
+                             ParallelPart* parallelPart,
                              std::string &errorMessage);
 
-    bool runSubtreeCall(SakuraItem* newSubtree,
+    bool runSubtreeCall(GrowthPlan* plan,
+                        SakuraItem* newSubtree,
                         ValueItemMap &values,
-                        const std::string &filePath,
                         std::string &errorMessage);
-    bool runLoop(SakuraItem* loopContent,
+    bool runLoop(GrowthPlan* plan,
+                 SakuraItem* loopContent,
                  const ValueItemMap &values,
-                 const std::string &filePath,
                  const std::string &tempVarName,
                  DataArray* array,
                  std::string &errorMessage,

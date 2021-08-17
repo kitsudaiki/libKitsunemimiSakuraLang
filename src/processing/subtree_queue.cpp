@@ -23,7 +23,8 @@
 #include "subtree_queue.h"
 
 #include <items/item_methods.h>
-
+#include <processing/active_counter.h>
+#include <processing/growth_plan.h>
 #include <libKitsunemimiPersistence/logger/logger.h>
 
 namespace Kitsunemimi
@@ -42,7 +43,7 @@ SubtreeQueue::SubtreeQueue() {}
  * @param newObject the new subtree-object, which should be added to the queue
  */
 void
-SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
+SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 {
     m_lock.lock();
     m_queue.push(newObject);
@@ -58,7 +59,7 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  * @param hierarchy actual hierarchy for terminal output
  * @param parentValues data-map with parent-values
  * @param tempVarName loop-internal variable
- * @param array data-array in case of an iterator-loop, else false
+ * @param array data-array in case of an iterator-loop, else nullptr
  * @param errorMessage reference for error-message
  * @param endPos end position in array or counter end
  * @param startPos start position in array or counter start
@@ -66,32 +67,27 @@ SubtreeQueue::addSubtreeObject(SubtreeObject* newObject)
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
-                                        ValueItemMap postProcessing,
-                                        const std::string &filePath,
-                                        const std::vector<std::string> &hierarchy,
-                                        DataMap &parentValues,
+SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
+                                        SakuraItem* subtreeItem,
                                         const std::string &tempVarName,
                                         DataArray* array,
                                         std::string &errorMessage,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
-    // create and initialize one counter-instance for all new subtrees
-    ActiveCounter* activeCounter = new ActiveCounter();
-    activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
-    std::vector<SubtreeObject*> spawnedObjects;
+    plan->activeCounter = new ActiveCounter();
+    plan->activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
         // encapsulate the content of the loop together with the values and the counter-object
         // as an subtree-object and add it to the subtree-queue
-        SubtreeObject* object = new SubtreeObject();
-        object->subtree = subtree->copy();
-        object->items = parentValues;
-        object->hirarchy = hierarchy;
-        object->activeCounter = activeCounter;
-        object->filePath = filePath;
+        GrowthPlan* object = new GrowthPlan();
+        object->completeSubtree = subtreeItem->copy();
+        object->items = plan->items;
+        object->hirarchy = plan->hirarchy;
+        object->parentPlan = plan;
+        object->filePath = plan->filePath;
 
         // add the counter-variable as new value to be accessable within the loop
         if(array != nullptr) {
@@ -100,30 +96,35 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
             object->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
         }
 
-        addSubtreeObject(object);
-        spawnedObjects.push_back(object);
+        addGrowthPlan(object);
+        plan->parallelObjects.push_back(object);
     }
 
-    bool result = waitUntilFinish(activeCounter, errorMessage);
+    bool result = waitUntilFinish(plan, errorMessage);
 
-    // post-processing and cleanup
-    for(uint64_t i = startPos; i < endPos; i++)
+    if(result)
     {
-        std::string errorMessage = "";
-        if(fillInputValueItemMap(postProcessing,
-                                 spawnedObjects.at(static_cast<uint32_t>(i))->items,
-                                 errorMessage) == false)
+        // post-processing and cleanup
+        GrowthPlan* parent = nullptr;
+        for(GrowthPlan* child : plan->parallelObjects)
         {
-            errorMessage = createError("subtree-processing",
-                                       "error processing post-aggregation of for-loop:\n"
-                                       + errorMessage);
-            result = false;
+            parent = child->parentPlan;
+            std::string errorMessage = "";
+            if(fillInputValueItemMap(parent->postAggregation, child->items, errorMessage) == false)
+            {
+                errorMessage = createError("subtree-processing",
+                                           "error processing post-aggregation of for-loop:\n"
+                                           + errorMessage);
+                result = false;
+            }
+        }
+
+        if(parent != nullptr) {
+            overrideItems(parent->items, parent->postAggregation, ONLY_EXISTING);
         }
     }
 
-    overrideItems(parentValues, postProcessing, ONLY_EXISTING);
-
-    clearSpawnedObjects(spawnedObjects);
+    plan->clearChilds();
 
     return result;
 }
@@ -137,67 +138,59 @@ SubtreeQueue::spawnParallelSubtreesLoop(SakuraItem* subtree,
  * @param hierarchy actual hierarchy for terminal output
  * @param parentValues data-map with parent-values
  * @param errorMessage reference for error-message
- * @param endPos end position in array or counter end
- * @param startPos start position in array or counter start
  *
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::spawnParallelSubtrees(DataMap &resultingItems,
+SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
                                     const std::vector<SakuraItem*> &childs,
-                                    const std::string &filePath,
-                                    const std::vector<std::string> &hierarchy,
-                                    const DataMap &parentValues,
-                                    std::string &errorMessage,
-                                    const uint64_t endPos,
-                                    const uint64_t startPos)
+                                    std::string &errorMessage)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
-    // TODO: check that startPos and endPos are not outside of the childs
-
-    // create and initialize all threads
-    ActiveCounter* activeCounter = new ActiveCounter();
-    activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
-    std::vector<SubtreeObject*> spawnedObjects;
+    plan->activeCounter = new ActiveCounter();
+    plan->activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
-    for(uint64_t i = startPos; i < endPos; i++)
+    for(uint64_t i = 0; i < childs.size(); i++)
     {
-        SubtreeObject* object = new SubtreeObject();
-        object->subtree = childs.at(i)->copy();
-        object->hirarchy = hierarchy;
-        object->items = parentValues;
-        object->activeCounter = activeCounter;
-        object->filePath = filePath;
+        GrowthPlan* object = new GrowthPlan();
+        object->completeSubtree = childs.at(i)->copy();
+        object->hirarchy = plan->hirarchy;
+        object->items = plan->items;
+        object->parentPlan = plan;
+        object->filePath = plan->filePath;
 
-        addSubtreeObject(object);
-        spawnedObjects.push_back(object);
+        addGrowthPlan(object);
+        plan->parallelObjects.push_back(object);
     }
 
-    const bool ret = waitUntilFinish(activeCounter, errorMessage);
+    const bool result = waitUntilFinish(plan, errorMessage);
 
     // write result back for output
-    if(spawnedObjects.size() == 1) {
-        overrideItems(resultingItems, spawnedObjects.at(0)->items, ALL);
+    if(result)
+    {
+        for(GrowthPlan* child : plan->parallelObjects) {
+            overrideItems(plan->items, child->items, ALL);
+        }
     }
 
-    clearSpawnedObjects(spawnedObjects);
+    plan->clearChilds();
 
-    return ret;
+    return result;
 }
 
 
 /**
- * @brief getSubtreeObject take ta object from the queue and delete it from the queue
+ * @brief getGrowthPlan take ta object from the queue and delete it from the queue
  *
  * @return first object in the queue or an empty-object, if nothing is in the queue
  */
-SubtreeQueue::SubtreeObject*
-SubtreeQueue::getSubtreeObject()
+GrowthPlan*
+SubtreeQueue::getGrowthPlan()
 {
-    SubtreeObject* subtree = nullptr;
+    GrowthPlan* subtree = nullptr;
 
     m_lock.lock();
     if(m_queue.empty() == false)
@@ -210,8 +203,6 @@ SubtreeQueue::getSubtreeObject()
     return subtree;
 }
 
-
-
 /**
  * @brief wait until all spawned tasks are finished
  *
@@ -221,44 +212,21 @@ SubtreeQueue::getSubtreeObject()
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter,
+SubtreeQueue::waitUntilFinish(GrowthPlan* plan,
                               std::string &errorMessage)
 {
     // wait until the created subtree was fully processed by the worker-threads
-    while(activeCounter->isEqual() == false) {
+    while(plan->activeCounter->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
 
     // in case of on error, forward this error to the upper layer
-    const bool result = activeCounter->success;
+    const bool result = plan->activeCounter->success;
     if(result == false) {
-        errorMessage = activeCounter->outputMessage;
+        errorMessage = plan->activeCounter->outputMessage;
     }
 
     return result;
-}
-
-/**
- * @brief free memory of all spawned objects
- *
- * @param vector with spawned queue-objects
- */
-void
-SubtreeQueue::clearSpawnedObjects(std::vector<SubtreeObject*> &spawnedObjects)
-{
-    ActiveCounter* activeCounter = nullptr;
-
-    // free allocated resources
-    for(SubtreeObject* obj : spawnedObjects)
-    {
-        activeCounter = obj->activeCounter;
-        delete obj->subtree;
-        delete obj;
-    }
-
-    if(activeCounter != nullptr) {
-        delete activeCounter;
-    }
 }
 
 } // namespace Sakura
