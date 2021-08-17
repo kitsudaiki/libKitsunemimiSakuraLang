@@ -42,7 +42,8 @@ public:
 
     void blossomMethods_test();
     void addAndGet_test();
-    void runAndTrigger_test();
+    void runAndTriggerTree_test();
+    void runAndTriggerBlossom_test();
 
     template<typename  T>
     void compare(T isValue, T shouldValue)

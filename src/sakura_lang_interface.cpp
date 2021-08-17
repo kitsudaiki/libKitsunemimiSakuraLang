@@ -21,6 +21,7 @@
  */
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
+#include <libKitsunemimiSakuraLang/blossom.h>
 
 #include <sakura_garden.h>
 #include <validator.h>
@@ -125,13 +126,77 @@ SakuraLangInterface::triggerTree(DataMap &result,
                   tree,
                   errorMessage) == false)
     {
+        delete currentObj;
         m_lock.unlock();
         return false;
     }
 
+    result = currentObj->items;
+    delete currentObj;
     m_lock.unlock();
 
-    result = currentObj->items;
+    return true;
+}
+
+/**
+ * @brief trigger existing blossom
+ *
+ * @param map with resulting items
+ * @param id id of the blossom to trigger
+ * @param initialValues input-values for the tree
+ * @param errorMessage reference for error-message
+ *
+ * @return true, if successfule, else false
+ */
+bool
+SakuraLangInterface::triggerBlossom(DataMap &result,
+                                    const std::string &id,
+                                    DataMap &initialValues,
+                                    std::string &errorMessage)
+{
+    LOG_DEBUG("trigger blossom");
+
+    m_lock.lock();
+
+    // get initial tree-item
+    Blossom* blossom = getBlossom("special", id);
+    if(blossom == nullptr)
+    {
+        errorMessage = "No blosom found for the id " + id;
+        m_lock.unlock();
+        return false;
+    }
+
+    BlossomLeaf blossomLeaf;
+
+    // update blossom-leaf for processing
+    blossomLeaf.blossomName = id;
+    blossomLeaf.blossomPath = id;
+    blossomLeaf.blossomGroupType = "special";
+    blossomLeaf.parentValues = &initialValues;
+    blossomLeaf.input = initialValues;
+    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + id);
+
+    const bool validationResult = blossom->validateInput(initialValues, errorMessage);
+    if(validationResult == false)
+    {
+        m_lock.unlock();
+        return false;
+    }
+
+    // process blossom
+    const bool ret = blossom->growBlossom(blossomLeaf, errorMessage);
+    if(ret == false)
+    {
+        m_lock.unlock();
+        return false;
+    }
+
+    // TODO: override only with the output-values to avoid unnecessary conflicts
+    result = initialValues;
+    overrideItems(result, blossomLeaf.output, ONLY_EXISTING);
+
+    m_lock.unlock();
 
     return true;
 }
