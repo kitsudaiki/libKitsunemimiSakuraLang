@@ -68,7 +68,8 @@ public:
                      DataMap &initialValues,
                      std::string &errorMessage);
     bool triggerBlossom(DataMap& result,
-                        const std::string &id,
+                        const std::string &blossomName,
+                        const std::string &blossomGroupName,
                         DataMap &initialValues,
                         std::string &errorMessage);
     bool readFilesInDir(const std::string &directoryPath,
