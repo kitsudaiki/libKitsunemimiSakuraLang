@@ -156,20 +156,16 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
 {
     LOG_DEBUG("trigger blossom");
 
-    m_lock.lock();
-
-    // get initial tree-item
+    // get initial blossom-item
     Blossom* blossom = getBlossom("special", id);
     if(blossom == nullptr)
     {
         errorMessage = "No blosom found for the id " + id;
-        m_lock.unlock();
         return false;
     }
 
+    // inialize a new blossom-leaf for processing
     BlossomLeaf blossomLeaf;
-
-    // update blossom-leaf for processing
     blossomLeaf.blossomName = id;
     blossomLeaf.blossomPath = id;
     blossomLeaf.blossomGroupType = "special";
@@ -178,25 +174,19 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + id);
 
     const bool validationResult = blossom->validateInput(initialValues, errorMessage);
-    if(validationResult == false)
-    {
-        m_lock.unlock();
+    if(validationResult == false) {
         return false;
     }
 
     // process blossom
     const bool ret = blossom->growBlossom(blossomLeaf, errorMessage);
-    if(ret == false)
-    {
-        m_lock.unlock();
+    if(ret == false) {
         return false;
     }
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     result = initialValues;
     overrideItems(result, blossomLeaf.output, ONLY_EXISTING);
-
-    m_lock.unlock();
 
     return true;
 }
