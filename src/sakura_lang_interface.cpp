@@ -142,7 +142,8 @@ SakuraLangInterface::triggerTree(DataMap &result,
  * @brief trigger existing blossom
  *
  * @param map with resulting items
- * @param id id of the blossom to trigger
+ * @param blossomName id of the blossom to trigger
+ * @param blossomGroupName id of the group of the blossom to trigger
  * @param initialValues input-values for the tree
  * @param errorMessage reference for error-message
  *
@@ -150,28 +151,29 @@ SakuraLangInterface::triggerTree(DataMap &result,
  */
 bool
 SakuraLangInterface::triggerBlossom(DataMap &result,
-                                    const std::string &id,
+                                    const std::string &blossomName,
+                                    const std::string &blossomGroupName,
                                     DataMap &initialValues,
                                     std::string &errorMessage)
 {
     LOG_DEBUG("trigger blossom");
 
     // get initial blossom-item
-    Blossom* blossom = getBlossom("special", id);
+    Blossom* blossom = getBlossom(blossomGroupName, blossomName);
     if(blossom == nullptr)
     {
-        errorMessage = "No blosom found for the id " + id;
+        errorMessage = "No blosom found for the id " + blossomName;
         return false;
     }
 
     // inialize a new blossom-leaf for processing
     BlossomLeaf blossomLeaf;
-    blossomLeaf.blossomName = id;
-    blossomLeaf.blossomPath = id;
-    blossomLeaf.blossomGroupType = "special";
+    blossomLeaf.blossomName = blossomName;
+    blossomLeaf.blossomPath = blossomName;
+    blossomLeaf.blossomGroupType = blossomGroupName;
     blossomLeaf.parentValues = &initialValues;
     blossomLeaf.input = initialValues;
-    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + id);
+    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
     const bool validationResult = blossom->validateInput(initialValues, errorMessage);
     if(validationResult == false) {
