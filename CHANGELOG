@@ -1,6 +1,15 @@
 # Changelog
 
-## [0.8.0] - 2021-037-30
+## [0.9.0] - 2021-09-26
+
+### Added
+- made blossoms directly callable for easier handlich of small tasks
+
+### Changed
+- big restructures of the thread internal task-handling
+
+
+## [0.8.0] - 2021-07-30
 
 ### Changed
 - reworked the collecting of sakura-files to be more minimal, because the old version also had some advantages, but the code was totally dirty and hard to maintain
