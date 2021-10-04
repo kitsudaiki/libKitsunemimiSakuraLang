@@ -22,10 +22,10 @@
 
 #include "sakura_file_collector.h"
 
-#include <libKitsunemimiPersistence/files/text_file.h>
-#include <libKitsunemimiPersistence/files/binary_file.h>
-#include <libKitsunemimiPersistence/files/file_methods.h>
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/files/text_file.h>
+#include <libKitsunemimiCommon/files/binary_file.h>
+#include <libKitsunemimiCommon/common_methods/file_methods.h>
+#include <libKitsunemimiCommon/logger.h>
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
@@ -55,10 +55,10 @@ bool
 SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
                                     std::string &errorMessage)
 {
-    const bfs::path rootPath = directoryPath;
+    const std::filesystem::path rootPath = directoryPath;
 
     // precheck
-    if(bfs::is_directory(rootPath) == false)
+    if(std::filesystem::is_directory(rootPath) == false)
     {
         TableItem errorOutput;
         initErrorOutput(errorOutput);
@@ -73,7 +73,7 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
 
     // get list the all files
     std::vector<std::string> sakuraFiles;
-    if(Kitsunemimi::Persistence::listFiles(sakuraFiles, directoryPath) == false)
+    if(Kitsunemimi::listFiles(sakuraFiles, directoryPath) == false)
     {
         errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
         return false;
@@ -83,7 +83,7 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     for(const std::string &filePath : sakuraFiles)
     {
         std::string content = "";
-        if(Kitsunemimi::Persistence::readFile(content, filePath, errorMessage) == false)
+        if(Kitsunemimi::readFile(content, filePath, errorMessage) == false)
         {
             errorMessage = "reading sakura-files failed with error: " + errorMessage;
             return false;
@@ -120,15 +120,15 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
  * @return true, if successful, else false
  */
 bool
-SakuraFileCollector::collectFiles(const bfs::path &rootPath,
-                                  const bfs::path &dirPath,
+SakuraFileCollector::collectFiles(const std::filesystem::path &rootPath,
+                                  const std::filesystem::path &dirPath,
                                   std::string &errorMessage)
 {
-    const bfs::path filesPath = dirPath / bfs::path("files");
-    if(bfs::exists(filesPath))
+    const std::filesystem::path filesPath = dirPath / std::filesystem::path("files");
+    if(std::filesystem::exists(filesPath))
     {
         return getFilesInDir(rootPath,
-                             bfs::path(filesPath),
+                             std::filesystem::path(filesPath),
                              "files",
                              errorMessage);
     }
@@ -146,16 +146,16 @@ SakuraFileCollector::collectFiles(const bfs::path &rootPath,
  * @return true, if successful, else false
  */
 bool
-SakuraFileCollector::collectResources(const bfs::path &rootPath,
-                                      const bfs::path &dirPath,
+SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
+                                      const std::filesystem::path &dirPath,
                                       std::string &errorMessage)
 {
-    const bfs::path ressourcePath = dirPath / bfs::path("resources");
+    const std::filesystem::path ressourcePath = dirPath / std::filesystem::path("resources");
 
-    if(bfs::exists(ressourcePath))
+    if(std::filesystem::exists(ressourcePath))
     {
         return getFilesInDir(rootPath,
-                             bfs::path(ressourcePath),
+                             std::filesystem::path(ressourcePath),
                              "resources",
                              errorMessage);
     }
@@ -173,16 +173,16 @@ SakuraFileCollector::collectResources(const bfs::path &rootPath,
  * @return true, if successful, else false
  */
 bool
-SakuraFileCollector::collectTemplates(const bfs::path &rootPath,
-                                      const bfs::path &dirPath,
+SakuraFileCollector::collectTemplates(const std::filesystem::path &rootPath,
+                                      const std::filesystem::path &dirPath,
                                       std::string &errorMessage)
 {
-    const bfs::path templatesPath = dirPath / bfs::path("templates");
+    const std::filesystem::path templatesPath = dirPath / std::filesystem::path("templates");
 
-    if(bfs::exists(templatesPath))
+    if(std::filesystem::exists(templatesPath))
     {
         return getFilesInDir(rootPath,
-                             bfs::path(templatesPath),
+                             std::filesystem::path(templatesPath),
                              "templates",
                              errorMessage);
     }
@@ -201,13 +201,13 @@ SakuraFileCollector::collectTemplates(const bfs::path &rootPath,
  * @return true, if successful, else false
  */
 bool
-SakuraFileCollector::getFilesInDir(const bfs::path &rootPath,
-                                   const bfs::path &directory,
+SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
+                                   const std::filesystem::path &directory,
                                    const std::string &type,
                                    std::string &errorMessage)
 {
-    boost::filesystem::directory_iterator end_itr;
-    for(boost::filesystem::directory_iterator itr(directory);
+    std::filesystem::directory_iterator end_itr;
+    for(std::filesystem::directory_iterator itr(directory);
         itr != end_itr;
         ++itr)
     {
@@ -223,12 +223,12 @@ SakuraFileCollector::getFilesInDir(const bfs::path &rootPath,
         }
         else
         {
-            bfs::path relPath = bfs::relative(itr->path(), rootPath);
+            std::filesystem::path relPath = std::filesystem::relative(itr->path(), rootPath);
             //--------------------------------------------------------------------------------------
             if(type == "files")
             {
                 Kitsunemimi::DataBuffer* buffer = new DataBuffer();
-                Kitsunemimi::Persistence::BinaryFile binFile(itr->path().string());
+                Kitsunemimi::BinaryFile binFile(itr->path().string());
                 bool ret = binFile.readCompleteFile(*buffer);
 
                 if(ret == false)
@@ -256,9 +256,9 @@ SakuraFileCollector::getFilesInDir(const bfs::path &rootPath,
             {
                 // read resource-file
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::Persistence::readFile(fileContent,
-                                                              itr->path().string(),
-                                                              errorMessage);
+                bool ret = Kitsunemimi::readFile(fileContent,
+                                                 itr->path().string(),
+                                                 errorMessage);
                 if(ret == false)
                 {
                     TableItem errorOutput;
@@ -283,9 +283,9 @@ SakuraFileCollector::getFilesInDir(const bfs::path &rootPath,
             if(type == "templates")
             {
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::Persistence::readFile(fileContent,
-                                                              itr->path().string(),
-                                                              errorMessage);
+                bool ret = Kitsunemimi::readFile(fileContent,
+                                                 itr->path().string(),
+                                                 errorMessage);
                 if(ret == false)
                 {
                     TableItem errorOutput;

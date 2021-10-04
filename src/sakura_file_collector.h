@@ -27,10 +27,8 @@
 #include <map>
 #include <mutex>
 #include <unistd.h>
+#include <filesystem>
 #include <sys/ioctl.h>
-#include <boost/filesystem.hpp>
-
-namespace bfs = boost::filesystem;
 
 namespace Kitsunemimi
 {
@@ -50,17 +48,17 @@ public:
 private:
     SakuraLangInterface* m_interface = nullptr;
 
-    bool collectFiles(const bfs::path &rootPath,
-                      const bfs::path &dirPath,
+    bool collectFiles(const std::filesystem::path &rootPath,
+                      const std::filesystem::path &dirPath,
                       std::string &errorMessage);
-    bool collectResources(const bfs::path &rootPath,
-                          const bfs::path &dirPath,
+    bool collectResources(const std::filesystem::path &rootPath,
+                          const std::filesystem::path &dirPath,
                           std::string &errorMessage);
-    bool collectTemplates(const bfs::path &rootPath,
-                          const bfs::path &dirPath,
+    bool collectTemplates(const std::filesystem::path &rootPath,
+                          const std::filesystem::path &dirPath,
                           std::string &errorMessage);
-    bool getFilesInDir(const bfs::path &rootPath,
-                       const bfs::path &directory,
+    bool getFilesInDir(const std::filesystem::path &rootPath,
+                       const std::filesystem::path &directory,
                        const std::string &type,
                        std::string &errorMessage);
 

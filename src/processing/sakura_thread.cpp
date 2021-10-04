@@ -34,8 +34,8 @@
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
-#include <libKitsunemimiPersistence/logger/logger.h>
-#include <libKitsunemimiPersistence/files/file_methods.h>
+#include <libKitsunemimiCommon/logger.h>
+#include <libKitsunemimiCommon/common_methods/file_methods.h>
 
 namespace Kitsunemimi
 {
@@ -392,8 +392,8 @@ SakuraThread::processSubtree(GrowthPlan* plan,
 {
     // get sakura-file based on the required path
     Kitsunemimi::Sakura::SakuraGarden* garden = m_interface->m_garden;
-    const bfs::path relPath = garden->getRelativePath(plan->filePath,
-                                                      subtreeItem->nameOrPath);
+    const std::filesystem::path relPath = garden->getRelativePath(plan->filePath,
+                                                                  subtreeItem->nameOrPath);
 
     // get and check tree
     TreeItem* newSubtree = garden->getTree(relPath.string());

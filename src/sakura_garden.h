@@ -26,10 +26,7 @@
 #include <vector>
 #include <string>
 #include <map>
-
-#include <boost/filesystem.hpp>
-
-namespace bfs = boost::filesystem;
+#include <filesystem>
 
 namespace Kitsunemimi
 {
@@ -46,8 +43,8 @@ public:
     SakuraGarden();
     ~SakuraGarden();
 
-    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
-                                    const bfs::path &blossomInternalRelPath);
+    const std::filesystem::path getRelativePath(const std::filesystem::path &blossomFilePath,
+                                               const std::filesystem::path &blossomInternalRelPath);
     // add
     bool addTree(const std::string &id, TreeItem* tree);
     bool addResource(const std::string &id, TreeItem* resource);

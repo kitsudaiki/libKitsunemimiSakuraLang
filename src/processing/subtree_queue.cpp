@@ -25,7 +25,7 @@
 #include <items/item_methods.h>
 #include <processing/active_counter.h>
 #include <processing/growth_plan.h>
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
