@@ -1,6 +1,6 @@
 #include "standalone_blossom.h"
 
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/logger.h>
 #include <interface_test.h>
 
 namespace Kitsunemimi

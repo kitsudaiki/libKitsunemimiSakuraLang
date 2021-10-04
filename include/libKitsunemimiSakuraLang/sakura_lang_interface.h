@@ -27,8 +27,8 @@
 #include <map>
 #include <mutex>
 #include <unistd.h>
+#include <filesystem>
 #include <sys/ioctl.h>
-#include <boost/filesystem.hpp>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 
@@ -53,8 +53,6 @@ class Validator;
 class SakuraParserInterface;
 class SakuraFileCollector;
 struct GrowthPlan;
-
-namespace bfs = boost::filesystem;
 
 class SakuraLangInterface
 {
@@ -100,8 +98,8 @@ public:
     const std::string getTemplate(const std::string &id);
     DataBuffer* getFile(const std::string &id);
 
-    const bfs::path getRelativePath(const bfs::path &blossomFilePath,
-                                    const bfs::path &blossomInternalRelPath);
+    const std::filesystem::path getRelativePath(const std::filesystem::path &blossomFilePath,
+                                               const std::filesystem::path &blossomInternalRelPath);
 
 
 private:

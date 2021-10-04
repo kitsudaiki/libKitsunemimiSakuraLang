@@ -36,7 +36,7 @@
 #include <items/item_methods.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/logger.h>
 
 
 namespace Kitsunemimi
@@ -459,9 +459,9 @@ SakuraLangInterface::getFile(const std::string &id)
  *
  * @return path, which is relative to the root-path.
  */
-const bfs::path
-SakuraLangInterface::getRelativePath(const bfs::path &blossomFilePath,
-                                     const bfs::path &blossomInternalRelPath)
+const std::filesystem::path
+SakuraLangInterface::getRelativePath(const std::filesystem::path &blossomFilePath,
+                                     const std::filesystem::path &blossomInternalRelPath)
 {
     return m_garden->getRelativePath(blossomFilePath, blossomInternalRelPath);
 }

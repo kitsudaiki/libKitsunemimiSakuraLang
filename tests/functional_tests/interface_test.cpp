@@ -28,7 +28,7 @@
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 #include <libKitsunemimiSakuraLang/blossom.h>
 
-#include <libKitsunemimiPersistence/files/text_file.h>
+#include <libKitsunemimiCommon/files/text_file.h>
 #include <libKitsunemimiCommon/buffer/data_buffer.h>
 
 namespace Kitsunemimi

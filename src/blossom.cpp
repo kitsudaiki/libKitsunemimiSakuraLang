@@ -23,7 +23,7 @@
 #include <libKitsunemimiSakuraLang/blossom.h>
 
 #include <items/item_methods.h>
-#include <libKitsunemimiPersistence/logger/logger.h>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {

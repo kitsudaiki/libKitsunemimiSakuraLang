@@ -26,8 +26,8 @@
 
 #include <libKitsunemimiCommon/common_methods/string_methods.h>
 
-#include <libKitsunemimiPersistence/logger/logger.h>
-#include <libKitsunemimiPersistence/files/file_methods.h>
+#include <libKitsunemimiCommon/logger.h>
+#include <libKitsunemimiCommon/common_methods/file_methods.h>
 
 namespace Kitsunemimi
 {
@@ -53,13 +53,13 @@ SakuraGarden::~SakuraGarden() {}
  *
  * @return path, which is relative to the root-path.
  */
-const bfs::path
-SakuraGarden::getRelativePath(const bfs::path &blossomFilePath,
-                              const bfs::path &blossomInternalRelPath)
+const std::filesystem::path
+SakuraGarden::getRelativePath(const std::filesystem::path &blossomFilePath,
+                              const std::filesystem::path &blossomInternalRelPath)
 {
     // create source-path
-    const bfs::path parentPath = blossomFilePath.parent_path();
-    const bfs::path relativePath = bfs::relative(parentPath, rootPath);
+    const std::filesystem::path parentPath = blossomFilePath.parent_path();
+    const std::filesystem::path relativePath = std::filesystem::relative(parentPath, rootPath);
 
     // build new relative path for the new file-request
     if(relativePath == ".") {
