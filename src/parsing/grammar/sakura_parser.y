@@ -574,38 +574,18 @@ item_set:
         ValueItem newItem;
         newItem.item = new DataValue(empty);
 
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
-
         $$->insert($2, newItem);
     }
 |
     "-" registerable_identifier "=" value_item
     {
         $$ = new ValueItemMap();
-
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
-
         $$->insert($2, $4);
     }
 |
     "-" registerable_identifier "=" "{" item_set "}"
     {
         $$ = new ValueItemMap();
-
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
-
         $$->insert($2, $5);
     }
 |
@@ -615,12 +595,6 @@ item_set:
 
         ValueItem newItem;
         newItem.item = $4;
-
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
 
         $$->insert($2, newItem);
     }
@@ -642,12 +616,6 @@ item_set:
         newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
-        if($$->contains($4))
-        {
-            driver.error(yyla.location, "name already used: \"" + $4 + "\"", true);
-            return 1;
-        }
-
         $$->insert($4, newItem);
     }
 |
@@ -659,12 +627,6 @@ item_set:
         newItem.item = new DataValue(std::string(""));
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
 
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
-
         $$->insert($2, newItem);
     }
 |
@@ -673,12 +635,6 @@ item_set:
         $$ = new ValueItemMap();
 
         ValueItem newItem = $4;
-
-        if($$->contains($2))
-        {
-            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
-            return 1;
-        }
 
         if($3 == "==") {
             newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
