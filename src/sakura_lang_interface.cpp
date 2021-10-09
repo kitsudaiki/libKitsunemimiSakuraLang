@@ -187,8 +187,8 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
-    result = initialValues;
-    overrideItems(result, blossomLeaf.output, ONLY_EXISTING);
+    result.clear();
+    overrideItems(result, blossomLeaf.output, ALL);
 
     return true;
 }
