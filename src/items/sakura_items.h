@@ -116,6 +116,7 @@ public:
     std::string unparsedConent = "";
     std::string relativePath = "";
     std::string rootPath = "";
+    std::vector<std::string> outputKeys;
 
     SakuraItem* childs;
 };

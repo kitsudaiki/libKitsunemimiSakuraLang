@@ -105,35 +105,26 @@ SakuraLangInterface::triggerTree(DataMap &result,
 {
     LOG_DEBUG("trigger tree");
 
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* tree = m_garden->getTree(id);
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + id;
-        m_lock.unlock();
         return false;
     }
 
-    GrowthPlan* currentObj = new GrowthPlan();
-    currentObj->items = initialValues;
-
-    overrideItems(currentObj->items, tree->values, ONLY_NON_EXISTING);
+    // prepare
+    GrowthPlan growthPlan;
+    growthPlan.items = initialValues;
+    overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
+    result.clear();
 
     // process sakura-file with initial values
-    if(runProcess(currentObj,
-                  tree,
-                  errorMessage) == false)
-    {
-        delete currentObj;
-        m_lock.unlock();
+    if(runProcess(result, &growthPlan, tree, errorMessage) == false) {
         return false;
     }
-
-    result = currentObj->items;
-    delete currentObj;
-    m_lock.unlock();
 
     return true;
 }
@@ -157,6 +148,8 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
                                     std::string &errorMessage)
 {
     LOG_DEBUG("trigger blossom");
+
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial blossom-item
     Blossom* blossom = getBlossom(blossomGroupName, blossomName);
@@ -187,8 +180,8 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
-    result = initialValues;
-    overrideItems(result, blossomLeaf.output, ONLY_EXISTING);
+    result.clear();
+    overrideItems(result, blossomLeaf.output, ALL);
 
     return true;
 }
@@ -303,31 +296,24 @@ SakuraLangInterface::addTree(std::string id,
                              const std::string &treeContent,
                              std::string &errorMessage)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
-    if(tree == nullptr)
-    {
-        errorMessage = "Failed to parse " + id;
-        m_lock.unlock();
+    if(tree == nullptr) {
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false)
-    {
-        m_lock.unlock();
+    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false) {
         return false;
     }
 
     if(id == "") {
         id = tree->id;
     }
-    const bool result = m_garden->addTree(id, tree);
-    m_lock.unlock();
 
-    return result;
+    return m_garden->addTree(id, tree);
 }
 
 /**
@@ -342,11 +328,8 @@ bool
 SakuraLangInterface::addTemplate(const std::string &id,
                                  const std::string &templateContent)
 {
-    m_lock.lock();
-    const bool result = m_garden->addTemplate(id, templateContent);
-    m_lock.unlock();
-
-    return result;
+    std::lock_guard<std::mutex> guard(m_lock);
+    return m_garden->addTemplate(id, templateContent);
 }
 
 /**
@@ -361,11 +344,8 @@ bool
 SakuraLangInterface::addFile(const std::string &id,
                              DataBuffer* data)
 {
-    m_lock.lock();
-    const bool result = m_garden->addFile(id, data);
-    m_lock.unlock();
-
-    return result;
+    std::lock_guard<std::mutex> guard(m_lock);
+    return m_garden->addFile(id, data);
 }
 
 /**
@@ -382,31 +362,26 @@ SakuraLangInterface::addResource(std::string id,
                                  const std::string &content,
                                  std::string &errorMessage)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* ressource = m_parser->parseTreeString(id, content, errorMessage);
     if(ressource == nullptr)
     {
         errorMessage = "Failed to parse " + id;
-        m_lock.unlock();
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false)
-    {
-        m_lock.unlock();
+    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false) {
         return false;
     }
 
     if(id == "") {
         id = ressource->id;
     }
-    const bool result = m_garden->addResource(id, ressource);
-    m_lock.unlock();
 
-    return result;
+    return m_garden->addResource(id, ressource);
 }
 
 /**
@@ -478,17 +453,16 @@ SakuraLangInterface::getRelativePath(const std::filesystem::path &blossomFilePat
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(GrowthPlan* plan,
+SakuraLangInterface::runProcess(DataMap &result,
+                                GrowthPlan* plan,
                                 TreeItem* tree,
                                 std::string &errorMessage)
 {
     // check if input-values match with the first tree
-    const std::vector<std::string> failedInput = checkInput(tree->values,
-                                                            plan->items);
+    const std::vector<std::string> failedInput = checkInput(tree->values, plan->items);
     if(failedInput.size() > 0)
     {
         errorMessage = "Following input-values are not valid for the initial tress:\n";
-
         for(const std::string& item : failedInput) {
             errorMessage += "    " + item + "\n";
         }
@@ -499,11 +473,25 @@ SakuraLangInterface::runProcess(GrowthPlan* plan,
     std::vector<SakuraItem*> childs;
     childs.push_back(tree);
 
-    const bool result = m_queue->spawnParallelSubtrees(plan,
-                                                       childs,
-                                                       errorMessage);
+    // init task
+    const bool ret = m_queue->spawnParallelSubtrees(plan, childs, errorMessage);
+    if(ret == false) {
+        return false;
+    }
 
-    return result;
+    // collect relevant output-values
+    std::map<std::string, DataItem*>::const_iterator it;
+    for(it = plan->items.m_map.begin();
+        it != plan->items.m_map.end();
+        it++)
+    {
+        const ValueItem item = tree->values.getValueItem(it->first);
+        if(item.type == ValueItem::OUTPUT_PAIR_TYPE) {
+            result.insert(it->first, it->second->copy());
+        }
+    }
+
+    return true;
 }
 
 /**
