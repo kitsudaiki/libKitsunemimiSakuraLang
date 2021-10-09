@@ -133,7 +133,8 @@ Blossom::validateInput(DataMap &input,
         defIt != validationMap.end();
         defIt++)
     {
-        if(defIt->second.isRequired == true)
+        if(defIt->second.isRequired == true
+                && defIt->second.type == IO_ValueType::INPUT_TYPE)
         {
             // search for values
             const bool ret = input.contains(defIt->first);
