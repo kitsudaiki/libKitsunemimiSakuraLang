@@ -94,6 +94,8 @@ Interface_Test::addAndGet_test()
 
     // test addTree
     TEST_EQUAL(interface->addTree("test-tree", getTestTree(), errorMessage), true);
+    std::cout<<"errorMessage: "<<errorMessage<<std::endl;
+
     TEST_EQUAL(interface->addTree("test-tree", getTestTree(), errorMessage), false);
 
     // test addTemplate
@@ -135,6 +137,10 @@ Interface_Test::runAndTriggerTree_test()
     // test triggerTree
     DataMap result;
     TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, errorMessage), true);
+    TEST_EQUAL(result.size(), 1);
+    if(result.size() == 0) {
+        return;
+    }
     TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, errorMessage), false);
     DataMap falseMap;
@@ -183,7 +189,7 @@ Interface_Test::getTestTree()
 {
     const std::string tree = "[\"test\"]\n"
                              "- input = \"{{}}\"\n"
-                             "- test_output = \"\"\n"
+                             "- test_output = >>\n"
                              "\n"
                              "test1(\"this is a test\")\n"
                              "->test2:\n"

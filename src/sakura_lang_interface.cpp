@@ -115,17 +115,15 @@ SakuraLangInterface::triggerTree(DataMap &result,
         return false;
     }
 
+    // prepare
     GrowthPlan growthPlan;
     growthPlan.items = initialValues;
-
     overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
 
     // process sakura-file with initial values
-    if(runProcess(&growthPlan, tree, errorMessage) == false) {
+    if(runProcess(result, &growthPlan, tree, errorMessage) == false) {
         return false;
     }
-
-    result = growthPlan.items;
 
     return true;
 }
@@ -301,9 +299,7 @@ SakuraLangInterface::addTree(std::string id,
 
     // get initial tree-item
     TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
-    if(tree == nullptr)
-    {
-        errorMessage = "Failed to parse " + id;
+    if(tree == nullptr) {
         return false;
     }
 
@@ -457,17 +453,16 @@ SakuraLangInterface::getRelativePath(const std::filesystem::path &blossomFilePat
  * @return true, if proocess was successful, else false
  */
 bool
-SakuraLangInterface::runProcess(GrowthPlan* plan,
+SakuraLangInterface::runProcess(DataMap &result,
+                                GrowthPlan* plan,
                                 TreeItem* tree,
                                 std::string &errorMessage)
 {
     // check if input-values match with the first tree
-    const std::vector<std::string> failedInput = checkInput(tree->values,
-                                                            plan->items);
+    const std::vector<std::string> failedInput = checkInput(tree->values, plan->items);
     if(failedInput.size() > 0)
     {
         errorMessage = "Following input-values are not valid for the initial tress:\n";
-
         for(const std::string& item : failedInput) {
             errorMessage += "    " + item + "\n";
         }
@@ -478,11 +473,26 @@ SakuraLangInterface::runProcess(GrowthPlan* plan,
     std::vector<SakuraItem*> childs;
     childs.push_back(tree);
 
-    const bool result = m_queue->spawnParallelSubtrees(plan,
-                                                       childs,
-                                                       errorMessage);
+    // init task
+    const bool ret = m_queue->spawnParallelSubtrees(plan, childs, errorMessage);
+    if(ret == false) {
+        return false;
+    }
 
-    return result;
+    // collect relevant output-values
+    result.clear();
+    std::map<std::string, DataItem*>::const_iterator it;
+    for(it = plan->items.m_map.begin();
+        it != plan->items.m_map.end();
+        it++)
+    {
+        const ValueItem item = tree->values.getValueItem(it->first);
+        if(item.type == ValueItem::OUTPUT_PAIR_TYPE) {
+            result.insert(it->first, it->second->copy());
+        }
+    }
+
+    return true;
 }
 
 /**

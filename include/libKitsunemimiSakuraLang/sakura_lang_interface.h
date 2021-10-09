@@ -124,8 +124,9 @@ private:
 
     std::map<std::string, std::map<std::string, Blossom*>> m_registeredBlossoms;
 
-    bool runProcess(GrowthPlan* plan,
-                    TreeItem *tree,
+    bool runProcess(DataMap &result,
+                    GrowthPlan* plan,
+                    TreeItem* tree,
                     std::string &errorMessage);
 
     // output

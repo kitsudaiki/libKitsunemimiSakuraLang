@@ -529,6 +529,22 @@ item_set:
         $$ = $1;
     }
 |
+    item_set  "-" regiterable_identifier "=" ">>"
+    {
+        ValueItem newItem;
+        newItem.item = new DataValue(std::string(""));
+        newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
+
+        $1->insert($3, newItem);
+        $$ = $1;
+    }
+|
     item_set  "-" "identifier" compare_type value_item
     {
         ValueItem newItem = $5;
@@ -633,6 +649,23 @@ item_set:
         }
 
         $$->insert($4, newItem);
+    }
+|
+    "-" regiterable_identifier "=" ">>"
+    {
+        $$ = new ValueItemMap();
+
+        ValueItem newItem;
+        newItem.item = new DataValue(std::string(""));
+        newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+
+        if($$->contains($2))
+        {
+            driver.error(yyla.location, "name already used: \"" + $2 + "\"", true);
+            return 1;
+        }
+
+        $$->insert($2, newItem);
     }
 |
     "-" "identifier" compare_type value_item

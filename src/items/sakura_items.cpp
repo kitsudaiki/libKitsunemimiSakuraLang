@@ -123,6 +123,7 @@ TreeItem::copy()
 
     newItem->type = type;
     newItem->values = values;
+    newItem->outputKeys = outputKeys;
 
     newItem->unparsedConent = unparsedConent;
     newItem->relativePath = relativePath;

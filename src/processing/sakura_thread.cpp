@@ -80,9 +80,7 @@ SakuraThread::run()
 
                 // run the real task
                 std::string errorMessage = "";
-                const bool result = processSakuraItem(plan,
-                                                      plan->completeSubtree,
-                                                      errorMessage);
+                const bool result = processSakuraItem(plan, plan->completeSubtree, errorMessage);
 
                 // handle result
                 if(plan->parentPlan != nullptr)
