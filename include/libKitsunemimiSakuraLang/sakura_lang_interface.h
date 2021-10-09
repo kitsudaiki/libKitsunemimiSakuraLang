@@ -70,6 +70,7 @@ public:
                         const std::string &blossomGroupName,
                         DataMap &initialValues,
                         std::string &errorMessage);
+
     bool readFilesInDir(const std::string &directoryPath,
                         std::string &errorMessage);
 

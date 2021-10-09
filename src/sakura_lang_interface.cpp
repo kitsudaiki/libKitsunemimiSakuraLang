@@ -105,35 +105,27 @@ SakuraLangInterface::triggerTree(DataMap &result,
 {
     LOG_DEBUG("trigger tree");
 
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* tree = m_garden->getTree(id);
     if(tree == nullptr)
     {
         errorMessage = "No tree found for the input-path " + id;
-        m_lock.unlock();
         return false;
     }
 
-    GrowthPlan* currentObj = new GrowthPlan();
-    currentObj->items = initialValues;
+    GrowthPlan growthPlan;
+    growthPlan.items = initialValues;
 
-    overrideItems(currentObj->items, tree->values, ONLY_NON_EXISTING);
+    overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
 
     // process sakura-file with initial values
-    if(runProcess(currentObj,
-                  tree,
-                  errorMessage) == false)
-    {
-        delete currentObj;
-        m_lock.unlock();
+    if(runProcess(&growthPlan, tree, errorMessage) == false) {
         return false;
     }
 
-    result = currentObj->items;
-    delete currentObj;
-    m_lock.unlock();
+    result = growthPlan.items;
 
     return true;
 }
@@ -157,6 +149,8 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
                                     std::string &errorMessage)
 {
     LOG_DEBUG("trigger blossom");
+
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial blossom-item
     Blossom* blossom = getBlossom(blossomGroupName, blossomName);
@@ -303,21 +297,18 @@ SakuraLangInterface::addTree(std::string id,
                              const std::string &treeContent,
                              std::string &errorMessage)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
     if(tree == nullptr)
     {
         errorMessage = "Failed to parse " + id;
-        m_lock.unlock();
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false)
-    {
-        m_lock.unlock();
+    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false) {
         return false;
     }
 
@@ -325,7 +316,6 @@ SakuraLangInterface::addTree(std::string id,
         id = tree->id;
     }
     const bool result = m_garden->addTree(id, tree);
-    m_lock.unlock();
 
     return result;
 }
@@ -342,11 +332,8 @@ bool
 SakuraLangInterface::addTemplate(const std::string &id,
                                  const std::string &templateContent)
 {
-    m_lock.lock();
-    const bool result = m_garden->addTemplate(id, templateContent);
-    m_lock.unlock();
-
-    return result;
+    std::lock_guard<std::mutex> guard(m_lock);
+    return m_garden->addTemplate(id, templateContent);
 }
 
 /**
@@ -361,11 +348,8 @@ bool
 SakuraLangInterface::addFile(const std::string &id,
                              DataBuffer* data)
 {
-    m_lock.lock();
-    const bool result = m_garden->addFile(id, data);
-    m_lock.unlock();
-
-    return result;
+    std::lock_guard<std::mutex> guard(m_lock);
+    return m_garden->addFile(id, data);
 }
 
 /**
@@ -382,31 +366,26 @@ SakuraLangInterface::addResource(std::string id,
                                  const std::string &content,
                                  std::string &errorMessage)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
     TreeItem* ressource = m_parser->parseTreeString(id, content, errorMessage);
     if(ressource == nullptr)
     {
         errorMessage = "Failed to parse " + id;
-        m_lock.unlock();
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false)
-    {
-        m_lock.unlock();
+    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false) {
         return false;
     }
 
     if(id == "") {
         id = ressource->id;
     }
-    const bool result = m_garden->addResource(id, ressource);
-    m_lock.unlock();
 
-    return result;
+    return m_garden->addResource(id, ressource);
 }
 
 /**
