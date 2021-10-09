@@ -123,7 +123,7 @@ YY_DECL;
 %type  <std::string> compare_type
 %type  <ValueItem>  value_item
 %type  <std::vector<ValueItem>*>  value_item_list
-%type  <std::string> regiterable_identifier;
+%type  <std::string> registerable_identifier;
 
 %type  <BlossomGroupItem*> blossom_group
 %type  <SequentiellPart*> blossom_group_set
@@ -282,7 +282,7 @@ if_condition:
     }
 
 for_each_loop:
-    "for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
+    "for" "(" registerable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new ForEachBranching();
         $$->tempVarName = $3;
@@ -292,7 +292,7 @@ for_each_loop:
         $$->content = $9;
     }
 |
-    "parallel_for" "(" regiterable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
+    "parallel_for" "(" registerable_identifier ":" value_item ")" item_set "{" blossom_group_set "}"
     {
         $$ = new ForEachBranching();
         $$->tempVarName = $3;
@@ -304,7 +304,7 @@ for_each_loop:
     }
 
 for_loop:
-    "for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
+    "for" "(" registerable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
         if($7 != $3)
         {
@@ -330,7 +330,7 @@ for_loop:
         $$->content = $17;
     }
 |
-    "parallel_for" "(" regiterable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
+    "parallel_for" "(" registerable_identifier "=" value_item ";" "identifier" "<" value_item ";" "identifier" "+" "+" ")" item_set "{" blossom_group_set "}"
     {
         if($7 != $3)
         {
@@ -438,7 +438,7 @@ blossom:
    }
 
 
-regiterable_identifier:
+registerable_identifier:
    "identifier"
    {
        driver.m_registeredKeys.push_back($1);
@@ -451,7 +451,7 @@ item_set:
         $$ = new ValueItemMap();
     }
 |
-    item_set  "-" regiterable_identifier "=" "{" "{" "}" "}"
+    item_set  "-" registerable_identifier "=" "{" "{" "}" "}"
     {
         std::string empty = "{{}}";
         ValueItem newItem;
@@ -467,7 +467,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" regiterable_identifier "=" value_item
+    item_set  "-" registerable_identifier "=" value_item
     {
         if($1->contains($3))
         {
@@ -479,7 +479,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" regiterable_identifier "=" "{" item_set "}"
+    item_set  "-" registerable_identifier "=" "{" item_set "}"
     {
         if($1->contains($3))
         {
@@ -491,7 +491,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" regiterable_identifier "=" json_abstract
+    item_set  "-" registerable_identifier "=" json_abstract
     {
         ValueItem newItem;
         newItem.item = $5;
@@ -529,7 +529,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" regiterable_identifier "=" ">>"
+    item_set  "-" registerable_identifier "=" ">>"
     {
         ValueItem newItem;
         newItem.item = new DataValue(std::string(""));
@@ -566,7 +566,7 @@ item_set:
         $$ = $1;
     }
 |
-    "-" regiterable_identifier "=" "{" "{" "}" "}"
+    "-" registerable_identifier "=" "{" "{" "}" "}"
     {
         $$ = new ValueItemMap();
 
@@ -583,7 +583,7 @@ item_set:
         $$->insert($2, newItem);
     }
 |
-    "-" regiterable_identifier "=" value_item
+    "-" registerable_identifier "=" value_item
     {
         $$ = new ValueItemMap();
 
@@ -596,7 +596,7 @@ item_set:
         $$->insert($2, $4);
     }
 |
-    "-" regiterable_identifier "=" "{" item_set "}"
+    "-" registerable_identifier "=" "{" item_set "}"
     {
         $$ = new ValueItemMap();
 
@@ -609,7 +609,7 @@ item_set:
         $$->insert($2, $5);
     }
 |
-    "-" regiterable_identifier "=" json_abstract
+    "-" registerable_identifier "=" json_abstract
     {
         $$ = new ValueItemMap();
 
@@ -651,7 +651,7 @@ item_set:
         $$->insert($4, newItem);
     }
 |
-    "-" regiterable_identifier "=" ">>"
+    "-" registerable_identifier "=" ">>"
     {
         $$ = new ValueItemMap();
 

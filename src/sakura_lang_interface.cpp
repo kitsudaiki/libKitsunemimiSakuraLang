@@ -119,6 +119,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     GrowthPlan growthPlan;
     growthPlan.items = initialValues;
     overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
+    result.clear();
 
     // process sakura-file with initial values
     if(runProcess(result, &growthPlan, tree, errorMessage) == false) {
@@ -311,9 +312,8 @@ SakuraLangInterface::addTree(std::string id,
     if(id == "") {
         id = tree->id;
     }
-    const bool result = m_garden->addTree(id, tree);
 
-    return result;
+    return m_garden->addTree(id, tree);
 }
 
 /**
@@ -480,7 +480,6 @@ SakuraLangInterface::runProcess(DataMap &result,
     }
 
     // collect relevant output-values
-    result.clear();
     std::map<std::string, DataItem*>::const_iterator it;
     for(it = plan->items.m_map.begin();
         it != plan->items.m_map.end();
