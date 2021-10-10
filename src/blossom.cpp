@@ -109,8 +109,8 @@ Blossom::validateInput(DataMap &input,
     {
         // check if all keys in the values of the blossom-item also exist in the required-key-list
         std::map<std::string, DataItem*>::const_iterator compareIt;
-        for(compareIt = input.m_map.begin();
-            compareIt != input.m_map.end();
+        for(compareIt = input.map.begin();
+            compareIt != input.map.end();
             compareIt++)
         {
             std::map<std::string, BlossomValidDef>::const_iterator defIt;

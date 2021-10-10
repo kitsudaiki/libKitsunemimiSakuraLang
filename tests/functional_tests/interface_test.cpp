@@ -119,7 +119,7 @@ Interface_Test::addAndGet_test()
         return;
     }
 
-    TEST_EQUAL(returnBuffer->bufferPosition, getTestFile()->bufferPosition);
+    TEST_EQUAL(returnBuffer->usedBufferSize, getTestFile()->usedBufferSize);
 }
 
 /**

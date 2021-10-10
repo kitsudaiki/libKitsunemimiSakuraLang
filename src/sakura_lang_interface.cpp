@@ -481,8 +481,8 @@ SakuraLangInterface::runProcess(DataMap &result,
 
     // collect relevant output-values
     std::map<std::string, DataItem*>::const_iterator it;
-    for(it = plan->items.m_map.begin();
-        it != plan->items.m_map.end();
+    for(it = plan->items.map.begin();
+        it != plan->items.map.end();
         it++)
     {
         const ValueItem item = tree->values.getValueItem(it->first);

@@ -40,7 +40,7 @@ ThreadPool::ThreadPool(const uint32_t numberOfThreads,
 {
     for(uint32_t i = 0; i < numberOfThreads; i++)
     {
-        SakuraThread* child = new SakuraThread(interface);
+        SakuraThread* child = new SakuraThread(interface, "SakuraThread_" + std::to_string(i));
         m_childThreads.push_back(child);
         child->startThread();
     }

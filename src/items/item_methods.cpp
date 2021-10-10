@@ -404,14 +404,14 @@ overrideItems(DataMap &original,
     if(type == ONLY_EXISTING)
     {
         std::map<std::string, DataItem*>::const_iterator overrideIt;
-        for(overrideIt = override.m_map.begin();
-            overrideIt != override.m_map.end();
+        for(overrideIt = override.map.begin();
+            overrideIt != override.map.end();
             overrideIt++)
         {
             std::map<std::string, DataItem*>::iterator originalIt;
-            originalIt = original.m_map.find(overrideIt->first);
+            originalIt = original.map.find(overrideIt->first);
 
-            if(originalIt != original.m_map.end()) {
+            if(originalIt != original.map.end()) {
                 original.insert(overrideIt->first, overrideIt->second->copy(), true);
             }
         }
@@ -419,14 +419,14 @@ overrideItems(DataMap &original,
     if(type == ONLY_NON_EXISTING)
     {
         std::map<std::string, DataItem*>::const_iterator overrideIt;
-        for(overrideIt = override.m_map.begin();
-            overrideIt != override.m_map.end();
+        for(overrideIt = override.map.begin();
+            overrideIt != override.map.end();
             overrideIt++)
         {
             std::map<std::string, DataItem*>::iterator originalIt;
-            originalIt = original.m_map.find(overrideIt->first);
+            originalIt = original.map.find(overrideIt->first);
 
-            if(originalIt == original.m_map.end()) {
+            if(originalIt == original.map.end()) {
                 original.insert(overrideIt->first, overrideIt->second->copy(), true);
             }
         }
@@ -434,8 +434,8 @@ overrideItems(DataMap &original,
     else if(type == ALL)
     {
         std::map<std::string, DataItem*>::const_iterator overrideIt;
-        for(overrideIt = override.m_map.begin();
-            overrideIt != override.m_map.end();
+        for(overrideIt = override.map.begin();
+            overrideIt != override.map.end();
             overrideIt++)
         {
             original.insert(overrideIt->first, overrideIt->second->copy(), true);
@@ -464,9 +464,9 @@ overrideItems(DataMap &original,
             overrideIt++)
         {
             std::map<std::string, DataItem*>::iterator originalIt;
-            originalIt = original.m_map.find(overrideIt->first);
+            originalIt = original.map.find(overrideIt->first);
 
-            if(originalIt != original.m_map.end()) {
+            if(originalIt != original.map.end()) {
                 original.insert(overrideIt->first, overrideIt->second.item->copy(), true);
             }
         }
@@ -479,9 +479,9 @@ overrideItems(DataMap &original,
             overrideIt++)
         {
             std::map<std::string, DataItem*>::iterator originalIt;
-            originalIt = original.m_map.find(overrideIt->first);
+            originalIt = original.map.find(overrideIt->first);
 
-            if(originalIt == original.m_map.end()) {
+            if(originalIt == original.map.end()) {
                 original.insert(overrideIt->first, overrideIt->second.item->copy(), true);
             }
         }
@@ -573,8 +573,8 @@ checkInput(ValueItemMap &original,
     std::vector<std::string> result;
 
     std::map<std::string, DataItem*>::const_iterator it;
-    for(it = itemInputValues.m_map.begin();
-        it != itemInputValues.m_map.end();
+    for(it = itemInputValues.map.begin();
+        it != itemInputValues.map.end();
         it++)
     {
         if(original.contains(it->first) == false) {
@@ -598,8 +598,8 @@ checkItems(DataMap &items)
     std::vector<std::string> result;
 
     std::map<std::string, DataItem*>::const_iterator it;
-    for(it = items.m_map.begin();
-        it != items.m_map.end();
+    for(it = items.map.begin();
+        it != items.map.end();
         it++)
     {
         if(it->second->getString() == "{{}}") {

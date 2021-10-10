@@ -43,7 +43,8 @@ class SakuraThread
         : public Kitsunemimi::Thread
 {
 public:
-    SakuraThread(SakuraLangInterface* interface);
+    SakuraThread(SakuraLangInterface* interface,
+                 const std::string &threadName);
 
 private:
     bool m_started = false;

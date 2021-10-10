@@ -47,7 +47,8 @@ namespace Sakura
  *
  * @param queue pointer to the subtree-queue, where new separated subtrees should be added
  */
-SakuraThread::SakuraThread(SakuraLangInterface* interface)
+SakuraThread::SakuraThread(SakuraLangInterface* interface, const std::string &threadName)
+    : Kitsunemimi::Thread(threadName)
 {
     m_interface = interface;
 }
