@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SAKURAFILECOLLECTOR_H
-#define SAKURAFILECOLLECTOR_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_SAKURAFILECOLLECTOR_H
+#define KITSUNEMIMI_SAKURA_LANG_SAKURAFILECOLLECTOR_H
 
 #include <string>
 #include <map>
@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <filesystem>
 #include <sys/ioctl.h>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
@@ -43,29 +44,27 @@ public:
     SakuraFileCollector(SakuraLangInterface* interface);
 
     bool readFilesInDir(const std::string &directoryPath,
-                        std::string &errorMessage);
+                        ErrorContainer &error);
 
 private:
     SakuraLangInterface* m_interface = nullptr;
 
     bool collectFiles(const std::filesystem::path &rootPath,
                       const std::filesystem::path &dirPath,
-                      std::string &errorMessage);
+                      ErrorContainer &error);
     bool collectResources(const std::filesystem::path &rootPath,
                           const std::filesystem::path &dirPath,
-                          std::string &errorMessage);
+                          ErrorContainer &error);
     bool collectTemplates(const std::filesystem::path &rootPath,
                           const std::filesystem::path &dirPath,
-                          std::string &errorMessage);
+                          ErrorContainer &error);
     bool getFilesInDir(const std::filesystem::path &rootPath,
                        const std::filesystem::path &directory,
                        const std::string &type,
-                       std::string &errorMessage);
-
-    void initErrorOutput(TableItem &errorOutput);
+                       ErrorContainer &error);
 };
 
 }
 }
 
-#endif // SAKURAFILECOLLECTOR_H
+#endif // KITSUNEMIMI_SAKURA_LANG_SAKURAFILECOLLECTOR_H

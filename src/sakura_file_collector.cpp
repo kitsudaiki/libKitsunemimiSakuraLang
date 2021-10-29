@@ -25,7 +25,6 @@
 #include <libKitsunemimiCommon/files/text_file.h>
 #include <libKitsunemimiCommon/files/binary_file.h>
 #include <libKitsunemimiCommon/common_methods/file_methods.h>
-#include <libKitsunemimiCommon/logger.h>
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
@@ -53,20 +52,17 @@ SakuraFileCollector::SakuraFileCollector(SakuraLangInterface* interface)
  */
 bool
 SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
-                                    std::string &errorMessage)
+                                    ErrorContainer &error)
 {
     const std::filesystem::path rootPath = directoryPath;
 
     // precheck
     if(std::filesystem::is_directory(rootPath) == false)
     {
-        TableItem errorOutput;
-        initErrorOutput(errorOutput);
-        errorOutput.addRow(std::vector<std::string>{"source", "while reading sakura-files"});
-        errorOutput.addRow(std::vector<std::string>{"message",
-                                                    "path doesn't exist or is not a directory: "
-                                                    + rootPath.string()});
-        errorMessage = errorOutput.toString();
+        error.errorMessage = "while reading sakura-files, "
+                             "because path doesn't exist or is not a directory: "
+                             + rootPath.string();
+        LOG_ERROR(error);
         return false;
     }
 
@@ -75,7 +71,8 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     std::vector<std::string> sakuraFiles;
     if(Kitsunemimi::listFiles(sakuraFiles, directoryPath) == false)
     {
-        errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
+        error.errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
+        LOG_ERROR(error);
         return false;
     }
 
@@ -83,27 +80,30 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     for(const std::string &filePath : sakuraFiles)
     {
         std::string content = "";
-        if(Kitsunemimi::readFile(content, filePath, errorMessage) == false)
+        std::string subError = "";
+        if(Kitsunemimi::readFile(content, filePath, subError) == false)
         {
-            errorMessage = "reading sakura-files failed with error: " + errorMessage;
+            error.errorMessage = "reading sakura-files failed with error: " + subError;
+            LOG_ERROR(error);
             return false;
         }
 
-        if(m_interface->addTree("", content, errorMessage) == false)
+        if(m_interface->addTree("", content, subError) == false)
         {
-            errorMessage = "parsing sakura-files failed with error: " + errorMessage;
+            error.errorMessage = "parsing sakura-files failed with error: " + subError;
+            LOG_ERROR(error);
             return false;
         }
     }
 
     // collect special files
-    if(collectFiles(rootPath, directoryPath, errorMessage) == false) {
+    if(collectFiles(rootPath, directoryPath, error) == false) {
         return false;
     }
-    if(collectResources(rootPath, directoryPath, errorMessage) == false) {
+    if(collectResources(rootPath, directoryPath, error) == false) {
         return false;
     }
-    if(collectTemplates(rootPath, directoryPath, errorMessage) == false) {
+    if(collectTemplates(rootPath, directoryPath, error) == false) {
         return false;
     }
 
@@ -122,7 +122,7 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
 bool
 SakuraFileCollector::collectFiles(const std::filesystem::path &rootPath,
                                   const std::filesystem::path &dirPath,
-                                  std::string &errorMessage)
+                                  ErrorContainer &error)
 {
     const std::filesystem::path filesPath = dirPath / std::filesystem::path("files");
     if(std::filesystem::exists(filesPath))
@@ -130,7 +130,7 @@ SakuraFileCollector::collectFiles(const std::filesystem::path &rootPath,
         return getFilesInDir(rootPath,
                              std::filesystem::path(filesPath),
                              "files",
-                             errorMessage);
+                             error);
     }
 
     return true;
@@ -148,7 +148,7 @@ SakuraFileCollector::collectFiles(const std::filesystem::path &rootPath,
 bool
 SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
                                       const std::filesystem::path &dirPath,
-                                      std::string &errorMessage)
+                                      ErrorContainer &error)
 {
     const std::filesystem::path ressourcePath = dirPath / std::filesystem::path("resources");
 
@@ -157,7 +157,7 @@ SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
         return getFilesInDir(rootPath,
                              std::filesystem::path(ressourcePath),
                              "resources",
-                             errorMessage);
+                             error);
     }
 
     return true;
@@ -175,7 +175,7 @@ SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
 bool
 SakuraFileCollector::collectTemplates(const std::filesystem::path &rootPath,
                                       const std::filesystem::path &dirPath,
-                                      std::string &errorMessage)
+                                      ErrorContainer &error)
 {
     const std::filesystem::path templatesPath = dirPath / std::filesystem::path("templates");
 
@@ -184,7 +184,7 @@ SakuraFileCollector::collectTemplates(const std::filesystem::path &rootPath,
         return getFilesInDir(rootPath,
                              std::filesystem::path(templatesPath),
                              "templates",
-                             errorMessage);
+                             error);
     }
 
     return true;
@@ -204,7 +204,7 @@ bool
 SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
                                    const std::filesystem::path &directory,
                                    const std::string &type,
-                                   std::string &errorMessage)
+                                   ErrorContainer &error)
 {
     std::filesystem::directory_iterator end_itr;
     for(std::filesystem::directory_iterator itr(directory);
@@ -216,7 +216,7 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             if(getFilesInDir(rootPath,
                              itr->path(),
                              type,
-                             errorMessage) == false)
+                             error) == false)
             {
                 return false;
             }
@@ -233,21 +233,15 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
 
                 if(ret == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while reading files"});
-                    errorOutput.addRow({"message", "can not read file " + itr->path().string()});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "can not read file " + itr->path().string();
+                    LOG_ERROR(error);
                     return false;
                 }
 
                 if(m_interface->addFile(relPath.string(), buffer) == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while reading files"});
-                    errorOutput.addRow({"message", "id already used: " + relPath.string()});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "file with the id '" + relPath.string() + "'already used";
+                    LOG_ERROR(error);
                     return false;
                 }
             }
@@ -256,26 +250,19 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             {
                 // read resource-file
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::readFile(fileContent,
-                                                 itr->path().string(),
-                                                 errorMessage);
+                std::string subError = "";
+                bool ret = Kitsunemimi::readFile(fileContent,  itr->path().string(), subError);
                 if(ret == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while reading ressource-files"});
-                    errorOutput.addRow({"message", errorMessage});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "while reading ressource-files got error: " + subError;
+                    LOG_ERROR(error);
                     return false;
                 }
 
-                if(m_interface->addResource("", fileContent, errorMessage) == false)
+                if(m_interface->addResource("", fileContent, subError) == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while parsing ressource-files"});
-                    errorOutput.addRow({"message", "id already used: "});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "while parsing ressource-files got error: " + subError;
+                    LOG_ERROR(error);
                     return false;
                 }
             }
@@ -283,26 +270,21 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             if(type == "templates")
             {
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::readFile(fileContent,
-                                                 itr->path().string(),
-                                                 errorMessage);
+                std::string subError = "";
+                bool ret = Kitsunemimi::readFile(fileContent, itr->path().string(), subError);
                 if(ret == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while reading template-files"});
-                    errorOutput.addRow({"message", errorMessage});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "while reading template-files got error: " + subError;
+                    LOG_ERROR(error);
                     return false;
                 }
 
                 if(m_interface->addTemplate(relPath.string(), fileContent) == false)
                 {
-                    TableItem errorOutput;
-                    initErrorOutput(errorOutput);
-                    errorOutput.addRow({"source", "while reading template-files"});
-                    errorOutput.addRow({"message", "id already used: " + relPath.string()});
-                    errorMessage = errorOutput.toString();
+                    error.errorMessage = "template-file with the id '"
+                                         + relPath.string()
+                                         + "'already used";
+                    LOG_ERROR(error);
                     return false;
                 }
             }
@@ -311,20 +293,6 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
     }
 
     return true;
-}
-
-/**
- * @brief initialize table for error-message output
- *
- * @param errorOutput reference to table-item for error-message output
- */
-void
-SakuraFileCollector::initErrorOutput(TableItem &errorOutput)
-{
-    errorOutput.addColumn("key");
-    errorOutput.addColumn("value");
-    errorOutput.addRow(std::vector<std::string>{"ERROR", " "});
-    errorOutput.addRow(std::vector<std::string>{"component", "libKitsunemimiSakuraLang"});
 }
 
 }

@@ -1,5 +1,5 @@
-#ifndef GROWTHPLAN_H
-#define GROWTHPLAN_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_GROWTHPLAN_H
+#define KITSUNEMIMI_SAKURA_LANG_GROWTHPLAN_H
 
 #include <items/sakura_items.h>
 
@@ -36,4 +36,4 @@ public:
 } // namespace Sakura
 } // namespace Kitsunemimi
 
-#endif // GROWTHPLAN_H
+#endif // KITSUNEMIMI_SAKURA_LANG_GROWTHPLAN_H

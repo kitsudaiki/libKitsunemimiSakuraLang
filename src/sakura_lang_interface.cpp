@@ -36,7 +36,6 @@
 #include <items/item_methods.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
-#include <libKitsunemimiCommon/logger.h>
 
 
 namespace Kitsunemimi
@@ -394,9 +393,9 @@ SakuraLangInterface::addResource(std::string id,
  */
 bool
 SakuraLangInterface::readFilesInDir(const std::string &directoryPath,
-                                    std::string &errorMessage)
+                                    ErrorContainer &error)
 {
-    return m_fileCollector->readFilesInDir(directoryPath, errorMessage);
+    return m_fileCollector->readFilesInDir(directoryPath, error);
 }
 
 /**

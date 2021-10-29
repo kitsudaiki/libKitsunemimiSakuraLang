@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef ACTIVE_COUNTER_H
-#define ACTIVE_COUNTER_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_ACTIVE_COUNTER_H
+#define KITSUNEMIMI_SAKURA_LANG_ACTIVE_COUNTER_H
 
 #include <thread>
 #include <chrono>
@@ -91,4 +91,4 @@ struct ActiveCounter
 } // namespace Sakura
 } // namespace Kitsunemimi
 
-#endif // ACTIVE_COUNTER_H
+#endif // KITSUNEMIMI_SAKURA_LANG_ACTIVE_COUNTER_H

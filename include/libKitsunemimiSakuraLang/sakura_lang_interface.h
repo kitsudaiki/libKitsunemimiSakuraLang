@@ -31,6 +31,7 @@
 #include <sys/ioctl.h>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
@@ -72,7 +73,7 @@ public:
                         std::string &errorMessage);
 
     bool readFilesInDir(const std::string &directoryPath,
-                        std::string &errorMessage);
+                        ErrorContainer &error);
 
     // blossom getter and setter
     bool doesBlossomExist(const std::string &groupName,
