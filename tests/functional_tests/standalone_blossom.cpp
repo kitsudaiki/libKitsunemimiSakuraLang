@@ -13,6 +13,7 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 {
     m_sessionTest = sessionTest;
     registerField("input", INPUT_TYPE, true);
+    registerField("should_fail", INPUT_TYPE, false);
     registerField("output", OUTPUT_TYPE, true);
 }
 
@@ -22,6 +23,18 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf, uint64_t &status, std::stri
     LOG_DEBUG("StandaloneBlossom");
     DataValue* value = blossomLeaf.input.get("input")->toValue();
     m_sessionTest->compare(value->getInt(), 42);
+
+    if(blossomLeaf.input.contains("should_fail"))
+    {
+        const bool shouldFail = blossomLeaf.input.get("should_fail")->toValue()->getBool();
+        if(shouldFail)
+        {
+            status = 1337;
+            errorMessage = "successfully failed";
+            return false;
+        }
+    }
+
     blossomLeaf.output.insert("output", new Kitsunemimi::DataValue(42));
     return true;
 }

@@ -54,7 +54,9 @@ public:
 private:
     const std::string getTestTree();
     const std::string getTestTemplate();
+
     DataBuffer* getTestFile();
+    const std::string getExpectedError();
 };
 
 } // namespace Sakura

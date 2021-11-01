@@ -136,20 +136,43 @@ Interface_Test::runAndTriggerTree_test()
 
     // test triggerTree
     DataMap result;
-    uint64_t status = 200;
+    uint64_t status = 0;
     TEST_EQUAL(interface->triggerTree(result,
                                       "test-tree",
                                       inputValues,
                                       status,
                                       errorMessage), true);
     TEST_EQUAL(result.size(), 1);
+    TEST_EQUAL(status, 0);
     if(result.size() == 0) {
         return;
     }
     TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
+
+
+
     TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, errorMessage), false);
+    TEST_EQUAL(status, 0);
     DataMap falseMap;
     TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, errorMessage), false);
+    TEST_EQUAL(status, 0);
+
+
+    inputValues.insert("should_fail", new DataValue(true));
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, status, errorMessage), false);
+    TEST_EQUAL(status, 1337);
+
+    const std::string expectedError = "+-------------------+---------------------+\n"
+                                      "| Field             | Value               |\n"
+                                      "+===================+=====================+\n"
+                                      "| location          | blossom execute     |\n"
+                                      "+-------------------+---------------------+\n"
+                                      "| blossom-file-path | /test-tree          |\n"
+                                      "+-------------------+---------------------+\n"
+                                      "| error-message     | successfully failed |\n"
+                                      "+-------------------+---------------------+\n";
+
+    TEST_EQUAL(errorMessage, expectedError);
 }
 
 /**
@@ -166,13 +189,14 @@ Interface_Test::runAndTriggerBlossom_test()
 
     // test triggerBlossom
     DataMap result;
-    uint64_t status = 200;
+    uint64_t status = 0;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          inputValues,
                                          status,
                                          errorMessage), true);
+    TEST_EQUAL(status, 0);
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
@@ -180,6 +204,8 @@ Interface_Test::runAndTriggerBlossom_test()
                                          inputValues,
                                          status,
                                          errorMessage), false);
+    TEST_EQUAL(status, 0);
+
     DataMap falseMap;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
@@ -187,6 +213,31 @@ Interface_Test::runAndTriggerBlossom_test()
                                          falseMap,
                                          status,
                                          errorMessage), false);
+    TEST_EQUAL(status, 0);
+
+    inputValues.insert("should_fail", new DataValue(true));
+    TEST_EQUAL(interface->triggerBlossom(result,
+                                         "standalone",
+                                         "special",
+                                         inputValues,
+                                         status,
+                                         errorMessage), false);
+    TEST_EQUAL(status, 1337);
+
+    const std::string expectedError = "+--------------------+---------------------+\n"
+                                      "| Field              | Value               |\n"
+                                      "+====================+=====================+\n"
+                                      "| location           | blossom execute     |\n"
+                                      "+--------------------+---------------------+\n"
+                                      "| blossom-group-type | special             |\n"
+                                      "+--------------------+---------------------+\n"
+                                      "| blossom-name       | standalone          |\n"
+                                      "+--------------------+---------------------+\n"
+                                      "| blossom-file-path  | standalone          |\n"
+                                      "+--------------------+---------------------+\n"
+                                      "| error-message      | successfully failed |\n"
+                                      "+--------------------+---------------------+\n";
+    TEST_EQUAL(errorMessage, expectedError);
 }
 
 /**
@@ -198,11 +249,13 @@ Interface_Test::getTestTree()
 {
     const std::string tree = "[\"test\"]\n"
                              "- input = \"{{}}\"\n"
+                             "- should_fail = false\n"
                              "- test_output = >>\n"
                              "\n"
                              "test1(\"this is a test\")\n"
                              "->test2:\n"
                              "   - input = input\n"
+                             "   - should_fail = should_fail\n"
                              "   - output >> test_output\n";
     return tree;
 }
