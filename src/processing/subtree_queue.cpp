@@ -45,9 +45,8 @@ SubtreeQueue::SubtreeQueue() {}
 void
 SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
     m_queue.push(newObject);
-    m_lock.unlock();
 }
 
 /**
@@ -196,15 +195,15 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 GrowthPlan*
 SubtreeQueue::getGrowthPlan()
 {
+    std::lock_guard<std::mutex> guard(m_lock);
+
     GrowthPlan* subtree = nullptr;
 
-    m_lock.lock();
     if(m_queue.empty() == false)
     {
         subtree = m_queue.front();
         m_queue.pop();
     }
-    m_lock.unlock();
 
     return subtree;
 }

@@ -53,9 +53,8 @@ struct ActiveCounter
      */
     void increaseCounter()
     {
-        lock.lock();
+        std::lock_guard<std::mutex> guard(lock);
         isCounter++;
-        lock.unlock();
     }
 
     /**
@@ -65,11 +64,8 @@ struct ActiveCounter
      */
     bool isEqual()
     {
-        bool result = false;
-        lock.lock();
-        result = isCounter == shouldCount;
-        lock.unlock();
-        return result;
+        std::lock_guard<std::mutex> guard(lock);
+        return isCounter == shouldCount;
     }
 };
 
