@@ -21,12 +21,27 @@ GrowthPlan::~GrowthPlan()
     clearChilds();
 }
 
-void GrowthPlan::clearChilds()
+void
+GrowthPlan::clearChilds()
 {
-    for(GrowthPlan* obj : parallelObjects) {
-        delete obj;
+    for(GrowthPlan* child : childPlans) {
+        delete child;
     }
-    parallelObjects.clear();
+    childPlans.clear();
+}
+
+void
+GrowthPlan::getErrorResult()
+{
+    for(GrowthPlan* child : childPlans)
+    {
+        if(child->success == false)
+        {
+            errorMessage = child->errorMessage;
+            status = child->status;
+            success = child->success;
+        }
+    }
 }
 
 } // namespace Sakura

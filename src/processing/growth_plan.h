@@ -17,6 +17,11 @@ public:
     SakuraItem* completeSubtree = nullptr;
     // map with all input-values for the subtree
     DataMap items;
+
+    bool success = true;
+    std::string errorMessage = "";
+    uint64_t status;
+
     // shared counter-instance, which will be increased after the subtree was fully processed
     ActiveCounter* activeCounter = nullptr;
     GrowthPlan* parentPlan = nullptr;
@@ -24,13 +29,14 @@ public:
     std::vector<std::string> hirarchy;
     std::string filePath = "";
 
-    std::vector<GrowthPlan*> parallelObjects;
+    std::vector<GrowthPlan*> childPlans;
     ValueItemMap postAggregation;
 
     GrowthPlan();
     ~GrowthPlan();
 
     void clearChilds();
+    void getErrorResult();
 };
 
 } // namespace Sakura

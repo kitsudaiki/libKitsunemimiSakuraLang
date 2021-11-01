@@ -17,7 +17,7 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 }
 
 bool
-StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf, std::string &)
+StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf, uint64_t &status, std::string &errorMessage)
 {
     LOG_DEBUG("StandaloneBlossom");
     DataValue* value = blossomLeaf.input.get("input")->toValue();

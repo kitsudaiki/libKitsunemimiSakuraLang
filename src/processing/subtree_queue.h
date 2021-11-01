@@ -69,8 +69,7 @@ private:
     std::mutex m_lock;
     std::queue<GrowthPlan*> m_queue;
 
-    bool waitUntilFinish(GrowthPlan* plan,
-                         std::string &errorMessage);
+    bool waitUntilFinish(ActiveCounter* activeCounter);
 };
 
 } // namespace Sakura

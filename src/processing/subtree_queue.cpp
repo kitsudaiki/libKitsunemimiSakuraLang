@@ -97,16 +97,16 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         }
 
         addGrowthPlan(object);
-        plan->parallelObjects.push_back(object);
+        plan->childPlans.push_back(object);
     }
 
-    bool result = waitUntilFinish(plan, errorMessage);
+    bool result = waitUntilFinish(plan->activeCounter);
 
     if(result)
     {
         // post-processing and cleanup
         GrowthPlan* parent = nullptr;
-        for(GrowthPlan* child : plan->parallelObjects)
+        for(GrowthPlan* child : plan->childPlans)
         {
             parent = child->parentPlan;
             std::string errorMessage = "";
@@ -122,6 +122,10 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         if(parent != nullptr) {
             overrideItems(parent->items, parent->postAggregation, ONLY_EXISTING);
         }
+    }
+    else
+    {
+        plan->getErrorResult();
     }
 
     plan->clearChilds();
@@ -163,17 +167,21 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         object->filePath = plan->filePath;
 
         addGrowthPlan(object);
-        plan->parallelObjects.push_back(object);
+        plan->childPlans.push_back(object);
     }
 
-    const bool result = waitUntilFinish(plan, errorMessage);
+    const bool result = waitUntilFinish(plan->activeCounter);
 
     // write result back for output
     if(result)
     {
-        for(GrowthPlan* child : plan->parallelObjects) {
+        for(GrowthPlan* child : plan->childPlans) {
             overrideItems(plan->items, child->items, ALL);
         }
+    }
+    else
+    {
+        plan->getErrorResult();
     }
 
     plan->clearChilds();
@@ -212,21 +220,14 @@ SubtreeQueue::getGrowthPlan()
  * @return true, if successful, else false
  */
 bool
-SubtreeQueue::waitUntilFinish(GrowthPlan* plan,
-                              std::string &errorMessage)
+SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter)
 {
     // wait until the created subtree was fully processed by the worker-threads
-    while(plan->activeCounter->isEqual() == false) {
+    while(activeCounter->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
 
-    // in case of on error, forward this error to the upper layer
-    const bool result = plan->activeCounter->success;
-    if(result == false) {
-        errorMessage = plan->activeCounter->outputMessage;
-    }
-
-    return result;
+    return activeCounter->success;
 }
 
 } // namespace Sakura

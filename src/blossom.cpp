@@ -75,13 +75,14 @@ Blossom::registerField(const std::string &name,
  */
 bool
 Blossom::growBlossom(BlossomLeaf &blossomLeaf,
+                     uint64_t &status,
                      std::string &errorMessage)
 {
     blossomLeaf.output.clear();
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
-    const bool ret = runTask(blossomLeaf, errorMessage);
+    const bool ret = runTask(blossomLeaf, status, errorMessage);
 
     // handle result
     if(ret == false)

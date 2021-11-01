@@ -46,7 +46,6 @@ struct ActiveCounter
     uint32_t isCounter = 0;
     uint32_t shouldCount = 0;
     bool success = true;
-    std::string outputMessage = "";
 
     ActiveCounter() {}
 
@@ -74,16 +73,16 @@ struct ActiveCounter
         return result;
     }
 
+
     /**
      * @brief register error in one of the spawned threads to inform the other threads
      *
      * @param errorMessage error-message
      */
-    void registerError(const std::string &errorMessage)
+    void registerError()
     {
         lock.lock();
         success = false;
-        outputMessage = errorMessage;
         lock.unlock();
     }
 };

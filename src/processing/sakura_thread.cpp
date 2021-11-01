@@ -86,8 +86,15 @@ SakuraThread::run()
                 // handle result
                 if(plan->parentPlan != nullptr)
                 {
-                    if(result == false) {
-                        plan->parentPlan->activeCounter->registerError(errorMessage);
+                    if(result == false)
+                    {
+                        plan->parentPlan->activeCounter->registerError();
+                        plan->errorMessage = errorMessage;
+                        plan->success = false;
+                    }
+                    else
+                    {
+                        plan->success = true;
                     }
 
                     // increase active-counter as last step, so the source subtree can check, if all
@@ -246,7 +253,7 @@ SakuraThread::processBlossom(GrowthPlan* plan,
     convertValueMap(blossomLeaf.input, blossomItem.values);
 
     // process blossom
-    const bool ret = blossom->growBlossom(blossomLeaf, errorMessage);
+    const bool ret = blossom->growBlossom(blossomLeaf, plan->status, errorMessage);
     if(ret == false) {
         return false;
     }

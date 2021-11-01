@@ -136,15 +136,20 @@ Interface_Test::runAndTriggerTree_test()
 
     // test triggerTree
     DataMap result;
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, errorMessage), true);
+    uint64_t status = 200;
+    TEST_EQUAL(interface->triggerTree(result,
+                                      "test-tree",
+                                      inputValues,
+                                      status,
+                                      errorMessage), true);
     TEST_EQUAL(result.size(), 1);
     if(result.size() == 0) {
         return;
     }
     TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
-    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, errorMessage), false);
     DataMap falseMap;
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, errorMessage), false);
 }
 
 /**
@@ -161,22 +166,26 @@ Interface_Test::runAndTriggerBlossom_test()
 
     // test triggerBlossom
     DataMap result;
+    uint64_t status = 200;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          inputValues,
+                                         status,
                                          errorMessage), true);
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
                                          "special",
                                          inputValues,
+                                         status,
                                          errorMessage), false);
     DataMap falseMap;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          falseMap,
+                                         status,
                                          errorMessage), false);
 }
 
