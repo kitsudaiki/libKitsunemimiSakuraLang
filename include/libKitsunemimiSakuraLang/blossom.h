@@ -79,7 +79,7 @@ public:
     virtual ~Blossom();
 
 protected:
-    virtual bool runTask(BlossomLeaf &blossomLeaf, std::string &errorMessage) = 0;
+    virtual bool runTask(BlossomLeaf &blossomLeaf, uint64_t &status, std::string &errorMessage) = 0;
     bool allowUnmatched = false;
 
     bool registerField(const std::string &name,
@@ -93,6 +93,7 @@ private:
     std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
+                     uint64_t &status,
                      std::string &errorMessage);
     bool validateInput(DataMap &input,
                        std::string &errorMessage);

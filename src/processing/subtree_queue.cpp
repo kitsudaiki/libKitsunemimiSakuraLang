@@ -45,9 +45,8 @@ SubtreeQueue::SubtreeQueue() {}
 void
 SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 {
-    m_lock.lock();
+    std::lock_guard<std::mutex> guard(m_lock);
     m_queue.push(newObject);
-    m_lock.unlock();
 }
 
 /**
@@ -71,7 +70,6 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         SakuraItem* subtreeItem,
                                         const std::string &tempVarName,
                                         DataArray* array,
-                                        std::string &errorMessage,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
@@ -97,25 +95,25 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         }
 
         addGrowthPlan(object);
-        plan->parallelObjects.push_back(object);
+        plan->childPlans.push_back(object);
     }
 
-    bool result = waitUntilFinish(plan, errorMessage);
+    waitUntilFinish(plan->activeCounter);
 
-    if(result)
+    if(plan->success)
     {
         // post-processing and cleanup
         GrowthPlan* parent = nullptr;
-        for(GrowthPlan* child : plan->parallelObjects)
+        for(GrowthPlan* child : plan->childPlans)
         {
             parent = child->parentPlan;
             std::string errorMessage = "";
             if(fillInputValueItemMap(parent->postAggregation, child->items, errorMessage) == false)
             {
-                errorMessage = createError("subtree-processing",
-                                           "error processing post-aggregation of for-loop:\n"
-                                           + errorMessage);
-                result = false;
+                plan->errorMessage = createError("subtree-processing",
+                                                 "error processing post-aggregation of for-loop:\n"
+                                                 + errorMessage);
+                plan->success = false;
             }
         }
 
@@ -123,10 +121,14 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
             overrideItems(parent->items, parent->postAggregation, ONLY_EXISTING);
         }
     }
+    else
+    {
+        plan->getErrorResult();
+    }
 
     plan->clearChilds();
 
-    return result;
+    return plan->success;
 }
 
 /**
@@ -143,8 +145,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
  */
 bool
 SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
-                                    const std::vector<SakuraItem*> &childs,
-                                    std::string &errorMessage)
+                                    const std::vector<SakuraItem*> &childs)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
@@ -163,22 +164,26 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         object->filePath = plan->filePath;
 
         addGrowthPlan(object);
-        plan->parallelObjects.push_back(object);
+        plan->childPlans.push_back(object);
     }
 
-    const bool result = waitUntilFinish(plan, errorMessage);
+    waitUntilFinish(plan->activeCounter);
 
     // write result back for output
-    if(result)
+    if(plan->success)
     {
-        for(GrowthPlan* child : plan->parallelObjects) {
+        for(GrowthPlan* child : plan->childPlans) {
             overrideItems(plan->items, child->items, ALL);
         }
+    }
+    else
+    {
+        plan->getErrorResult();
     }
 
     plan->clearChilds();
 
-    return result;
+    return plan->success;
 }
 
 
@@ -190,15 +195,15 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 GrowthPlan*
 SubtreeQueue::getGrowthPlan()
 {
+    std::lock_guard<std::mutex> guard(m_lock);
+
     GrowthPlan* subtree = nullptr;
 
-    m_lock.lock();
     if(m_queue.empty() == false)
     {
         subtree = m_queue.front();
         m_queue.pop();
     }
-    m_lock.unlock();
 
     return subtree;
 }
@@ -211,22 +216,13 @@ SubtreeQueue::getGrowthPlan()
  *
  * @return true, if successful, else false
  */
-bool
-SubtreeQueue::waitUntilFinish(GrowthPlan* plan,
-                              std::string &errorMessage)
+void
+SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter)
 {
     // wait until the created subtree was fully processed by the worker-threads
-    while(plan->activeCounter->isEqual() == false) {
+    while(activeCounter->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
-
-    // in case of on error, forward this error to the upper layer
-    const bool result = plan->activeCounter->success;
-    if(result == false) {
-        errorMessage = plan->activeCounter->outputMessage;
-    }
-
-    return result;
 }
 
 } // namespace Sakura

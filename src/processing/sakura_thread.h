@@ -53,47 +53,35 @@ private:
     void run();
 
     bool processSakuraItem(GrowthPlan* plan,
-                           SakuraItem* sakuraItem,
-                           std::string &errorMessage);
+                           SakuraItem* sakuraItem);
 
     bool processBlossom(GrowthPlan* plan,
-                        BlossomItem &blossomItem,
-                        std::string &errorMessage);
+                        BlossomItem &blossomItem);
     bool processBlossomGroup(GrowthPlan* plan,
-                             BlossomGroupItem &blossomGroupItem,
-                             std::string &errorMessage);
+                             BlossomGroupItem &blossomGroupItem);
     bool processTree(GrowthPlan* plan,
-                     TreeItem* treeItem,
-                     std::string &errorMessage);
+                     TreeItem* treeItem);
     bool processSubtree(GrowthPlan* plan,
-                        SubtreeItem* subtreeItem,
-                        std::string &errorMessage);
+                        SubtreeItem* subtreeItem);
     bool processIf(GrowthPlan* plan,
-                   IfBranching* ifCondition,
-                   std::string &errorMessage);
+                   IfBranching* ifCondition);
     bool processForEach(GrowthPlan* plan,
-                        ForEachBranching* forEachItem,
-                        std::string &errorMessage);
+                        ForEachBranching* forEachItem);
     bool processFor(GrowthPlan* plan,
-                    ForBranching* forItem,
-                    std::string &errorMessage);
+                    ForBranching* forItem);
     bool processSequeniellPart(GrowthPlan* plan,
-                               SequentiellPart* subtree,
-                               std::string &errorMessage);
+                               SequentiellPart* subtree);
     bool processParallelPart(GrowthPlan* plan,
-                             ParallelPart* parallelPart,
-                             std::string &errorMessage);
+                             ParallelPart* parallelPart);
 
     bool runSubtreeCall(GrowthPlan* plan,
                         SakuraItem* newSubtree,
-                        ValueItemMap &values,
-                        std::string &errorMessage);
+                        ValueItemMap &values);
     bool runLoop(GrowthPlan* plan,
                  SakuraItem* loopContent,
                  const ValueItemMap &values,
                  const std::string &tempVarName,
                  DataArray* array,
-                 std::string &errorMessage,
                  const uint64_t endPos,
                  const uint64_t startPos = 0);
 };

@@ -65,11 +65,13 @@ public:
     bool triggerTree(DataMap& result,
                      const std::string &id,
                      DataMap &initialValues,
+                     uint64_t &status,
                      std::string &errorMessage);
     bool triggerBlossom(DataMap& result,
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
                         DataMap &initialValues,
+                        uint64_t &status,
                         std::string &errorMessage);
 
     bool readFilesInDir(const std::string &directoryPath,
@@ -127,8 +129,7 @@ private:
 
     bool runProcess(DataMap &result,
                     GrowthPlan* plan,
-                    TreeItem* tree,
-                    std::string &errorMessage);
+                    TreeItem* tree);
 
     // output
     void printOutput(const BlossomGroupItem &blossomGroupItem);
