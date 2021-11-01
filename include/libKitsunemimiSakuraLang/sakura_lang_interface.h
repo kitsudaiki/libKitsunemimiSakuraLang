@@ -129,8 +129,7 @@ private:
 
     bool runProcess(DataMap &result,
                     GrowthPlan* plan,
-                    TreeItem* tree,
-                    std::string &errorMessage);
+                    TreeItem* tree);
 
     // output
     void printOutput(const BlossomGroupItem &blossomGroupItem);

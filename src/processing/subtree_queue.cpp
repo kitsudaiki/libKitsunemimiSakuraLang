@@ -71,7 +71,6 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         SakuraItem* subtreeItem,
                                         const std::string &tempVarName,
                                         DataArray* array,
-                                        std::string &errorMessage,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
@@ -100,9 +99,9 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         plan->childPlans.push_back(object);
     }
 
-    bool result = waitUntilFinish(plan->activeCounter);
+    waitUntilFinish(plan->activeCounter);
 
-    if(result)
+    if(plan->success)
     {
         // post-processing and cleanup
         GrowthPlan* parent = nullptr;
@@ -112,10 +111,10 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
             std::string errorMessage = "";
             if(fillInputValueItemMap(parent->postAggregation, child->items, errorMessage) == false)
             {
-                errorMessage = createError("subtree-processing",
-                                           "error processing post-aggregation of for-loop:\n"
-                                           + errorMessage);
-                result = false;
+                plan->errorMessage = createError("subtree-processing",
+                                                 "error processing post-aggregation of for-loop:\n"
+                                                 + errorMessage);
+                plan->success = false;
             }
         }
 
@@ -130,7 +129,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
 
     plan->clearChilds();
 
-    return result;
+    return plan->success;
 }
 
 /**
@@ -147,8 +146,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
  */
 bool
 SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
-                                    const std::vector<SakuraItem*> &childs,
-                                    std::string &errorMessage)
+                                    const std::vector<SakuraItem*> &childs)
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
@@ -170,10 +168,10 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         plan->childPlans.push_back(object);
     }
 
-    const bool result = waitUntilFinish(plan->activeCounter);
+    waitUntilFinish(plan->activeCounter);
 
     // write result back for output
-    if(result)
+    if(plan->success)
     {
         for(GrowthPlan* child : plan->childPlans) {
             overrideItems(plan->items, child->items, ALL);
@@ -186,7 +184,7 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 
     plan->clearChilds();
 
-    return result;
+    return plan->success;
 }
 
 
@@ -219,15 +217,13 @@ SubtreeQueue::getGrowthPlan()
  *
  * @return true, if successful, else false
  */
-bool
+void
 SubtreeQueue::waitUntilFinish(ActiveCounter* activeCounter)
 {
     // wait until the created subtree was fully processed by the worker-threads
     while(activeCounter->isEqual() == false) {
         std::this_thread::sleep_for(chronoMilliSec(10));
     }
-
-    return activeCounter->success;
 }
 
 } // namespace Sakura

@@ -45,7 +45,6 @@ struct ActiveCounter
     std::mutex lock;
     uint32_t isCounter = 0;
     uint32_t shouldCount = 0;
-    bool success = true;
 
     ActiveCounter() {}
 
@@ -71,19 +70,6 @@ struct ActiveCounter
         result = isCounter == shouldCount;
         lock.unlock();
         return result;
-    }
-
-
-    /**
-     * @brief register error in one of the spawned threads to inform the other threads
-     *
-     * @param errorMessage error-message
-     */
-    void registerError()
-    {
-        lock.lock();
-        success = false;
-        lock.unlock();
     }
 };
 

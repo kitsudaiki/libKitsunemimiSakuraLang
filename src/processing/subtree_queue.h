@@ -53,13 +53,11 @@ public:
     void addGrowthPlan(GrowthPlan* newObject);
 
     bool spawnParallelSubtrees(GrowthPlan* plan,
-                               const std::vector<SakuraItem *> &childs,
-                               std::string &errorMessage);
+                               const std::vector<SakuraItem*> &childs);
     bool spawnParallelSubtreesLoop(GrowthPlan* plan,
                                    SakuraItem* subtreeItem,
                                    const std::string &tempVarName,
                                    DataArray* array,
-                                   std::string &errorMessage,
                                    uint64_t endPos,
                                    const uint64_t startPos = 0);
 
@@ -69,7 +67,7 @@ private:
     std::mutex m_lock;
     std::queue<GrowthPlan*> m_queue;
 
-    bool waitUntilFinish(ActiveCounter* activeCounter);
+    void waitUntilFinish(ActiveCounter* activeCounter);
 };
 
 } // namespace Sakura
