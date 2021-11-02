@@ -73,8 +73,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
                                         uint64_t endPos,
                                         const uint64_t startPos)
 {
-    plan->activeCounter = new ActiveCounter();
-    plan->activeCounter->shouldCount = static_cast<uint32_t>(endPos - startPos);
+    plan->activeCounter.shouldCount = static_cast<uint32_t>(endPos - startPos);
 
     for(uint64_t i = startPos; i < endPos; i++)
     {
@@ -98,7 +97,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         plan->childPlans.push_back(object);
     }
 
-    waitUntilFinish(plan->activeCounter);
+    waitUntilFinish(&plan->activeCounter);
 
     if(plan->success)
     {
@@ -149,8 +148,7 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
 {
     LOG_DEBUG("spawnParallelSubtrees");
 
-    plan->activeCounter = new ActiveCounter();
-    plan->activeCounter->shouldCount = static_cast<uint32_t>(childs.size());
+    plan->activeCounter.shouldCount = static_cast<uint32_t>(childs.size());
 
     // encapsulate each subtree of the paralle part as subtree-object and add it to the
     // subtree-queue for parallel processing
@@ -167,7 +165,7 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
         plan->childPlans.push_back(object);
     }
 
-    waitUntilFinish(plan->activeCounter);
+    waitUntilFinish(&plan->activeCounter);
 
     // write result back for output
     if(plan->success)

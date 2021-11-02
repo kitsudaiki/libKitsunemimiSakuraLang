@@ -2,13 +2,13 @@
 #define KITSUNEMIMI_SAKURA_LANG_GROWTHPLAN_H
 
 #include <items/sakura_items.h>
+#include <processing/active_counter.h>
 
 namespace Kitsunemimi
 {
 namespace Sakura
 {
 class SakuraItem;
-struct ActiveCounter;
 
 class GrowthPlan
 {
@@ -23,7 +23,7 @@ public:
     uint64_t status;
 
     // shared counter-instance, which will be increased after the subtree was fully processed
-    ActiveCounter* activeCounter = nullptr;
+    ActiveCounter activeCounter;
     GrowthPlan* parentPlan = nullptr;
     // current position in the processing-hirarchy for status-output
     std::vector<std::string> hirarchy;

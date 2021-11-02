@@ -1,7 +1,5 @@
 #include "growth_plan.h"
 
-#include <processing/active_counter.h>
-
 namespace Kitsunemimi
 {
 namespace Sakura
@@ -13,9 +11,6 @@ GrowthPlan::~GrowthPlan()
 {
     if(completeSubtree != nullptr) {
         delete completeSubtree;
-    }
-    if(activeCounter != nullptr) {
-        delete activeCounter;
     }
 
     clearChilds();

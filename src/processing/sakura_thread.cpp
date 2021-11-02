@@ -98,7 +98,7 @@ SakuraThread::run()
 
                     // increase active-counter as last step, so the source subtree can check, if all
                     // spawned subtrees are finished
-                    plan->parentPlan->activeCounter->increaseCounter();
+                    plan->parentPlan->activeCounter.increaseCounter();
                 }
             }
         }
