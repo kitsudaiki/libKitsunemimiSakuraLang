@@ -102,10 +102,6 @@ public:
     const std::string getTemplate(const std::string &id);
     DataBuffer* getFile(const std::string &id);
 
-    const std::filesystem::path getRelativePath(const std::filesystem::path &blossomFilePath,
-                                               const std::filesystem::path &blossomInternalRelPath);
-
-
 private:
     friend SakuraThread;
     friend Validator;

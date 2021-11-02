@@ -430,22 +430,6 @@ SakuraLangInterface::getFile(const std::string &id)
 }
 
 /**
- * @brief convert path, which is relative to a sakura-file, into a path, which is relative to the
- *        root-path.
- *
- * @param blossomFilePath absolut path of the file of the blossom
- * @param blossomInternalRelPath relative path, which is called inside of the blossom
- *
- * @return path, which is relative to the root-path.
- */
-const std::filesystem::path
-SakuraLangInterface::getRelativePath(const std::filesystem::path &blossomFilePath,
-                                     const std::filesystem::path &blossomInternalRelPath)
-{
-    return m_garden->getRelativePath(blossomFilePath, blossomInternalRelPath);
-}
-
-/**
  * @brief start processing by spawning the first subtree-object
  *
  * @param resultingItems map for resulting items
