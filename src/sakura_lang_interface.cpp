@@ -99,7 +99,7 @@ SakuraLangInterface::~SakuraLangInterface()
 bool
 SakuraLangInterface::triggerTree(DataMap &result,
                                  const std::string &id,
-                                 DataMap &initialValues,
+                                 const DataMap &initialValues,
                                  uint64_t &status,
                                  std::string &errorMessage)
 {
@@ -147,7 +147,7 @@ bool
 SakuraLangInterface::triggerBlossom(DataMap &result,
                                     const std::string &blossomName,
                                     const std::string &blossomGroupName,
-                                    DataMap &initialValues,
+                                    const DataMap &initialValues,
                                     uint64_t &status,
                                     std::string &errorMessage)
 {
@@ -168,18 +168,16 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.blossomName = blossomName;
     blossomLeaf.blossomPath = blossomName;
     blossomLeaf.blossomGroupType = blossomGroupName;
-    blossomLeaf.parentValues = &initialValues;
     blossomLeaf.input = initialValues;
+    blossomLeaf.parentValues = &blossomLeaf.input;
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
-    const bool validationResult = blossom->validateInput(initialValues, errorMessage);
-    if(validationResult == false) {
+    if(blossom->validateInput(initialValues, errorMessage) == false) {
         return false;
     }
 
     // process blossom
-    const bool ret = blossom->growBlossom(blossomLeaf, status, errorMessage);
-    if(ret == false) {
+    if(blossom->growBlossom(blossomLeaf, status, errorMessage) == false) {
         return false;
     }
 

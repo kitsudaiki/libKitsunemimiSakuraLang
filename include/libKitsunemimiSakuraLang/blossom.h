@@ -95,7 +95,7 @@ private:
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      uint64_t &status,
                      std::string &errorMessage);
-    bool validateInput(DataMap &input,
+    bool validateInput(const DataMap &input,
                        std::string &errorMessage);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,

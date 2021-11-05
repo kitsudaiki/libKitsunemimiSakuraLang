@@ -103,7 +103,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @return true, if successful, else false
  */
 bool
-Blossom::validateInput(DataMap &input,
+Blossom::validateInput(const DataMap &input,
                        std::string &errorMessage)
 {
     if(allowUnmatched == false)

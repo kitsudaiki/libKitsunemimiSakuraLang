@@ -64,13 +64,13 @@ public:
 
     bool triggerTree(DataMap& result,
                      const std::string &id,
-                     DataMap &initialValues,
+                     const DataMap &initialValues,
                      uint64_t &status,
                      std::string &errorMessage);
     bool triggerBlossom(DataMap& result,
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
-                        DataMap &initialValues,
+                        const DataMap &initialValues,
                         uint64_t &status,
                         std::string &errorMessage);
 
