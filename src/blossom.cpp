@@ -41,6 +41,36 @@ Blossom::Blossom() {}
 Blossom::~Blossom() {}
 
 /**
+ * @brief register input field for validation of incoming messages
+ *
+ * @param name name of the filed to identifiy value
+ * @param required false, to make field optional, true to make it required
+ *
+ * @return false, if already name already registered, else true
+ */
+bool
+Blossom::registerInputField(const std::string &name,
+                            const bool required)
+{
+    return registerField(name, INPUT_TYPE, required);
+}
+
+/**
+ * @brief register output field for validation of incoming messages
+ *
+ * @param name name of the filed to identifiy value
+ * @param required false, to make field optional, true to make it required
+ *
+ * @return false, if already name already registered, else true
+ */
+bool
+Blossom::registerOutputField(const std::string &name,
+                             const bool required)
+{
+    return registerField(name, OUTPUT_TYPE, required);
+}
+
+/**
  * @brief register field for validation of incoming messages
  *
  * @param name name of the filed to identifiy value
@@ -168,7 +198,7 @@ Blossom::validateInput(BlossomItem &blossomItem,
                        std::string &errorMessage)
 {
     std::map<std::string, IO_ValueType> compareMap;
-    blossomItem.values.getCompareMap(compareMap);
+    getCompareMap(blossomItem.values, compareMap);
 
     if(allowUnmatched == false)
     {
@@ -235,6 +265,41 @@ Blossom::validateInput(BlossomItem &blossomItem,
     }
 
     return true;
+}
+
+/**
+ * @brief get map for comparism in validator
+ *
+ * @param value-map to compare
+ * @param compareMap reference for the resulting map
+ */
+void
+Blossom::getCompareMap(const ValueItemMap &valueMap,
+                       std::map<std::string, IO_ValueType> &compareMap)
+{
+    // copy items
+    std::map<std::string, ValueItem>::const_iterator it;
+    for(it = valueMap.m_valueMap.begin();
+        it != valueMap.m_valueMap.end();
+        it++)
+    {
+        if(it->second.type == ValueItem::INPUT_PAIR_TYPE) {
+            compareMap.emplace(it->first, INPUT_TYPE);
+        }
+
+        if(it->second.type == ValueItem::OUTPUT_PAIR_TYPE) {
+            compareMap.emplace(it->second.item->toString(), OUTPUT_TYPE);
+        }
+    }
+
+    // copy child-maps
+    std::map<std::string, ValueItemMap*>::const_iterator itChilds;
+    for(itChilds = valueMap.m_childMaps.begin();
+        itChilds != valueMap.m_childMaps.end();
+        itChilds++)
+    {
+        compareMap.emplace(itChilds->first, INPUT_TYPE);
+    }
 }
 
 } // namespace Sakura

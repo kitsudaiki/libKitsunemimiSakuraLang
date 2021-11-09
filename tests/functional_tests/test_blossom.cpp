@@ -12,9 +12,9 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
     : Blossom()
 {
     m_sessionTest = sessionTest;
-    registerField("input", INPUT_TYPE, true);
-    registerField("should_fail", INPUT_TYPE, false);
-    registerField("output", OUTPUT_TYPE, true);
+    registerInputField("input", true);
+    registerInputField("should_fail", false);
+    registerOutputField("output", true);
 }
 
 bool
