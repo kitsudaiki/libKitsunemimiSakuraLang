@@ -59,7 +59,6 @@ public:
     std::string getValueAsString(const std::string &key);
     DataItem* get(const std::string &key);
     ValueItem getValueItem(const std::string &key);
-    void getCompareMap(std::map<std::string, IO_ValueType> &compareMap);
     uint64_t size();
     const std::string toString();
 
