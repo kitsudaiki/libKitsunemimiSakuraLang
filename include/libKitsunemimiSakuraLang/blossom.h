@@ -36,6 +36,7 @@ class SakuraLangInterface;
 class ValueItemMap;
 
 //--------------------------------------------------------------------------------------------------
+
 struct BlossomLeaf
 {
     std::string blossomType = "";
@@ -50,6 +51,15 @@ struct BlossomLeaf
     DataMap* parentValues = nullptr;
     std::string terminalOutput = "";
 };
+
+//--------------------------------------------------------------------------------------------------
+
+struct BlossomStatus
+{
+    uint64_t statusCode = 0;
+    std::string errorMessage = "";
+};
+
 //--------------------------------------------------------------------------------------------------
 
 class Blossom
@@ -59,7 +69,9 @@ public:
     virtual ~Blossom();
 
 protected:
-    virtual bool runTask(BlossomLeaf &blossomLeaf, uint64_t &status, std::string &errorMessage) = 0;
+    virtual bool runTask(BlossomLeaf &blossomLeaf,
+                         BlossomStatus &status,
+                         std::string &errorMessage) = 0;
     bool allowUnmatched = false;
 
     bool registerInputField(const std::string &name, const bool required);
@@ -96,7 +108,7 @@ private:
     std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
-                     uint64_t &status,
+                     BlossomStatus &status,
                      std::string &errorMessage);
     bool validateInput(const DataMap &input,
                        std::string &errorMessage);
