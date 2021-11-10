@@ -105,7 +105,7 @@ Blossom::registerField(const std::string &name,
  */
 bool
 Blossom::growBlossom(BlossomLeaf &blossomLeaf,
-                     uint64_t &status,
+                     BlossomStatus &status,
                      std::string &errorMessage)
 {
     blossomLeaf.output.clear();

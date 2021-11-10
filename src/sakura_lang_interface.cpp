@@ -100,7 +100,7 @@ bool
 SakuraLangInterface::triggerTree(DataMap &result,
                                  const std::string &id,
                                  const DataMap &initialValues,
-                                 uint64_t &status,
+                                 BlossomStatus &status,
                                  std::string &errorMessage)
 {
     LOG_DEBUG("trigger tree");
@@ -148,7 +148,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
                                     const std::string &blossomName,
                                     const std::string &blossomGroupName,
                                     const DataMap &initialValues,
-                                    uint64_t &status,
+                                    BlossomStatus &status,
                                     std::string &errorMessage)
 {
     LOG_DEBUG("trigger blossom");

@@ -134,33 +134,47 @@ Interface_Test::runAndTriggerTree_test()
     inputValues.insert("test_output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 
-    // test triggerTree
+    //----------------------------------------------------------------------------------------------
+    // positiv test
     DataMap result;
-    uint64_t status = 0;
+    errorMessage = "";
+    BlossomStatus status;
     TEST_EQUAL(interface->triggerTree(result,
                                       "test-tree",
                                       inputValues,
                                       status,
                                       errorMessage), true);
     TEST_EQUAL(result.size(), 1);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+
     if(result.size() == 0) {
         return;
     }
     TEST_EQUAL(result.get("test_output")->toValue()->getInt(), 42);
 
-
-
+    //----------------------------------------------------------------------------------------------
+    // test non-existing tree
+    errorMessage = "";
     TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, errorMessage), false);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+
+    //----------------------------------------------------------------------------------------------
+    // test invalid input-values
     DataMap falseMap;
+    errorMessage = "";
     TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, errorMessage), false);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
 
-
+    //----------------------------------------------------------------------------------------------
+    // test fail within blossom
+    errorMessage = "";
     inputValues.insert("should_fail", new DataValue(true));
     TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, status, errorMessage), false);
-    TEST_EQUAL(status, 1337);
+    TEST_EQUAL(status.statusCode, 1337);
+    TEST_EQUAL(status.errorMessage, "successfully failed");
 
     const std::string expectedError = "+-------------------+---------------------+\n"
                                       "| Field             | Value               |\n"
@@ -187,16 +201,23 @@ Interface_Test::runAndTriggerBlossom_test()
     inputValues.insert("output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 
-    // test triggerBlossom
+    //----------------------------------------------------------------------------------------------
+    // positiv test
     DataMap result;
-    uint64_t status = 0;
+    errorMessage = "";
+    BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          inputValues,
                                          status,
                                          errorMessage), true);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+
+    //----------------------------------------------------------------------------------------------
+    // test non-existing blossom
+    errorMessage = "";
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
@@ -204,8 +225,12 @@ Interface_Test::runAndTriggerBlossom_test()
                                          inputValues,
                                          status,
                                          errorMessage), false);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
 
+    //----------------------------------------------------------------------------------------------
+    // test invalid input-values
+    errorMessage = "";
     DataMap falseMap;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
@@ -213,8 +238,12 @@ Interface_Test::runAndTriggerBlossom_test()
                                          falseMap,
                                          status,
                                          errorMessage), false);
-    TEST_EQUAL(status, 0);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
 
+    //----------------------------------------------------------------------------------------------
+    // test fail within blossom
+    errorMessage = "";
     inputValues.insert("should_fail", new DataValue(true));
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
@@ -222,7 +251,8 @@ Interface_Test::runAndTriggerBlossom_test()
                                          inputValues,
                                          status,
                                          errorMessage), false);
-    TEST_EQUAL(status, 1337);
+    TEST_EQUAL(status.statusCode, 1337);
+    TEST_EQUAL(status.errorMessage, "successfully failed");
 
     const std::string expectedError = "+--------------------+---------------------+\n"
                                       "| Field              | Value               |\n"

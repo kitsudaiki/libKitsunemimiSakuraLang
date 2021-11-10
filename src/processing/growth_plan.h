@@ -20,7 +20,7 @@ public:
 
     bool success = true;
     std::string errorMessage = "";
-    uint64_t status;
+    BlossomStatus status;
 
     // shared counter-instance, which will be increased after the subtree was fully processed
     ActiveCounter activeCounter;

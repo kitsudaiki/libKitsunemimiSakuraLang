@@ -54,6 +54,7 @@ class Validator;
 class SakuraParserInterface;
 class SakuraFileCollector;
 struct GrowthPlan;
+struct BlossomStatus;
 
 class SakuraLangInterface
 {
@@ -65,13 +66,13 @@ public:
     bool triggerTree(DataMap& result,
                      const std::string &id,
                      const DataMap &initialValues,
-                     uint64_t &status,
+                     BlossomStatus &status,
                      std::string &errorMessage);
     bool triggerBlossom(DataMap& result,
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
                         const DataMap &initialValues,
-                        uint64_t &status,
+                        BlossomStatus &status,
                         std::string &errorMessage);
 
     bool readFilesInDir(const std::string &directoryPath,
