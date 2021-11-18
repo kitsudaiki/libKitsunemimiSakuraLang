@@ -101,7 +101,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
                                  const std::string &id,
                                  const DataMap &initialValues,
                                  BlossomStatus &status,
-                                 std::string &errorMessage)
+                                 ErrorContainer &error)
 {
     LOG_DEBUG("trigger tree");
 
@@ -111,7 +111,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     TreeItem* tree = m_garden->getTree(id);
     if(tree == nullptr)
     {
-        errorMessage = "No tree found for the input-path " + id;
+        error.addMeesage("No tree found for the input-path " + id);
         return false;
     }
 
@@ -125,7 +125,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     if(runProcess(result, &growthPlan, tree) == false)
     {
         status = growthPlan.status;
-        errorMessage = growthPlan.errorMessage;
+        error = growthPlan.error;
         return false;
     }
 
@@ -149,7 +149,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
                                     const std::string &blossomGroupName,
                                     const DataMap &initialValues,
                                     BlossomStatus &status,
-                                    std::string &errorMessage)
+                                    ErrorContainer &error)
 {
     LOG_DEBUG("trigger blossom");
 
@@ -159,7 +159,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     Blossom* blossom = getBlossom(blossomGroupName, blossomName);
     if(blossom == nullptr)
     {
-        errorMessage = "No blosom found for the id " + blossomName;
+        error.addMeesage("No blosom found for the id " + blossomName);
         return false;
     }
 
@@ -172,12 +172,12 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.parentValues = &blossomLeaf.input;
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
-    if(blossom->validateInput(initialValues, errorMessage) == false) {
+    if(blossom->validateInput(initialValues, error) == false) {
         return false;
     }
 
     // process blossom
-    if(blossom->growBlossom(blossomLeaf, status, errorMessage) == false) {
+    if(blossom->growBlossom(blossomLeaf, status, error) == false) {
         return false;
     }
 
@@ -296,18 +296,18 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
 bool
 SakuraLangInterface::addTree(std::string id,
                              const std::string &treeContent,
-                             std::string &errorMessage)
+                             ErrorContainer &error)
 {
     std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
-    TreeItem* tree = m_parser->parseTreeString(id, treeContent, errorMessage);
+    TreeItem* tree = m_parser->parseTreeString(id, treeContent, error);
     if(tree == nullptr) {
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(tree, "", errorMessage) == false) {
+    if(m_validator->checkSakuraItem(tree, "", error) == false) {
         return false;
     }
 
@@ -362,20 +362,20 @@ SakuraLangInterface::addFile(const std::string &id,
 bool
 SakuraLangInterface::addResource(std::string id,
                                  const std::string &content,
-                                 std::string &errorMessage)
+                                 ErrorContainer &error)
 {
     std::lock_guard<std::mutex> guard(m_lock);
 
     // get initial tree-item
-    TreeItem* ressource = m_parser->parseTreeString(id, content, errorMessage);
+    TreeItem* ressource = m_parser->parseTreeString(id, content, error);
     if(ressource == nullptr)
     {
-        errorMessage = "Failed to parse " + id;
+        error.addMeesage("Failed to parse " + id);
         return false;
     }
 
     // validator parsed tree
-    if(m_validator->checkSakuraItem(ressource, "", errorMessage) == false) {
+    if(m_validator->checkSakuraItem(ressource, "", error) == false) {
         return false;
     }
 
@@ -448,10 +448,11 @@ SakuraLangInterface::runProcess(DataMap &result,
     const std::vector<std::string> failedInput = checkInput(tree->values, plan->items);
     if(failedInput.size() > 0)
     {
-        plan->errorMessage = "Following input-values are not valid for the initial tress:\n";
+        std::string message ="Following input-values are not valid for the initial tress:\n";
         for(const std::string& item : failedInput) {
-            plan->errorMessage += "    " + item + "\n";
+            message += "    " + item + "\n";
         }
+        plan->error.addMeesage(message);
 
         return false;
     }

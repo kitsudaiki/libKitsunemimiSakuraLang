@@ -19,7 +19,7 @@ public:
     DataMap items;
 
     bool success = true;
-    std::string errorMessage = "";
+    ErrorContainer error;
     BlossomStatus status;
 
     // shared counter-instance, which will be increased after the subtree was fully processed

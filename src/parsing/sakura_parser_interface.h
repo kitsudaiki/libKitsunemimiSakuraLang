@@ -28,6 +28,7 @@
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/common_items/table_item.h>
+#include <libKitsunemimiCommon/logger.h>
 
 #include <iostream>
 
@@ -48,7 +49,7 @@ public:
 
     TreeItem* parseTreeString(const std::string &name,
                               const std::string &content,
-                              std::string &errorMessage);
+                              ErrorContainer &error);
 
     // connection the the scanner and parser
     void scan_begin(const std::string &inputString);

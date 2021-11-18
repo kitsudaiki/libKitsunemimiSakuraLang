@@ -259,7 +259,7 @@ SakuraParserInterface::removeQuotes(const std::string &input)
 TreeItem*
 SakuraParserInterface::parseTreeString(const std::string &name,
                                        const std::string &content,
-                                       std::string &errorMessage)
+                                       ErrorContainer &error)
 {
     // parse
     const bool parserResult = parse(content, "");
@@ -267,7 +267,8 @@ SakuraParserInterface::parseTreeString(const std::string &name,
     if(parserResult == false)
     {
         TableItem errorOutput = getErrorMessage();
-        errorMessage = errorOutput.toString();
+        error.addMeesage(errorOutput.toString(200, true));
+        errorOutput.clearTable();
         return nullptr;
     }
 

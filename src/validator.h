@@ -25,6 +25,7 @@
 
 #include <string>
 #include <map>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
@@ -42,12 +43,12 @@ public:
 
     bool checkBlossomItem(BlossomItem &blossomItem,
                           const std::string &filePath,
-                          std::string &errorMessage);
+                          ErrorContainer &error);
 
     bool checkSakuraItem(SakuraItem* sakuraItem,
                          const std::string &filePath,
-                         std::string &errorMessage);
-    bool checkAllItems(std::string &errorMessage);
+                         ErrorContainer &error);
+    bool checkAllItems(ErrorContainer &error);
 };
 
 } // namespace Sakura

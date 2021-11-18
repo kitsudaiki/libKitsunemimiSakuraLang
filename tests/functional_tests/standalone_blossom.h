@@ -16,7 +16,7 @@ public:
     StandaloneBlossom(Interface_Test* sessionTest);
 
 protected:
-    bool runTask(BlossomLeaf &blossomLeaf, BlossomStatus &status, std::string &errorMessage);
+    bool runTask(BlossomLeaf &blossomLeaf, BlossomStatus &status, ErrorContainer &error);
 
 private:
     Interface_Test* m_sessionTest = nullptr;

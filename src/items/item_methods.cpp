@@ -49,7 +49,7 @@ using Kitsunemimi::Jinja2::Jinja2Converter;
 bool
 getProcessedItem(ValueItem &valueItem,
                  DataMap &insertValues,
-                 std::string &errorMessage)
+                 ErrorContainer &error)
 {
     for(const Kitsunemimi::Sakura::FunctionItem& functionItem : valueItem.functions)
     {
@@ -64,80 +64,80 @@ getProcessedItem(ValueItem &valueItem,
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-function requires 1 argument";
+                error.addMeesage(type + "-function requires 1 argument");
                 return false;
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+            if(fillValueItem(arg, insertValues, error) == false) {
                 return false;
             }
 
             tempItem = getValue(valueItem.item,
                                 arg.item->toValue(),
-                                errorMessage);
+                                error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "split")
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-function requires 1 argument";
+                error.addMeesage(type + "-function requires 1 argument");
                 return false;
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+            if(fillValueItem(arg, insertValues, error) == false) {
                 return false;
             }
 
             tempItem = splitValue(valueItem.item->toValue(),
                                   arg.item->toValue(),
-                                  errorMessage);
+                                  error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "contains")
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-function requires 1 argument";
+                error.addMeesage(type + "-function requires 1 argument");
                 return false;
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+            if(fillValueItem(arg, insertValues, error) == false) {
                 return false;
             }
 
             tempItem = containsValue(valueItem.item,
                                      arg.item->toValue(),
-                                     errorMessage);
+                                     error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "size")
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-function requires 0 arguments";
+                error.addMeesage(type + "-function requires 0 arguments");
                 return false;
             }
 
-            tempItem = sizeValue(valueItem.item, errorMessage);
+            tempItem = sizeValue(valueItem.item, error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "insert")
         {
             if(functionItem.arguments.size() != 2)
             {
-                errorMessage = type + "-function requires 2 arguments";
+                error.addMeesage(type + "-function requires 2 arguments");
                 return false;
             }
 
             ValueItem arg1 = functionItem.arguments.at(0);
             ValueItem arg2 = functionItem.arguments.at(1);
 
-            if(fillValueItem(arg1, insertValues, errorMessage) == false
-                    || fillValueItem(arg2, insertValues, errorMessage) == false)
+            if(fillValueItem(arg1, insertValues, error) == false
+                    || fillValueItem(arg2, insertValues, error) == false)
             {
                 return false;
             }
@@ -145,51 +145,47 @@ getProcessedItem(ValueItem &valueItem,
             tempItem = insertValue(valueItem.item->toMap(),
                                    arg1.item->toValue(),
                                    arg2.item,
-                                   errorMessage);
+                                   error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "append")
         {
             if(functionItem.arguments.size() != 1)
             {
-                errorMessage = type + "-function requires 1 argument";
+                error.addMeesage(type + "-function requires 1 argument");
                 return false;
             }
 
             ValueItem arg = functionItem.arguments.at(0);
-            if(fillValueItem(arg, insertValues, errorMessage) == false) {
+            if(fillValueItem(arg, insertValues, error) == false) {
                 return false;
             }
 
             tempItem = appendValue(valueItem.item->toArray(),
                                    arg.item,
-                                   errorMessage);
+                                   error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "clear_empty")
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-function requires 0 arguments";
+                error.addMeesage(type + "-function requires 0 arguments");
                 return false;
             }
 
-            tempItem = clearEmpty(valueItem.item->toArray(),
-                                  errorMessage);
-
+            tempItem = clearEmpty(valueItem.item->toArray(),  error);
         }
         //------------------------------------------------------------------------------------------
         if(type == "parse_json")
         {
             if(functionItem.arguments.size() != 0)
             {
-                errorMessage = type + "-function requires 0 arguments";
+                error.addMeesage(type + "-function requires 0 arguments");
                 return false;
             }
 
-            tempItem = parseJson(valueItem.item->toValue(),
-                                 errorMessage);
-
+            tempItem = parseJson(valueItem.item->toValue(), error);
         }
         //------------------------------------------------------------------------------------------
 
@@ -218,7 +214,7 @@ getProcessedItem(ValueItem &valueItem,
 bool
 fillIdentifierItem(ValueItem &valueItem,
                    DataMap &insertValues,
-                   std::string &errorMessage)
+                   ErrorContainer &error)
 {
     // replace identifier with value from the insert-values
     DataItem* tempItem = insertValues.get(valueItem.item->toString());
@@ -233,7 +229,7 @@ fillIdentifierItem(ValueItem &valueItem,
     valueItem.isIdentifier = false;
     valueItem.functions = valueItem.functions;
 
-    return getProcessedItem(valueItem, insertValues, errorMessage);
+    return getProcessedItem(valueItem, insertValues, error);
 }
 
 /**
@@ -249,7 +245,7 @@ fillIdentifierItem(ValueItem &valueItem,
 bool
 fillJinja2Template(ValueItem &valueItem,
                    DataMap &insertValues,
-                   std::string &errorMessage)
+                   ErrorContainer &error)
 {
     // convert jinja2-string
     Jinja2Converter* converter = Jinja2Converter::getInstance();
@@ -257,11 +253,11 @@ fillJinja2Template(ValueItem &valueItem,
     bool ret = converter->convert(convertResult,
                                   valueItem.item->toString(),
                                   &insertValues,
-                                  errorMessage);
+                                  error);
 
     if(ret == false)
     {
-        errorMessage = createError("jinja2-converter", errorMessage);
+        error.addMeesage("Failed to fill jinja2-template");
         return false;
     }
 
@@ -285,24 +281,24 @@ fillJinja2Template(ValueItem &valueItem,
 bool
 fillValueItem(ValueItem &valueItem,
               DataMap &insertValues,
-              std::string &errorMessage)
+              ErrorContainer &error)
 {
     // process and fill incoming string, which is interpreted as jinja2-template
     if(valueItem.isIdentifier == false
             && valueItem.type != ValueItem::OUTPUT_PAIR_TYPE
             && valueItem.item->isStringValue())
     {
-        return fillJinja2Template(valueItem, insertValues, errorMessage);
+        return fillJinja2Template(valueItem, insertValues, error);
     }
     // process and fill incoming identifier
     else if(valueItem.isIdentifier
             && valueItem.type != ValueItem::OUTPUT_PAIR_TYPE)
     {
-        return fillIdentifierItem(valueItem, insertValues, errorMessage);
+        return fillIdentifierItem(valueItem, insertValues, error);
     }
     else if(valueItem.type != ValueItem::OUTPUT_PAIR_TYPE)
     {
-        return getProcessedItem(valueItem, insertValues, errorMessage);
+        return getProcessedItem(valueItem, insertValues, error);
     }
 
     // if value is an int-value, output-value or something else, then do nothing with the value
@@ -323,7 +319,7 @@ fillValueItem(ValueItem &valueItem,
 bool
 fillInputValueItemMap(ValueItemMap &items,
                       DataMap &insertValues,
-                      std::string &errorMessage)
+                      ErrorContainer &error)
 {
     // fill values
     std::map<std::string, ValueItem>::iterator it;
@@ -331,7 +327,7 @@ fillInputValueItemMap(ValueItemMap &items,
         it != items.m_valueMap.end();
         it++)
     {
-        if(fillValueItem(it->second, insertValues, errorMessage) == false) {
+        if(fillValueItem(it->second, insertValues, error) == false) {
             return false;
         }
     }
@@ -342,7 +338,7 @@ fillInputValueItemMap(ValueItemMap &items,
         itChild != items.m_childMaps.end();
         itChild++)
     {
-        const bool ret = fillInputValueItemMap(*itChild->second, insertValues, errorMessage);
+        const bool ret = fillInputValueItemMap(*itChild->second, insertValues, error);
         if(ret == false) {
             return false;
         }
@@ -675,54 +671,6 @@ convertValueMap(DataMap &result, const ValueItemMap &input)
 /**
  * @brief create an error-output
  *
- * @param blossomItem blossom-item with information of the error-location
- * @param blossomPath file-path, which contains the blossom
- * @param errorLocation location where the error appeared
- * @param errorMessage message to describe, what was wrong
- * @param possibleSolution message with a possible solution to solve the problem
- */
-const std::string
-createError(const BlossomItem &blossomItem,
-            const std::string &blossomPath,
-            const std::string &errorLocation,
-            const std::string &errorMessage,
-            const std::string &possibleSolution)
-{
-    return createError(errorLocation,
-                       errorMessage,
-                       possibleSolution,
-                       blossomItem.blossomType,
-                       blossomItem.blossomGroupType,
-                       blossomItem.blossomName,
-                       blossomPath);
-}
-
-/**
- * @brief create an error-output
- *
- * @param blossomLeaf blossom-item with information of the error-location
- * @param errorLocation location where the error appeared
- * @param errorMessage message to describe, what was wrong
- * @param possibleSolution message with a possible solution to solve the problem
- */
-const std::string
-createError(const BlossomLeaf &blossomLeaf,
-            const std::string &errorLocation,
-            const std::string &errorMessage,
-            const std::string &possibleSolution)
-{
-    return createError(errorLocation,
-                       errorMessage,
-                       possibleSolution,
-                       blossomLeaf.blossomType,
-                       blossomLeaf.blossomGroupType,
-                       blossomLeaf.blossomName,
-                       blossomLeaf.blossomPath);
-}
-
-/**
- * @brief create an error-output
- *
  * @param errorLocation location where the error appeared
  * @param errorMessage message to describe, what was wrong
  * @param possibleSolution message with a possible solution to solve the problem
@@ -731,9 +679,9 @@ createError(const BlossomLeaf &blossomLeaf,
  * @param blossomName name of the blossom in the script to specify the location
  * @param blossomFilePath file-path, where the error had appeared
  */
-const std::string
+void
 createError(const std::string &errorLocation,
-            const std::string &errorMessage,
+            ErrorContainer &error,
             const std::string &possibleSolution,
             const std::string &blossomType,
             const std::string &blossomGroupType,
@@ -765,9 +713,55 @@ createError(const std::string &errorLocation,
         errorOutput.addRow(std::vector<std::string>{"blossom-file-path", blossomFilePath});
     }
 
-    errorOutput.addRow(std::vector<std::string>{"error-message", errorMessage});
+    error.addMeesage("Error in location: \n" + errorOutput.toString(200, true));
+}
 
-    return errorOutput.toString(200);
+/**
+ * @brief create an error-output
+ *
+ * @param blossomItem blossom-item with information of the error-location
+ * @param blossomPath file-path, which contains the blossom
+ * @param errorLocation location where the error appeared
+ * @param errorMessage message to describe, what was wrong
+ * @param possibleSolution message with a possible solution to solve the problem
+ */
+void
+createError(const BlossomItem &blossomItem,
+            const std::string &blossomPath,
+            const std::string &errorLocation,
+            ErrorContainer &error,
+            const std::string &possibleSolution)
+{
+    return createError(errorLocation,
+                       error,
+                       possibleSolution,
+                       blossomItem.blossomType,
+                       blossomItem.blossomGroupType,
+                       blossomItem.blossomName,
+                       blossomPath);
+}
+
+/**
+ * @brief create an error-output
+ *
+ * @param blossomLeaf blossom-item with information of the error-location
+ * @param errorLocation location where the error appeared
+ * @param errorMessage message to describe, what was wrong
+ * @param possibleSolution message with a possible solution to solve the problem
+ */
+void
+createError(const BlossomLeaf &blossomLeaf,
+            const std::string &errorLocation,
+            ErrorContainer &error,
+            const std::string &possibleSolution)
+{
+    return createError(errorLocation,
+                       error,
+                       possibleSolution,
+                       blossomLeaf.blossomType,
+                       blossomLeaf.blossomGroupType,
+                       blossomLeaf.blossomName,
+                       blossomLeaf.blossomPath);
 }
 
 } // namespace Sakura

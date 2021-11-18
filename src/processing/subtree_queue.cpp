@@ -106,12 +106,7 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
         for(GrowthPlan* child : plan->childPlans)
         {
             parent = child->parentPlan;
-            std::string errorMessage = "";
-            if(fillInputValueItemMap(parent->postAggregation, child->items, errorMessage) == false)
-            {
-                plan->errorMessage = createError("subtree-processing",
-                                                 "error processing post-aggregation of for-loop:\n"
-                                                 + errorMessage);
+            if(fillInputValueItemMap(parent->postAggregation, child->items, plan->error) == false) {
                 plan->success = false;
             }
         }

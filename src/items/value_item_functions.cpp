@@ -46,13 +46,13 @@ namespace Sakura
 DataItem*
 getValue(DataItem* item,
          DataValue* key,
-         std::string &errorMessage)
+         ErrorContainer &error)
 {
     // precheck
     if(item == nullptr
             || key == nullptr)
     {
-        errorMessage = "inputs for get-function are invalid";
+        error.addMeesage("inputs for get-function are invalid");
         return nullptr;
     }
 
@@ -62,7 +62,7 @@ getValue(DataItem* item,
         DataItem* resultItem = item->get(key->toString());
         if(resultItem == nullptr)
         {
-            errorMessage = "key " + key->toString() + " doesn't exist in the map";
+            error.addMeesage("key " + key->toString() + " doesn't exist in the map");
             return nullptr;
         }
 
@@ -75,19 +75,19 @@ getValue(DataItem* item,
         // check that value for access is an integer
         if(key->isIntValue() == false)
         {
-            errorMessage = "input for the get-function is not an integer-typed value-item";
+            error.addMeesage("input for the get-function is not an integer-typed value-item");
             return nullptr;
         }
         if(key->getLong() < 0)
         {
-            errorMessage = "input for the get-function has a negative value";
+            error.addMeesage("input for the get-function has a negative value");
             return nullptr;
         }
 
         const uint64_t pos = static_cast<uint64_t>(key->getLong());
         if(item->size() <= pos)
         {
-            errorMessage = "input value for get-function is too but for the array";
+            error.addMeesage("input value for get-function is too but for the array");
             return nullptr;
         }
 
@@ -95,7 +95,7 @@ getValue(DataItem* item,
         return resultItem;
     }
 
-    errorMessage = "item for calling the get-function is a value-item";
+    error.addMeesage("item for calling the get-function is a value-item");
     return nullptr;
 }
 
@@ -111,13 +111,13 @@ getValue(DataItem* item,
 DataArray*
 splitValue(DataValue* item,
            DataValue* delimiter,
-           std::string &errorMessage)
+           ErrorContainer &error)
 {
     // precheck
     if(item == nullptr
             || delimiter == nullptr)
     {
-        errorMessage = "inputs for split-function are invalid";
+        error.addMeesage("inputs for split-function are invalid");
         return nullptr;
     }
 
@@ -157,12 +157,12 @@ splitValue(DataValue* item,
  */
 DataValue*
 sizeValue(DataItem* item,
-          std::string &errorMessage)
+          ErrorContainer &error)
 {
     // precheck
     if(item == nullptr)
     {
-        errorMessage = "inputs for size-function are invalid";
+        error.addMeesage("inputs for size-function are invalid");
         return nullptr;
     }
 
@@ -184,13 +184,13 @@ sizeValue(DataItem* item,
 DataValue*
 containsValue(DataItem* item,
               DataValue* key,
-              std::string &errorMessage)
+              ErrorContainer &error)
 {
     // precheck
     if(item == nullptr
             || key == nullptr)
     {
-        errorMessage = "inputs for contains-function are invalid";
+        error.addMeesage("inputs for contains-function are invalid");
         return nullptr;
     }
 
@@ -243,19 +243,19 @@ containsValue(DataItem* item,
 DataArray*
 appendValue(DataArray* item,
             DataItem* value,
-            std::string &errorMessage)
+            ErrorContainer &error)
 {
     // precheck
     if(item == nullptr
             || value == nullptr)
     {
-        errorMessage = "inputs for append-function are invalid";
+        error.addMeesage("inputs for append-function are invalid");
         return nullptr;
     }
 
     if(item->isArray() == false)
     {
-        errorMessage = "item, where the item should be added, is not an array-item";
+        error.addMeesage("item, where the item should be added, is not an array-item");
         return nullptr;
     }
 
@@ -280,20 +280,20 @@ DataMap*
 insertValue(DataMap* item,
             DataValue* key,
             DataItem* value,
-            std::string &errorMessage)
+            ErrorContainer &error)
 {
     // precheck
     if(item == nullptr
             || key == nullptr
             || value == nullptr)
     {
-        errorMessage = "inputs for insert-function are invalid";
+        error.addMeesage("inputs for insert-function are invalid");
         return nullptr;
     }
 
     if(item->isMap() == false)
     {
-        errorMessage = "item, where the new key-value-pair should be added, is not a map-item";
+        error.addMeesage("item, where the new key-value-pair should be added, is not a map-item");
         return nullptr;
     }
 
@@ -316,18 +316,18 @@ insertValue(DataMap* item,
  */
 DataArray*
 clearEmpty(DataArray* item,
-           std::string &errorMessage)
+           ErrorContainer &error)
 {
     // precheck
     if(item == nullptr)
     {
-        errorMessage = "inputs for clear-empty-function are invalid";
+        error.addMeesage("inputs for clear-empty-function are invalid");
         return nullptr;
     }
 
     if(item->isArray() == false)
     {
-        errorMessage = "item, which should be cleared, is not an array-item";
+        error.addMeesage("item, which should be cleared, is not an array-item");
         return nullptr;
     }
 
@@ -355,18 +355,18 @@ clearEmpty(DataArray* item,
  */
 DataItem*
 parseJson(DataValue* intput,
-          std::string &errorMessage)
+          ErrorContainer &error)
 {
     // precheck
     if(intput == nullptr)
     {
-        errorMessage = "inputs for size-function are invalid";
+        error.addMeesage("inputs for size-function are invalid");
         return nullptr;
     }
 
     // try to parse json
     Kitsunemimi::Json::JsonItem jsonItem;
-    if(jsonItem.parse(intput->toString(), errorMessage))
+    if(jsonItem.parse(intput->toString(), error))
     {
         DataItem* resultItem = jsonItem.getItemContent()->copy();
         return resultItem;
