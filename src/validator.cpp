@@ -48,7 +48,7 @@ Validator::~Validator() {}
  *
  * @param blossomItem blossom-item with the values, which should be validated
  * @param filePath path of the file, which will be actually checked
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if check successful, else false
  */
@@ -193,7 +193,7 @@ Validator::checkSakuraItem(SakuraItem* sakuraItem,
 /**
  * @brief check all blossom-items of all parsed trees
  *
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if check successful, else false
  */

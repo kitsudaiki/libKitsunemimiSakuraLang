@@ -92,7 +92,8 @@ SakuraLangInterface::~SakuraLangInterface()
  * @param map with resulting items
  * @param id id of the tree to trigger
  * @param initialValues input-values for the tree
- * @param errorMessage reference for error-message
+ * @param status reference for status-output
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -135,11 +136,12 @@ SakuraLangInterface::triggerTree(DataMap &result,
 /**
  * @brief trigger existing blossom
  *
- * @param map with resulting items
+ * @param result map with resulting items
  * @param blossomName id of the blossom to trigger
  * @param blossomGroupName id of the group of the blossom to trigger
  * @param initialValues input-values for the tree
- * @param errorMessage reference for error-message
+ * @param status reference for status-output
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -289,7 +291,7 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
  *
  * @param id id of the new tree
  * @param treeContent content of the new tree, which should be parsed
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -355,7 +357,7 @@ SakuraLangInterface::addFile(const std::string &id,
  *
  * @param id id of the new ressource
  * @param content content of the new ressource, which should be parsed
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -390,7 +392,7 @@ SakuraLangInterface::addResource(std::string id,
  * @brief simple read all files within a directory and register by id instead of path
  *
  * @param directoryPath path to directory with sakura-files to read
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -434,7 +436,6 @@ SakuraLangInterface::getFile(const std::string &id)
  * @param item subtree to spawn
  * @param initialValues initial set of values to override the same named values within the initial
  *                      called tree-item
- * @param errorMessage reference for error-message
  *
  * @return true, if proocess was successful, else false
  */

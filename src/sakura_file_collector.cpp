@@ -46,7 +46,7 @@ SakuraFileCollector::SakuraFileCollector(SakuraLangInterface* interface)
  * @brief simple read all files within a directory and register by id instead of path
  *
  * @param directoryPath path to directory with sakura-files to read
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -113,8 +113,9 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
 /**
  * @brief collect files within a directory
  *
+ * @param rootPath root-path of the file-collecting
  * @param dirPath directory-path where to search for files
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -167,7 +168,7 @@ SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
  *
  * @param rootPath initial path of the file collecting process
  * @param dirPath directory-path where to search for templates
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -195,7 +196,7 @@ SakuraFileCollector::collectTemplates(const std::filesystem::path &rootPath,
  * @param rootPath initial path of the file collecting process
  * @param directory directory-path to iterate over
  * @param type type to search for
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */

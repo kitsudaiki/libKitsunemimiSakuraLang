@@ -113,9 +113,8 @@ SakuraThread::run()
 /**
  * @brief central method of the thread to process the current part of the execution-tree
  *
+ * @param plan plan with all information of the current process
  * @param sakuraItem subtree, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -200,9 +199,8 @@ SakuraThread::processSakuraItem(GrowthPlan* plan,
 /**
  * @brief process single blossom
  *
+ * @param plan plan with all information of the current process
  * @param blossomItem item with all information for the blossom
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -266,9 +264,8 @@ SakuraThread::processBlossom(GrowthPlan* plan,
 /**
  * @brief process a group of blossoms
  *
+ * @param plan plan with all information of the current process
  * @param blossomGroupItem object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -334,8 +331,8 @@ SakuraThread::processBlossomGroup(GrowthPlan* plan,
 /**
  * @brief process a new tree
  *
+ * @param plan plan with all information of the current process
  * @param treeItem object, which should be processed
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -372,9 +369,8 @@ SakuraThread::processTree(GrowthPlan* plan,
 /**
  * @brief process a new subtree
  *
+ * @param plan plan with all information of the current process
  * @param subtreeItem object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -408,9 +404,8 @@ SakuraThread::processSubtree(GrowthPlan* plan,
 /**
  * @brief process a if-else-condition
  *
+ * @param plan plan with all information of the current process
  * @param ifCondition object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -470,9 +465,8 @@ SakuraThread::processIf(GrowthPlan* plan,
 /**
  * @brief process a for-each-loop
  *
+ * @param plan plan with all information of the current process
  * @param forEachItem object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -516,9 +510,8 @@ SakuraThread::processForEach(GrowthPlan* plan,
 /**
  * @brief process a for-loop
  *
+ * @param plan plan with all information of the current process
  * @param forItem object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -573,9 +566,8 @@ SakuraThread::processFor(GrowthPlan* plan,
 /**
  * @brief process sequentiall part
  *
+ * @param plan plan with all information of the current process
  * @param subtree object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -596,9 +588,8 @@ SakuraThread::processSequeniellPart(GrowthPlan* plan,
 /**
  * @brief process parallel part via worker-threads
  *
+ * @param plan plan with all information of the current process
  * @param parallelPart object, which should be processed
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true if successful, else false
  */
@@ -616,10 +607,9 @@ SakuraThread::processParallelPart(GrowthPlan* plan,
 /**
  * @brief internal processing of tree-item
  *
+ * @param plan plan with all information of the current process
  * @param newSubtree tree-item to call
  * @param values input-values
- * @param filePath of the current file
- * @param errorMessage reference for error-message
  *
  * @return true, if check successful, else false
  */
@@ -665,13 +655,12 @@ SakuraThread::runSubtreeCall(GrowthPlan* plan,
 /**
  * @brief run a normal loop
  *
+ * @param plan plan with all information of the current process
  * @param loopContent content of the loop, which should be executed multiple times
  * @param values input-values
- * @param filePath of the current file
  * @param tempVarName temporary variable name for usage within the loop to forward the object
  *                    over which is generated of the counter-variable
  * @param array nullptr if iterate over a range or pointer to array-item to iterate over this array
- * @param errorMessage reference for error-message
  * @param endPos start-position in the array or of the counter
  * @param startPos start-position in the array or of the counter
  *

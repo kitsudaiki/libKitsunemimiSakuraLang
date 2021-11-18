@@ -52,14 +52,10 @@ SubtreeQueue::addGrowthPlan(GrowthPlan* newObject)
 /**
  * @brief run a parallel loop
  *
+ * @param plan plan with all information of the current process
  * @param subtree subtree, which should be executed multiple times by multiple threads
- * @param postProcessing post-aggregation information
- * @param filePath path of the file, where the subtree belongs to
- * @param hierarchy actual hierarchy for terminal output
- * @param parentValues data-map with parent-values
  * @param tempVarName loop-internal variable
  * @param array data-array in case of an iterator-loop, else nullptr
- * @param errorMessage reference for error-message
  * @param endPos end position in array or counter end
  * @param startPos start position in array or counter start
  *
@@ -128,12 +124,8 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
 /**
  * @brief run multiple different subtrees in parallel threads
  *
- * @param resultingItems map for resulting items
+ * @param plan plan with all information of the current process
  * @param childs vector with subtrees, where each subtree should be executed by another thread
- * @param filePath path of the file, where the subtree belongs to
- * @param hierarchy actual hierarchy for terminal output
- * @param parentValues data-map with parent-values
- * @param errorMessage reference for error-message
  *
  * @return true, if successful, else false
  */
@@ -205,7 +197,6 @@ SubtreeQueue::getGrowthPlan()
  * @brief wait until all spawned tasks are finished
  *
  * @param activeCounter pointer to the active-counter, which was given each spawned thread
- * @param errorMessage reference for error-message
  *
  * @return true, if successful, else false
  */

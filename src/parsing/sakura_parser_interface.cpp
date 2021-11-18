@@ -252,7 +252,7 @@ SakuraParserInterface::removeQuotes(const std::string &input)
  *
  * @param name name for identification in debug and error-output
  * @param content string to parse
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return parsed tree-item, if successfule, else nullptr
  */

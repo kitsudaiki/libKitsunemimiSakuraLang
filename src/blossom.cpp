@@ -99,7 +99,8 @@ Blossom::registerField(const std::string &name,
  * @brief execute blossom
  *
  * @param blossomLeaf leaf-object for values-handling while processing
- * @param errorMessage reference for error-message
+ * @param status reference for status-output
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -128,7 +129,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @brief validate given input with the required and allowed values of the selected blossom
  *
  * @param input given input values
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -186,7 +187,7 @@ Blossom::validateInput(const DataMap &input,
  *
  * @param blossomItem blossom-item with given values
  * @param filePath file-path where the blossom belongs to, only used for error-output
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */

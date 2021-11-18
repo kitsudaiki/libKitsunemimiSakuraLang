@@ -41,7 +41,7 @@ using Kitsunemimi::Jinja2::Jinja2Converter;
  *
  * @param valueItem value-item, which should be processed
  * @param insertValues data-map with information to fill into the jinja2-string
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return false, if something went wrong while processing and filling, else true. If false
  *         an error-message was sent directly into the sakura-root-object
@@ -206,7 +206,7 @@ getProcessedItem(ValueItem &valueItem,
  *
  * @param valueItem value-item, which should be processed
  * @param insertValues data-map with information to fill into the jinja2-string
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return false, if something went wrong while processing and filling, else true. If false
  *         an error-message was sent directly into the sakura-root-object
@@ -237,7 +237,7 @@ fillIdentifierItem(ValueItem &valueItem,
  *
  * @param original value-item wiht string-content, which shuold be handled as jinja2-string
  * @param insertValues data-map with information to fill into the jinja2-string
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return false, if something went wrong while processing and filling, else true. If false
  *         an error-message was sent directly into the sakura-root-object
@@ -273,7 +273,7 @@ fillJinja2Template(ValueItem &valueItem,
  *
  * @param valueItem value-item, which should be processed and filled
  * @param insertValues data-map with the values to fill the value-item
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return false, if something went wrong while processing and filling, else true. If false
  *         an error-message was sent directly into the sakura-root-object
@@ -311,7 +311,7 @@ fillValueItem(ValueItem &valueItem,
  *
  * @param items value-item-map, which should be processed and filled
  * @param insertValues data-map with the values to fill the value-item-map
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return false, if something went wrong while processing and filling, else true. If false
  *         an error-message was sent directly into the sakura-root-object
@@ -672,7 +672,7 @@ convertValueMap(DataMap &result, const ValueItemMap &input)
  * @brief create an error-output
  *
  * @param errorLocation location where the error appeared
- * @param errorMessage message to describe, what was wrong
+ * @param error reference for error-output
  * @param possibleSolution message with a possible solution to solve the problem
  * @param blossomType type of the blossom, where the error appeared
  * @param blossomGroup type of the blossom-group, where the error appeared

@@ -39,7 +39,7 @@ namespace Sakura
  *
  * @param item map- or array-item
  * @param key key in map or position in array of the requested object
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return requested value, if found, else nullptr
  */
@@ -104,7 +104,7 @@ getValue(DataItem* item,
  *
  * @param item value-item, which should be splited
  * @param delimiter delimiter as string-value to identify the positions, where to split
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return array-item with the splitted content
  */
@@ -151,7 +151,7 @@ splitValue(DataValue* item,
  * @brief sizeValue get the size of an item
  *
  * @param item data-item, which should be checked
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return data-item of int-type with the size of the incoming item as value
  */
@@ -177,7 +177,7 @@ sizeValue(DataItem* item,
  *
  * @param item data-item, which should be checked
  * @param key value, which should be searched in the item
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return data-value with true, if key was found, else data-value with false
  */
@@ -236,7 +236,7 @@ containsValue(DataItem* item,
  *
  * @param item array-item, which shluld be extended
  * @param value data-item, which should be added
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return copy of the original array-item together with the new added object
  */
@@ -272,7 +272,7 @@ appendValue(DataArray* item,
  * @param item pointer to the map-item, where the new pair should be added
  * @param key key of the new pair
  * @param value value of the new pair
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return copy of the original map-item together with the new added pair
  */
@@ -310,7 +310,7 @@ insertValue(DataMap* item,
  * @brief delete all empty entries from an array-item
  *
  * @param item array-item, which shluld be cleared
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return copy of the original array-item together with the new added object
  */
@@ -349,7 +349,7 @@ clearEmpty(DataArray* item,
  * @brief parse a json-formated string into a data-item
  *
  * @param intput input-value with the json-formated content
- * @param errorMessage error-message for output
+ * @param error reference for error-output
  *
  * @return nullptr, if failed, else a data-item with the parsed content
  */
