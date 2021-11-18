@@ -24,6 +24,7 @@
 #define KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
@@ -71,7 +72,7 @@ public:
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
                          BlossomStatus &status,
-                         std::string &errorMessage) = 0;
+                         ErrorContainer &error) = 0;
     bool allowUnmatched = false;
 
     bool registerInputField(const std::string &name, const bool required);
@@ -109,12 +110,12 @@ private:
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      BlossomStatus &status,
-                     std::string &errorMessage);
+                     ErrorContainer &error);
     bool validateInput(const DataMap &input,
-                       std::string &errorMessage);
+                       ErrorContainer &error);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
-                       std::string &errorMessage);
+                       ErrorContainer &error);
     void getCompareMap(const ValueItemMap &valueMap,
                        std::map<std::string, IO_ValueType> &compareMap);
 };

@@ -67,13 +67,13 @@ public:
                      const std::string &id,
                      const DataMap &initialValues,
                      BlossomStatus &status,
-                     std::string &errorMessage);
+                     ErrorContainer &error);
     bool triggerBlossom(DataMap& result,
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
                         const DataMap &initialValues,
                         BlossomStatus &status,
-                        std::string &errorMessage);
+                        ErrorContainer &error);
 
     bool readFilesInDir(const std::string &directoryPath,
                         ErrorContainer &error);
@@ -90,14 +90,14 @@ public:
     // add
     bool addTree(std::string id,
                  const std::string &treeContent,
-                 std::string &errorMessage);
+                 ErrorContainer &error);
     bool addTemplate(const std::string &id,
                      const std::string &templateContent);
     bool addFile(const std::string &id,
                  Kitsunemimi::DataBuffer* data);
     bool addResource(std::string id,
                      const std::string &content,
-                     std::string &errorMessage);
+                     ErrorContainer &error);
 
     // getter
     const std::string getTemplate(const std::string &id);

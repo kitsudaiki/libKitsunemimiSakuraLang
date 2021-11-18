@@ -99,25 +99,26 @@ Blossom::registerField(const std::string &name,
  * @brief execute blossom
  *
  * @param blossomLeaf leaf-object for values-handling while processing
- * @param errorMessage reference for error-message
+ * @param status reference for status-output
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
 bool
 Blossom::growBlossom(BlossomLeaf &blossomLeaf,
                      BlossomStatus &status,
-                     std::string &errorMessage)
+                     ErrorContainer &error)
 {
     blossomLeaf.output.clear();
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
-    const bool ret = runTask(blossomLeaf, status, errorMessage);
+    const bool ret = runTask(blossomLeaf, status, error);
 
     // handle result
     if(ret == false)
     {
-        errorMessage = createError(blossomLeaf, "blossom execute", errorMessage);
+        createError(blossomLeaf, "blossom execute", error);
         return false;
     }
 
@@ -128,13 +129,13 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @brief validate given input with the required and allowed values of the selected blossom
  *
  * @param input given input values
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
 bool
 Blossom::validateInput(const DataMap &input,
-                       std::string &errorMessage)
+                       ErrorContainer &error)
 {
     if(allowUnmatched == false)
     {
@@ -149,10 +150,9 @@ Blossom::validateInput(const DataMap &input,
             if(defIt == validationMap.end())
             {
                 // build error-output
-                const std::string message = "variable \""
-                                            + compareIt->first
-                                            + "\" is not in the list of allowed keys";
-                errorMessage = createError("validator", message);
+                error.addMeesage("Validation failed, because variable \""
+                                 + compareIt->first
+                                 + "\" is not in the list of allowed keys");
                 return false;
             }
         }
@@ -171,10 +171,9 @@ Blossom::validateInput(const DataMap &input,
             const bool ret = input.contains(defIt->first);
             if(ret == false)
             {
-                const std::string message = "variable \""
-                                            + defIt->first
-                                            + "\" is required, but is not set.";
-                errorMessage = createError("validator", message);
+                error.addMeesage("Validation failed, because variable \""
+                                 + defIt->first
+                                 + "\" is required, but is not set.");
                 return false;
             }
         }
@@ -188,14 +187,14 @@ Blossom::validateInput(const DataMap &input,
  *
  * @param blossomItem blossom-item with given values
  * @param filePath file-path where the blossom belongs to, only used for error-output
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
 bool
 Blossom::validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
-                       std::string &errorMessage)
+                       ErrorContainer &error)
 {
     std::map<std::string, IO_ValueType> compareMap;
     getCompareMap(blossomItem.values, compareMap);
@@ -213,13 +212,10 @@ Blossom::validateInput(BlossomItem &blossomItem,
             if(defIt == validationMap.end())
             {
                 // build error-output
-                const std::string message = "variable \""
-                                            + compareIt->first
-                                            + "\" is not in the list of allowed keys";
-                errorMessage = createError(blossomItem,
-                                           filePath,
-                                           "validator",
-                                           message);
+                error.addMeesage("variable \""
+                                 + compareIt->first
+                                 + "\" is not in the list of allowed keys");
+                createError(blossomItem, filePath, "validator", error);
                 return false;
             }
         }
@@ -240,25 +236,19 @@ Blossom::validateInput(BlossomItem &blossomItem,
             {
                 if(defIt->second.type != compareIt->second)
                 {
-                    const std::string message = "variable \""
-                                                + defIt->first
-                                                + "\" has not the correct input/output type";
-                    errorMessage = createError(blossomItem,
-                                               filePath,
-                                               "validator",
-                                               message);
+                    error.addMeesage("variable \""
+                                     + defIt->first
+                                     + "\" has not the correct input/output type");
+                    createError(blossomItem, filePath, "validator", error);
                     return false;
                 }
             }
             else
             {
-                const std::string message = "variable \""
-                                            + defIt->first
-                                            + "\" is required, but is not set.";
-                errorMessage = createError(blossomItem,
-                                           filePath,
-                                           "validator",
-                                           message);
+                error.addMeesage("variable \""
+                                 + defIt->first
+                                 + "\" is required, but is not set.");
+                createError(blossomItem, filePath, "validator", error);
                 return false;
             }
         }

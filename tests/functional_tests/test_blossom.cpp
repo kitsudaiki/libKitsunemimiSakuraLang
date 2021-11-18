@@ -20,7 +20,7 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
 bool
 TestBlossom::runTask(BlossomLeaf &blossomLeaf,
                      BlossomStatus &status,
-                     std::string &errorMessage)
+                     ErrorContainer &error)
 {
     LOG_DEBUG("TestBlossom");
     DataValue* value = blossomLeaf.input.get("input")->toValue();
@@ -32,8 +32,8 @@ TestBlossom::runTask(BlossomLeaf &blossomLeaf,
         if(shouldFail)
         {
             status.statusCode = 1337;
-            errorMessage = "successfully failed";
-            status.errorMessage = errorMessage;
+            error.addMeesage("successfully failed");
+            status.errorMessage = error.toString();
             return false;
         }
     }

@@ -24,6 +24,7 @@
 #define KITSUNEMIMI_SAKURA_LANG_VALUE_ITEM_FUNCTIONS_H
 
 #include <string>
+#include <libKitsunemimiCommon/logger.h>
 
 namespace Kitsunemimi
 {
@@ -37,26 +38,26 @@ namespace Sakura
 
 DataItem* getValue(DataItem* item,
                    DataValue* key,
-                   std::string &errorMessage);
+                   ErrorContainer &error);
 DataArray* splitValue(DataValue* item,
                       DataValue* delimiter,
-                      std::string &errorMessage);
+                      ErrorContainer &error);
 DataValue* sizeValue(DataItem* item,
-                     std::string &errorMessage);
+                     ErrorContainer &error);
 DataValue* containsValue(DataItem* item,
                          DataValue* key,
-                         std::string &errorMessage);
+                         ErrorContainer &error);
 DataArray* appendValue(DataArray* item,
                        DataItem* value,
-                       std::string &errorMessage);
+                       ErrorContainer &error);
 DataMap* insertValue(DataMap* item,
                      DataValue* key,
                      DataItem* value,
-                     std::string &errorMessage);
+                     ErrorContainer &error);
 DataArray* clearEmpty(DataArray* item,
-                      std::string &errorMessage);
+                      ErrorContainer &error);
 DataItem* parseJson(DataValue* intput,
-                    std::string &errorMessage);
+                    ErrorContainer &error);
 
 } // namespace Sakura
 } // namespace Kitsunemimi

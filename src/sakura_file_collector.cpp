@@ -46,7 +46,7 @@ SakuraFileCollector::SakuraFileCollector(SakuraLangInterface* interface)
  * @brief simple read all files within a directory and register by id instead of path
  *
  * @param directoryPath path to directory with sakura-files to read
- * @param errorMessage reference for error-message
+ * @param error reference for error-output
  *
  * @return true, if successfule, else false
  */
@@ -59,9 +59,9 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     // precheck
     if(std::filesystem::is_directory(rootPath) == false)
     {
-        error.errorMessage = "while reading sakura-files, "
-                             "because path doesn't exist or is not a directory: "
-                             + rootPath.string();
+        error.addMeesage("while reading sakura-files, "
+                         "because path doesn't exist or is not a directory: "
+                         + rootPath.string());
         LOG_ERROR(error);
         return false;
     }
@@ -71,7 +71,7 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     std::vector<std::string> sakuraFiles;
     if(Kitsunemimi::listFiles(sakuraFiles, directoryPath) == false)
     {
-        error.errorMessage = "path with sakura-files doesn't exist: " + directoryPath;
+        error.addMeesage( "path with sakura-files doesn't exist: " + directoryPath);
         LOG_ERROR(error);
         return false;
     }
@@ -80,17 +80,16 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
     for(const std::string &filePath : sakuraFiles)
     {
         std::string content = "";
-        std::string subError = "";
-        if(Kitsunemimi::readFile(content, filePath, subError) == false)
+        if(Kitsunemimi::readFile(content, filePath, error) == false)
         {
-            error.errorMessage = "reading sakura-files failed with error: " + subError;
+            error.addMeesage("reading sakura-files failed");
             LOG_ERROR(error);
             return false;
         }
 
-        if(m_interface->addTree("", content, subError) == false)
+        if(m_interface->addTree("", content, error) == false)
         {
-            error.errorMessage = "parsing sakura-files failed with error: " + subError;
+            error.addMeesage("parsing sakura-files failed");
             LOG_ERROR(error);
             return false;
         }
@@ -114,8 +113,9 @@ SakuraFileCollector::readFilesInDir(const std::string &directoryPath,
 /**
  * @brief collect files within a directory
  *
+ * @param rootPath root-path of the file-collecting
  * @param dirPath directory-path where to search for files
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -168,7 +168,7 @@ SakuraFileCollector::collectResources(const std::filesystem::path &rootPath,
  *
  * @param rootPath initial path of the file collecting process
  * @param dirPath directory-path where to search for templates
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -196,7 +196,7 @@ SakuraFileCollector::collectTemplates(const std::filesystem::path &rootPath,
  * @param rootPath initial path of the file collecting process
  * @param directory directory-path to iterate over
  * @param type type to search for
- * @param errorMessage reference to error-message
+ * @param error reference for error-output
  *
  * @return true, if successful, else false
  */
@@ -233,14 +233,14 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
 
                 if(ret == false)
                 {
-                    error.errorMessage = "can not read file " + itr->path().string();
+                    error.addMeesage("can not read file " + itr->path().string());
                     LOG_ERROR(error);
                     return false;
                 }
 
                 if(m_interface->addFile(relPath.string(), buffer) == false)
                 {
-                    error.errorMessage = "file with the id '" + relPath.string() + "'already used";
+                    error.addMeesage("file with the id '" + relPath.string() + "'already used");
                     LOG_ERROR(error);
                     return false;
                 }
@@ -250,18 +250,17 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             {
                 // read resource-file
                 std::string fileContent = "";
-                std::string subError = "";
-                bool ret = Kitsunemimi::readFile(fileContent,  itr->path().string(), subError);
+                bool ret = Kitsunemimi::readFile(fileContent,  itr->path().string(), error);
                 if(ret == false)
                 {
-                    error.errorMessage = "while reading ressource-files got error: " + subError;
+                    error.addMeesage("Error while reading ressource-files");
                     LOG_ERROR(error);
                     return false;
                 }
 
-                if(m_interface->addResource("", fileContent, subError) == false)
+                if(m_interface->addResource("", fileContent, error) == false)
                 {
-                    error.errorMessage = "while parsing ressource-files got error: " + subError;
+                    error.addMeesage("Error while parsing ressource-files");
                     LOG_ERROR(error);
                     return false;
                 }
@@ -270,20 +269,19 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             if(type == "templates")
             {
                 std::string fileContent = "";
-                std::string subError = "";
-                bool ret = Kitsunemimi::readFile(fileContent, itr->path().string(), subError);
+                bool ret = Kitsunemimi::readFile(fileContent, itr->path().string(), error);
                 if(ret == false)
                 {
-                    error.errorMessage = "while reading template-files got error: " + subError;
+                    error.addMeesage("Error while reading template-files");
                     LOG_ERROR(error);
                     return false;
                 }
 
                 if(m_interface->addTemplate(relPath.string(), fileContent) == false)
                 {
-                    error.errorMessage = "template-file with the id '"
-                                         + relPath.string()
-                                         + "'already used";
+                    error.addMeesage("template-file with the id '"
+                                     + relPath.string()
+                                     + "'already used");
                     LOG_ERROR(error);
                     return false;
                 }

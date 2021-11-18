@@ -32,7 +32,7 @@ GrowthPlan::getErrorResult()
     {
         if(child->success == false)
         {
-            errorMessage = child->errorMessage;
+            error = child->error;
             status = child->status;
             success = child->success;
         }

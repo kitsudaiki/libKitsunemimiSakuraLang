@@ -27,6 +27,7 @@
 #include <string>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/logger.h>
 
 #include <items/sakura_items.h>
 
@@ -40,21 +41,21 @@ using Kitsunemimi::DataMap;
 
 bool getProcessedItem(ValueItem &valueItem,
                       DataMap &insertValues,
-                      std::string &errorMessage);
+                      ErrorContainer &error);
 
 // fill functions
 bool fillIdentifierItem(ValueItem &valueItem,
                         DataMap &insertValues,
-                        std::string &errorMessage);
+                        ErrorContainer &error);
 bool fillJinja2Template(ValueItem &valueItem,
                         DataMap &insertValues,
-                        std::string &errorMessage);
+                        ErrorContainer &error);
 bool fillValueItem(ValueItem &valueItem,
                    DataMap &insertValues,
-                   std::string &errorMessage);
+                   ErrorContainer &error);
 bool fillInputValueItemMap(ValueItemMap &items,
                            DataMap &insertValues,
-                           std::string &errorMessage);
+                           ErrorContainer &error);
 bool fillOutputValueItemMap(ValueItemMap &items,
                             DataMap &output);
 
@@ -87,22 +88,15 @@ void convertValueMap(DataMap &result,
                      const ValueItemMap &input);
 
 // error-output
-const std::string createError(const BlossomItem &blossomItem,
-                              const std::string &blossomPath,
-                              const std::string &errorLocation,
-                              const std::string &errorMessage,
-                              const std::string &possibleSolution = "");
-const std::string createError(const BlossomLeaf &blossomLeaf,
-                              const std::string &errorLocation,
-                              const std::string &errorMessage,
-                              const std::string &possibleSolution = "");
-const std::string createError(const std::string &errorLocation,
-                              const std::string &errorMessage,
-                              const std::string &possibleSolution = "",
-                              const std::string &blossomType = "",
-                              const std::string &blossomGroupType = "",
-                              const std::string &blossomName = "",
-                              const std::string &blossomFilePath = "");
+void createError(const BlossomItem &blossomItem,
+                 const std::string &blossomPath,
+                 const std::string &errorLocation,
+                 ErrorContainer &error,
+                 const std::string &possibleSolution = "");
+void createError(const BlossomLeaf &blossomLeaf,
+                 const std::string &errorLocation,
+                 ErrorContainer &error,
+                 const std::string &possibleSolution = "");
 
 } // namespace Sakura
 } // namespace Kitsunemimi

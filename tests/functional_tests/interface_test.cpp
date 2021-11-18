@@ -90,13 +90,13 @@ void
 Interface_Test::addAndGet_test()
 {
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
-    std::string errorMessage = "";
+    ErrorContainer error;
 
     // test addTree
-    TEST_EQUAL(interface->addTree("test-tree", getTestTree(), errorMessage), true);
-    std::cout<<"errorMessage: "<<errorMessage<<std::endl;
+    TEST_EQUAL(interface->addTree("test-tree", getTestTree(), error), true);
+    std::cout<<"errorMessage: "<<error.toString()<<std::endl;
 
-    TEST_EQUAL(interface->addTree("test-tree", getTestTree(), errorMessage), false);
+    TEST_EQUAL(interface->addTree("test-tree", getTestTree(), error), false);
 
     // test addTemplate
     TEST_EQUAL(interface->addTemplate("test-template", getTestTemplate()), true);
@@ -128,7 +128,7 @@ Interface_Test::addAndGet_test()
 void
 Interface_Test::runAndTriggerTree_test()
 {
-    std::string errorMessage = "";
+    ErrorContainer error;
     DataMap inputValues;
     inputValues.insert("input", new DataValue(42));
     inputValues.insert("test_output", new DataValue(""));
@@ -137,13 +137,12 @@ Interface_Test::runAndTriggerTree_test()
     //----------------------------------------------------------------------------------------------
     // positiv test
     DataMap result;
-    errorMessage = "";
     BlossomStatus status;
     TEST_EQUAL(interface->triggerTree(result,
                                       "test-tree",
                                       inputValues,
                                       status,
-                                      errorMessage), true);
+                                      error), true);
     TEST_EQUAL(result.size(), 1);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
@@ -155,38 +154,42 @@ Interface_Test::runAndTriggerTree_test()
 
     //----------------------------------------------------------------------------------------------
     // test non-existing tree
-    errorMessage = "";
-    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test invalid input-values
     DataMap falseMap;
-    errorMessage = "";
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test fail within blossom
-    errorMessage = "";
+    error._errorMessages.clear();
     inputValues.insert("should_fail", new DataValue(true));
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, status, errorMessage), false);
+    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, status, error), false);
     TEST_EQUAL(status.statusCode, 1337);
-    TEST_EQUAL(status.errorMessage, "successfully failed");
+    const std::string expectedStatus =
+            "+---------------------+---------------------+\n"
+            "| Error-Message Nr. 0 | successfully failed |\n"
+            "+---------------------+---------------------+\n";
+    TEST_EQUAL(status.errorMessage, expectedStatus);
 
-    const std::string expectedError = "+-------------------+---------------------+\n"
-                                      "| Field             | Value               |\n"
-                                      "+===================+=====================+\n"
-                                      "| location          | blossom execute     |\n"
-                                      "+-------------------+---------------------+\n"
-                                      "| blossom-file-path | /test-tree          |\n"
-                                      "+-------------------+---------------------+\n"
-                                      "| error-message     | successfully failed |\n"
-                                      "+-------------------+---------------------+\n";
+    const std::string expectedError =
+            "+---------------------+-----------------------------------------+\n"
+            "| Error-Message Nr. 1 | Error in location:                      |\n"
+            "|                     | +-------------------+-----------------+ |\n"
+            "|                     | | location          | blossom execute | |\n"
+            "|                     | +-------------------+-----------------+ |\n"
+            "|                     | | blossom-file-path | /test-tree      | |\n"
+            "|                     | +-------------------+-----------------+ |\n"
+            "+---------------------+-----------------------------------------+\n"
+            "| Error-Message Nr. 0 | successfully failed                     |\n"
+            "+---------------------+-----------------------------------------+\n";
 
-    TEST_EQUAL(errorMessage, expectedError);
+    TEST_EQUAL(error.toString(), expectedError);
 }
 
 /**
@@ -195,7 +198,7 @@ Interface_Test::runAndTriggerTree_test()
 void
 Interface_Test::runAndTriggerBlossom_test()
 {
-    std::string errorMessage = "";
+    ErrorContainer error;
     DataMap inputValues;
     inputValues.insert("input", new DataValue(42));
     inputValues.insert("output", new DataValue(""));
@@ -204,70 +207,73 @@ Interface_Test::runAndTriggerBlossom_test()
     //----------------------------------------------------------------------------------------------
     // positiv test
     DataMap result;
-    errorMessage = "";
     BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          inputValues,
                                          status,
-                                         errorMessage), true);
+                                         error), true);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test non-existing blossom
-    errorMessage = "";
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
                                          "special",
                                          inputValues,
                                          status,
-                                         errorMessage), false);
+                                         error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test invalid input-values
-    errorMessage = "";
     DataMap falseMap;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          falseMap,
                                          status,
-                                         errorMessage), false);
+                                         error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test fail within blossom
-    errorMessage = "";
+    error._errorMessages.clear();
     inputValues.insert("should_fail", new DataValue(true));
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
                                          inputValues,
                                          status,
-                                         errorMessage), false);
+                                         error), false);
     TEST_EQUAL(status.statusCode, 1337);
-    TEST_EQUAL(status.errorMessage, "successfully failed");
+    const std::string expectedStatus =
+            "+---------------------+---------------------+\n"
+            "| Error-Message Nr. 0 | successfully failed |\n"
+            "+---------------------+---------------------+\n";
+    TEST_EQUAL(status.errorMessage, expectedStatus);
 
-    const std::string expectedError = "+--------------------+---------------------+\n"
-                                      "| Field              | Value               |\n"
-                                      "+====================+=====================+\n"
-                                      "| location           | blossom execute     |\n"
-                                      "+--------------------+---------------------+\n"
-                                      "| blossom-group-type | special             |\n"
-                                      "+--------------------+---------------------+\n"
-                                      "| blossom-name       | standalone          |\n"
-                                      "+--------------------+---------------------+\n"
-                                      "| blossom-file-path  | standalone          |\n"
-                                      "+--------------------+---------------------+\n"
-                                      "| error-message      | successfully failed |\n"
-                                      "+--------------------+---------------------+\n";
-    TEST_EQUAL(errorMessage, expectedError);
+    const std::string expectedError =
+            "+---------------------+------------------------------------------+\n"
+            "| Error-Message Nr. 1 | Error in location:                       |\n"
+            "|                     | +--------------------+-----------------+ |\n"
+            "|                     | | location           | blossom execute | |\n"
+            "|                     | +--------------------+-----------------+ |\n"
+            "|                     | | blossom-group-type | special         | |\n"
+            "|                     | +--------------------+-----------------+ |\n"
+            "|                     | | blossom-name       | standalone      | |\n"
+            "|                     | +--------------------+-----------------+ |\n"
+            "|                     | | blossom-file-path  | standalone      | |\n"
+            "|                     | +--------------------+-----------------+ |\n"
+            "+---------------------+------------------------------------------+\n"
+            "| Error-Message Nr. 0 | successfully failed                      |\n"
+            "+---------------------+------------------------------------------+\n";
+    TEST_EQUAL(error.toString(), expectedError);
 }
 
 /**
