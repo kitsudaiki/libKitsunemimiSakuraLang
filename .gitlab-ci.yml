@@ -22,7 +22,7 @@ build:
   tags:
     - docker
 
-tests:
+functional_tests:
   stage: test
   script:
     - ls -l
