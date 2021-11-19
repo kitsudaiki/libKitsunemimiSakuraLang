@@ -123,14 +123,16 @@ SakuraLangInterface::triggerTree(DataMap &result,
     result.clear();
 
     // process sakura-file with initial values
-    if(runProcess(result, &growthPlan, tree) == false)
+    const bool ret = runProcess(result, &growthPlan, tree);
+    if(ret == false)
     {
         status = growthPlan.status;
         error = growthPlan.error;
-        return false;
     }
 
-    return true;
+    delete tree;
+
+    return ret;
 }
 
 /**
