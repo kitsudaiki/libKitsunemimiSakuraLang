@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.0] - 2021-11-19
+
+### Added
+- additional field within blossoms to retrun an internal error to not mix this with syntax-error within the scripts
+
+### Changed
+- use error-containers
+- updated field-registration in blossoms
+
+### Fixed
+- removed memory-leak with the new added memroy-leak-tests
+
+### Removed
+- the unused function 'getRelativePath' was removed from the interface
+
+
 ## [0.9.1] - 2021-10-04
 
 ### Changed
