@@ -388,7 +388,7 @@ blossom_group:
     "identifier" "(" name_item ")" item_set
     {
         $$ = new BlossomGroupItem();
-        $$->blossomGroupType = "special";
+        $$->blossomGroupType = "-";
         $$->id = $3;
         $$->values = *$5;
         delete $5;
@@ -401,7 +401,7 @@ blossom_group:
     "identifier" "(" name_item ")"
     {
         $$ = new BlossomGroupItem();
-        $$->blossomGroupType = "special";
+        $$->blossomGroupType = "-";
         $$->id = $3;
 
         BlossomItem* tempBlossom = new BlossomItem();

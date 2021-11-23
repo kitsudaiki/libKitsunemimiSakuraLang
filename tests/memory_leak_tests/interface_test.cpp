@@ -49,7 +49,7 @@ Interface_Test::Interface_Test()
 
     // test addBlossom
     interface->addBlossom("test1", "test2", testBlossom);
-    interface->addBlossom("special", "standalone", standaloneBlossom);
+    interface->addBlossom("-", "standalone", standaloneBlossom);
 
     interface->addTree("test-tree", getTestTree(), error);
     interface->addTemplate("test-template", getTestTemplate());
@@ -113,12 +113,12 @@ Interface_Test::runAndTriggerBlossom_test()
     input->insert("output", new DataValue(""));
 
 
-    interface->triggerBlossom(*result, "standalone", "special", context, *input, *status, *error);
-    interface->triggerBlossom(*result, "fail", "special", context, *input, *status, *error);
+    interface->triggerBlossom(*result, "standalone", "-", context, *input, *status, *error);
+    interface->triggerBlossom(*result, "fail", "-", context, *input, *status, *error);
     DataMap falseMap;
-    interface->triggerBlossom(*result, "standalone", "special", context, falseMap, *status, *error);
+    interface->triggerBlossom(*result, "standalone", "-", context, falseMap, *status, *error);
     input->insert("should_fail", new DataValue(true));
-    interface->triggerBlossom(*result, "standalone", "special", context, *input, *status, *error);
+    interface->triggerBlossom(*result, "standalone", "-", context, *input, *status, *error);
 
     delete error;
     delete input;
