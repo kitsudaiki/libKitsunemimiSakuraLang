@@ -722,7 +722,7 @@ createError(const std::string &errorLocation,
  * @param blossomItem blossom-item with information of the error-location
  * @param blossomPath file-path, which contains the blossom
  * @param errorLocation location where the error appeared
- * @param errorMessage message to describe, what was wrong
+ * @param error reference for error-output
  * @param possibleSolution message with a possible solution to solve the problem
  */
 void
@@ -746,7 +746,7 @@ createError(const BlossomItem &blossomItem,
  *
  * @param blossomLeaf blossom-item with information of the error-location
  * @param errorLocation location where the error appeared
- * @param errorMessage message to describe, what was wrong
+ * @param error reference for error-output
  * @param possibleSolution message with a possible solution to solve the problem
  */
 void

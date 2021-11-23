@@ -141,7 +141,7 @@ SakuraFileCollector::collectFiles(const std::filesystem::path &rootPath,
  *
  * @param rootPath initial path of the file collecting process
  * @param dirPath directory-path where to search for resources
- * @param errorMessage reference to error-message
+ * @param error reference to error-message
  *
  * @return true, if successful, else false
  */
@@ -293,5 +293,5 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
     return true;
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

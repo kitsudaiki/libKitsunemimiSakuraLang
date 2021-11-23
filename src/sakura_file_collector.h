@@ -64,7 +64,7 @@ private:
                        ErrorContainer &error);
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
 #endif // KITSUNEMIMI_SAKURA_LANG_SAKURAFILECOLLECTOR_H

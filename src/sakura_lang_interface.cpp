@@ -452,7 +452,6 @@ SakuraLangInterface::runProcess(DataMap &result,
                                 TreeItem* tree)
 {
     // check if input-values match with the first tree
-    std::string errorMessage = "";
     const std::vector<std::string> failedInput = checkInput(tree->values, plan->items);
     if(failedInput.size() > 0)
     {

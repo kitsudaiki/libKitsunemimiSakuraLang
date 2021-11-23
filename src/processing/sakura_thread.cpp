@@ -71,16 +71,10 @@ SakuraThread::run()
             {
                 // process input-values
                 DataMap baseItems;
-
-                overrideItems(baseItems,
-                              plan->completeSubtree->values,
-                              ALL);
-                overrideItems(baseItems,
-                              plan->items,
-                              ALL);
+                overrideItems(baseItems, plan->completeSubtree->values, ALL);
+                overrideItems(baseItems, plan->items,                   ALL);
 
                 // run the real task
-                std::string errorMessage = "";
                 const bool result = processSakuraItem(plan, plan->completeSubtree);
 
                 // handle result
@@ -599,10 +593,7 @@ SakuraThread::processParallelPart(GrowthPlan* plan,
                                   ParallelPart* parallelPart)
 {
     SequentiellPart* parts = dynamic_cast<SequentiellPart*>(parallelPart->childs);
-    const bool result = m_interface->m_queue->spawnParallelSubtrees(plan,
-                                                                    parts->childs);
-
-    return result;
+    return m_interface->m_queue->spawnParallelSubtrees(plan, parts->childs);
 }
 
 /**
@@ -620,9 +611,7 @@ SakuraThread::runSubtreeCall(GrowthPlan* plan,
                              ValueItemMap &values)
 {
     // fill values
-    std::string errorMessage = "";
-    const bool fillResult = fillInputValueItemMap(values, plan->items, plan->error);
-    if(fillResult == false)
+    if(fillInputValueItemMap(values, plan->items, plan->error) == false)
     {
         plan->error.addMeesage("error while processing subtree-call");
         return false;

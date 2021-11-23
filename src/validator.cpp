@@ -66,8 +66,7 @@ Validator::checkBlossomItem(BlossomItem &blossomItem,
     }
 
     // get blossom by type and group-type
-    Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType,
-                                             blossomItem.blossomType);
+    Blossom* blossom = interface->getBlossom(blossomItem.blossomGroupType, blossomItem.blossomType);
     if(blossom == nullptr)
     {
         error.addMeesage("unknow blossom-type\n"
@@ -84,7 +83,7 @@ Validator::checkBlossomItem(BlossomItem &blossomItem,
  *
  * @param sakuraItem item to check
  * @param filePath path of the file, which will be actually checked
- * @param errorMessage reference for error-message
+ * @param error reference for error-message
  *
  * @return true, if check successful, else false
  */
@@ -132,9 +131,7 @@ Validator::checkSakuraItem(SakuraItem* sakuraItem,
             blossomItem->blossomGroupType = blossomGroupItem->blossomGroupType;
             blossomItem->blossomName = blossomGroupItem->id;
 
-            overrideItems(blossomItem->values,
-                          blossomGroupItem->values,
-                          ONLY_NON_EXISTING);
+            overrideItems(blossomItem->values, blossomGroupItem->values, ONLY_NON_EXISTING);
 
             if(checkSakuraItem(blossomItem, filePath, error) == false) {
                 return false;
@@ -147,17 +144,11 @@ Validator::checkSakuraItem(SakuraItem* sakuraItem,
     if(sakuraItem->getType() == SakuraItem::IF_ITEM)
     {
         IfBranching* ifBranching = dynamic_cast<IfBranching*>(sakuraItem);
-        if(checkSakuraItem(ifBranching->ifContent,
-                           filePath,
-                           error) == false)
-        {
+        if(checkSakuraItem(ifBranching->ifContent, filePath, error) == false) {
             return false;
         }
 
-        if(checkSakuraItem(ifBranching->elseContent,
-                           filePath,
-                           error) == false)
-        {
+        if(checkSakuraItem(ifBranching->elseContent, filePath, error) == false) {
             return false;
         }
 
