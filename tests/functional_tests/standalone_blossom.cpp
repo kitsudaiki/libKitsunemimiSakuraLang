@@ -15,7 +15,7 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
     registerInputField("input", true);
     registerInputField("should_fail", false);
 
-    registerOutputField("output", true);
+    registerOutputField("output");
 }
 
 bool
