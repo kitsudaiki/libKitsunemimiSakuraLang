@@ -14,12 +14,12 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
     m_sessionTest = sessionTest;
     registerInputField("input", true);
     registerInputField("should_fail", false);
-    registerOutputField("output", true);
+    registerOutputField("output");
 }
 
 bool
 TestBlossom::runTask(BlossomLeaf &blossomLeaf,
-                     const DataMap* context,
+                     const DataMap*,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {

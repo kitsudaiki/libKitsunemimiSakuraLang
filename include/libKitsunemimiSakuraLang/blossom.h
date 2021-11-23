@@ -78,7 +78,7 @@ protected:
     bool allowUnmatched = false;
 
     bool registerInputField(const std::string &name, const bool required);
-    bool registerOutputField(const std::string &name, const bool required);
+    bool registerOutputField(const std::string &name);
 
 private:
     friend SakuraThread;

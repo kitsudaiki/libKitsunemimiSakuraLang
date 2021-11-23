@@ -14,7 +14,7 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
     m_sessionTest = sessionTest;
     registerInputField("input", true);
     registerInputField("should_fail", false);
-    registerOutputField("output", true);
+    registerOutputField("output");
 }
 
 bool
