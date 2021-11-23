@@ -61,7 +61,7 @@ Interface_Test::blossomMethods_test()
     // test addBlossom
     TEST_EQUAL(interface->addBlossom("test1", "test2", testBlossom), true);
     TEST_EQUAL(interface->addBlossom("test1", "test2", testBlossom), false);
-    TEST_EQUAL(interface->addBlossom("special", "standalone", standaloneBlossom), true);
+    TEST_EQUAL(interface->addBlossom("-", "standalone", standaloneBlossom), true);
 
     // test doesBlossomExist
     TEST_EQUAL(interface->doesBlossomExist("test1", "test2"), true);
@@ -230,7 +230,7 @@ Interface_Test::runAndTriggerBlossom_test()
     BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
-                                         "special",
+                                         "-",
                                          context,
                                          inputValues,
                                          status,
@@ -243,7 +243,7 @@ Interface_Test::runAndTriggerBlossom_test()
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
-                                         "special",
+                                         "-",
                                          context,
                                          inputValues,
                                          status,
@@ -256,7 +256,7 @@ Interface_Test::runAndTriggerBlossom_test()
     DataMap falseMap;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
-                                         "special",
+                                         "-",
                                          context,
                                          falseMap,
                                          status,
@@ -270,7 +270,7 @@ Interface_Test::runAndTriggerBlossom_test()
     inputValues.insert("should_fail", new DataValue(true));
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
-                                         "special",
+                                         "-",
                                          context,
                                          inputValues,
                                          status,
@@ -288,7 +288,7 @@ Interface_Test::runAndTriggerBlossom_test()
             "|                     | +--------------------+-----------------+ |\n"
             "|                     | | location           | blossom execute | |\n"
             "|                     | +--------------------+-----------------+ |\n"
-            "|                     | | blossom-group-type | special         | |\n"
+            "|                     | | blossom-group-type | -               | |\n"
             "|                     | +--------------------+-----------------+ |\n"
             "|                     | | blossom-name       | standalone      | |\n"
             "|                     | +--------------------+-----------------+ |\n"
