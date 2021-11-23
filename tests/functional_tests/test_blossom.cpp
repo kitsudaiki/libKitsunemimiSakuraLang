@@ -19,12 +19,14 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
 
 bool
 TestBlossom::runTask(BlossomLeaf &blossomLeaf,
+                     const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
     LOG_DEBUG("TestBlossom");
     DataValue* value = blossomLeaf.input.get("input")->toValue();
     m_sessionTest->compare(value->getInt(), 42);
+    m_sessionTest->compare(context->get("test-key")->getString(), std::string("asdf"));
 
     if(blossomLeaf.input.contains("should_fail"))
     {

@@ -19,6 +19,7 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
 
 bool
 TestBlossom::runTask(BlossomLeaf &blossomLeaf,
+                     const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {

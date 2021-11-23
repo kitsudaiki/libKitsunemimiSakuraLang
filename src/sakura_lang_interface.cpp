@@ -100,6 +100,7 @@ SakuraLangInterface::~SakuraLangInterface()
 bool
 SakuraLangInterface::triggerTree(DataMap &result,
                                  const std::string &id,
+                                 const DataMap &context,
                                  const DataMap &initialValues,
                                  BlossomStatus &status,
                                  ErrorContainer &error)
@@ -113,12 +114,14 @@ SakuraLangInterface::triggerTree(DataMap &result,
     if(tree == nullptr)
     {
         error.addMeesage("No tree found for the input-path " + id);
+        LOG_ERROR(error);
         return false;
     }
 
     // prepare
     GrowthPlan growthPlan;
     growthPlan.items = initialValues;
+    growthPlan.context = &context;
     overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
     result.clear();
 
@@ -128,6 +131,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     {
         status = growthPlan.status;
         error = growthPlan.error;
+        LOG_ERROR(error);
     }
 
     delete tree;
@@ -151,6 +155,7 @@ bool
 SakuraLangInterface::triggerBlossom(DataMap &result,
                                     const std::string &blossomName,
                                     const std::string &blossomGroupName,
+                                    const DataMap &context,
                                     const DataMap &initialValues,
                                     BlossomStatus &status,
                                     ErrorContainer &error)
@@ -181,7 +186,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // process blossom
-    if(blossom->growBlossom(blossomLeaf, status, error) == false) {
+    if(blossom->growBlossom(blossomLeaf, &context, status, error) == false) {
         return false;
     }
 

@@ -16,7 +16,10 @@ public:
     TestBlossom(Interface_Test* sessionTest);
 
 protected:
-    bool runTask(BlossomLeaf &blossomLeaf, BlossomStatus &status, ErrorContainer &error);
+    bool runTask(BlossomLeaf &blossomLeaf,
+                 const DataMap*,
+                 BlossomStatus &status,
+                 ErrorContainer &error);
 
 private:
     Interface_Test* m_sessionTest = nullptr;

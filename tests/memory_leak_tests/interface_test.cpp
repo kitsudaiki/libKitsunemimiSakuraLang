@@ -69,24 +69,25 @@ Interface_Test::runAndTriggerTree_test()
     REINIT_TEST();
 
     ErrorContainer* error = new ErrorContainer();
-    DataMap* inputValues = new DataMap();
+    DataMap* input = new DataMap();
     DataMap* result = new DataMap();
     BlossomStatus* status = new BlossomStatus();
+    DataMap context;
 
-    inputValues->insert("input", new DataValue(42));
-    inputValues->insert("output", new DataValue(""));
+    input->insert("input", new DataValue(42));
+    input->insert("output", new DataValue(""));
 
     //----------------------------------------------------------------------------------------------
     // positiv test
-    interface->triggerTree(*result, "test-tree", *inputValues, *status, *error);
-    interface->triggerTree(*result, "fail", *inputValues, *status, *error);
+    interface->triggerTree(*result, "test-tree", context, *input, *status, *error);
+    interface->triggerTree(*result, "fail", context, *input, *status, *error);
     DataMap falseMap;
-    interface->triggerTree(*result, "test-tree", falseMap, *status, *error);
-    inputValues->insert("should_fail", new DataValue(true));
-    interface->triggerTree(*result, "test-tree", *inputValues, *status, *error);
+    interface->triggerTree(*result, "test-tree", context, falseMap, *status, *error);
+    input->insert("should_fail", new DataValue(true));
+    interface->triggerTree(*result, "test-tree", context, *input, *status, *error);
 
     delete error;
-    delete inputValues;
+    delete input;
     delete result;
     delete status;
 
@@ -103,23 +104,24 @@ Interface_Test::runAndTriggerBlossom_test()
     REINIT_TEST();
 
     ErrorContainer* error = new ErrorContainer();
-    DataMap* inputValues = new DataMap();
+    DataMap* input = new DataMap();
     DataMap* result = new DataMap();
     BlossomStatus* status = new BlossomStatus();
+    DataMap context;
 
-    inputValues->insert("input", new DataValue(42));
-    inputValues->insert("output", new DataValue(""));
+    input->insert("input", new DataValue(42));
+    input->insert("output", new DataValue(""));
 
 
-    interface->triggerBlossom(*result, "standalone", "special", *inputValues, *status, *error);
-    interface->triggerBlossom(*result, "fail", "special", *inputValues, *status, *error);
+    interface->triggerBlossom(*result, "standalone", "special", context, *input, *status, *error);
+    interface->triggerBlossom(*result, "fail", "special", context, *input, *status, *error);
     DataMap falseMap;
-    interface->triggerBlossom(*result, "standalone", "special", falseMap, *status, *error);
-    inputValues->insert("should_fail", new DataValue(true));
-    interface->triggerBlossom(*result, "standalone", "special", *inputValues, *status, *error);
+    interface->triggerBlossom(*result, "standalone", "special", context, falseMap, *status, *error);
+    input->insert("should_fail", new DataValue(true));
+    interface->triggerBlossom(*result, "standalone", "special", context, *input, *status, *error);
 
     delete error;
-    delete inputValues;
+    delete input;
     delete result;
     delete status;
 

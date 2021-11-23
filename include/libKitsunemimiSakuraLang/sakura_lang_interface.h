@@ -65,6 +65,7 @@ public:
 
     bool triggerTree(DataMap& result,
                      const std::string &id,
+                     const DataMap &context,
                      const DataMap &initialValues,
                      BlossomStatus &status,
                      ErrorContainer &error);
@@ -72,6 +73,7 @@ public:
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
                         const DataMap &initialValues,
+                        const DataMap &context,
                         BlossomStatus &status,
                         ErrorContainer &error);
 
