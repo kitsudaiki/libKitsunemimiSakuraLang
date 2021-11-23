@@ -75,22 +75,23 @@ SubtreeQueue::spawnParallelSubtreesLoop(GrowthPlan* plan,
     {
         // encapsulate the content of the loop together with the values and the counter-object
         // as an subtree-object and add it to the subtree-queue
-        GrowthPlan* object = new GrowthPlan();
-        object->completeSubtree = subtreeItem->copy();
-        object->items = plan->items;
-        object->hirarchy = plan->hirarchy;
-        object->parentPlan = plan;
-        object->filePath = plan->filePath;
+        GrowthPlan* childPlan = new GrowthPlan();
+        childPlan->completeSubtree = subtreeItem->copy();
+        childPlan->items = plan->items;
+        childPlan->hirarchy = plan->hirarchy;
+        childPlan->parentPlan = plan;
+        childPlan->filePath = plan->filePath;
+        childPlan->context = plan->context;
 
         // add the counter-variable as new value to be accessable within the loop
         if(array != nullptr) {
-            object->items.insert(tempVarName, array->get(i)->copy(), true);
+            childPlan->items.insert(tempVarName, array->get(i)->copy(), true);
         } else {
-            object->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
+            childPlan->items.insert(tempVarName, new DataValue(static_cast<long>(i)), true);
         }
 
-        addGrowthPlan(object);
-        plan->childPlans.push_back(object);
+        addGrowthPlan(childPlan);
+        plan->childPlans.push_back(childPlan);
     }
 
     waitUntilFinish(&plan->activeCounter);
@@ -141,15 +142,16 @@ SubtreeQueue::spawnParallelSubtrees(GrowthPlan* plan,
     // subtree-queue for parallel processing
     for(uint64_t i = 0; i < childs.size(); i++)
     {
-        GrowthPlan* object = new GrowthPlan();
-        object->completeSubtree = childs.at(i)->copy();
-        object->hirarchy = plan->hirarchy;
-        object->items = plan->items;
-        object->parentPlan = plan;
-        object->filePath = plan->filePath;
+        GrowthPlan* childPlan = new GrowthPlan();
+        childPlan->completeSubtree = childs.at(i)->copy();
+        childPlan->hirarchy = plan->hirarchy;
+        childPlan->items = plan->items;
+        childPlan->parentPlan = plan;
+        childPlan->filePath = plan->filePath;
+        childPlan->context = plan->context;
 
-        addGrowthPlan(object);
-        plan->childPlans.push_back(object);
+        addGrowthPlan(childPlan);
+        plan->childPlans.push_back(childPlan);
     }
 
     waitUntilFinish(&plan->activeCounter);

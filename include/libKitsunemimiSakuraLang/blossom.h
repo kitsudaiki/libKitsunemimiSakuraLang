@@ -50,6 +50,7 @@ struct BlossomLeaf
     DataMap input;
 
     DataMap* parentValues = nullptr;
+
     std::string terminalOutput = "";
 };
 
@@ -71,6 +72,7 @@ public:
 
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
+                         const DataMap* context,
                          BlossomStatus &status,
                          ErrorContainer &error) = 0;
     bool allowUnmatched = false;
@@ -109,6 +111,7 @@ private:
     std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
+                     const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error);
     bool validateInput(const DataMap &input,

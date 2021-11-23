@@ -20,6 +20,7 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 
 bool
 StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
+                           const DataMap*,
                            BlossomStatus &status,
                            ErrorContainer &error)
 {

@@ -106,6 +106,7 @@ Blossom::registerField(const std::string &name,
  */
 bool
 Blossom::growBlossom(BlossomLeaf &blossomLeaf,
+                     const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
@@ -113,7 +114,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
-    const bool ret = runTask(blossomLeaf, status, error);
+    const bool ret = runTask(blossomLeaf, context, status, error);
 
     // handle result
     if(ret == false)

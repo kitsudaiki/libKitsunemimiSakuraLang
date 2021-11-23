@@ -133,6 +133,8 @@ Interface_Test::runAndTriggerTree_test()
     inputValues.insert("input", new DataValue(42));
     inputValues.insert("test_output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
 
     //----------------------------------------------------------------------------------------------
     // positiv test
@@ -140,6 +142,7 @@ Interface_Test::runAndTriggerTree_test()
     BlossomStatus status;
     TEST_EQUAL(interface->triggerTree(result,
                                       "test-tree",
+                                      context,
                                       inputValues,
                                       status,
                                       error), true);
@@ -154,14 +157,24 @@ Interface_Test::runAndTriggerTree_test()
 
     //----------------------------------------------------------------------------------------------
     // test non-existing tree
-    TEST_EQUAL(interface->triggerTree(result, "fail", inputValues, status, error), false);
+    TEST_EQUAL(interface->triggerTree(result,
+                                      "fail",
+                                      context,
+                                      inputValues,
+                                      status,
+                                      error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
     // test invalid input-values
     DataMap falseMap;
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", falseMap, status, error), false);
+    TEST_EQUAL(interface->triggerTree(result,
+                                      "test-tree",
+                                      context,
+                                      falseMap,
+                                      status,
+                                      error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
 
@@ -169,7 +182,12 @@ Interface_Test::runAndTriggerTree_test()
     // test fail within blossom
     error._errorMessages.clear();
     inputValues.insert("should_fail", new DataValue(true));
-    TEST_EQUAL(interface->triggerTree(result, "test-tree", inputValues, status, error), false);
+    TEST_EQUAL(interface->triggerTree(result,
+                                      "test-tree",
+                                      context,
+                                      inputValues,
+                                      status,
+                                      error), false);
     TEST_EQUAL(status.statusCode, 1337);
     const std::string expectedStatus =
             "+---------------------+---------------------+\n"
@@ -203,6 +221,8 @@ Interface_Test::runAndTriggerBlossom_test()
     inputValues.insert("input", new DataValue(42));
     inputValues.insert("output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
 
     //----------------------------------------------------------------------------------------------
     // positiv test
@@ -211,6 +231,7 @@ Interface_Test::runAndTriggerBlossom_test()
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
+                                         context,
                                          inputValues,
                                          status,
                                          error), true);
@@ -223,6 +244,7 @@ Interface_Test::runAndTriggerBlossom_test()
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
                                          "special",
+                                         context,
                                          inputValues,
                                          status,
                                          error), false);
@@ -235,6 +257,7 @@ Interface_Test::runAndTriggerBlossom_test()
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
+                                         context,
                                          falseMap,
                                          status,
                                          error), false);
@@ -248,6 +271,7 @@ Interface_Test::runAndTriggerBlossom_test()
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "special",
+                                         context,
                                          inputValues,
                                          status,
                                          error), false);

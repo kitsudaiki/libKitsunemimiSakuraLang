@@ -17,6 +17,7 @@ public:
     SakuraItem* completeSubtree = nullptr;
     // map with all input-values for the subtree
     DataMap items;
+    const DataMap* context = nullptr;
 
     bool success = true;
     ErrorContainer error;

@@ -229,7 +229,9 @@ SakuraThread::processBlossom(GrowthPlan* plan,
     if(blossom == nullptr)
     {
         createError(blossomItem, plan->filePath, "processing", plan->error);
-        plan->error.addMeesage("unknow blossom-type");
+        plan->error.addMeesage("unknow blossom-type\n"
+                               "    group: " + blossomItem.blossomGroupType +
+                               "    type: " + blossomItem.blossomType);
         return false;
     }
 
@@ -244,8 +246,7 @@ SakuraThread::processBlossom(GrowthPlan* plan,
     convertValueMap(blossomLeaf.input, blossomItem.values);
 
     // process blossom
-    const bool ret = blossom->growBlossom(blossomLeaf, plan->status, plan->error);
-    if(ret == false) {
+    if(blossom->growBlossom(blossomLeaf, plan->context, plan->status, plan->error) == false) {
         return false;
     }
 
