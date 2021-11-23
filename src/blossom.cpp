@@ -112,7 +112,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
-    const bool ret = runTask(blossomLeaf, context, status, error);
+    const bool ret = runTask(blossomLeaf, *context, status, error);
 
     // handle result
     if(ret == false)

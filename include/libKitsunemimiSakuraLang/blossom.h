@@ -72,7 +72,7 @@ public:
 
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
-                         const DataMap* context,
+                         const DataMap &context,
                          BlossomStatus &status,
                          ErrorContainer &error) = 0;
     bool allowUnmatched = false;

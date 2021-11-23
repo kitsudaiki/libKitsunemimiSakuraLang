@@ -20,14 +20,14 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 
 bool
 StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
-                           const DataMap* context,
+                           const DataMap &context,
                            BlossomStatus &status,
                            ErrorContainer &error)
 {
     LOG_DEBUG("StandaloneBlossom");
     DataValue* value = blossomLeaf.input.get("input")->toValue();
     m_sessionTest->compare(value->getInt(), 42); 
-    m_sessionTest->compare(context->get("test-key")->getString(), std::string("asdf"));
+    m_sessionTest->compare(context.get("test-key")->getString(), std::string("asdf"));
 
     if(blossomLeaf.input.contains("should_fail"))
     {

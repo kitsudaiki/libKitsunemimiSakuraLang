@@ -17,7 +17,7 @@ public:
 
 protected:
     bool runTask(BlossomLeaf &blossomLeaf,
-                 const DataMap* context,
+                 const DataMap &context,
                  BlossomStatus &status,
                  ErrorContainer &error);
 
