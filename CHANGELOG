@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0] - 2021-11-26
+
+### Added
+- new global context-object for global accessable read-only-variables
+
+### Changed
+- renamed group-type `special` to only `-`
+
+### Removed
+- removed the required-flag for registration of output-fields, because it is not used anyway
+
+
 ## [0.10.0] - 2021-11-19
 
 ### Added
