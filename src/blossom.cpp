@@ -50,9 +50,11 @@ Blossom::~Blossom() {}
  */
 bool
 Blossom::registerInputField(const std::string &name,
-                            const bool required)
+                            const FieldType type,
+                            const bool required,
+                            const std::string &comment)
 {
-    return registerField(name, INPUT_TYPE, required);
+    return registerField(name, INPUT_TYPE, type, required, comment);
 }
 
 /**
@@ -63,9 +65,11 @@ Blossom::registerInputField(const std::string &name,
  * @return false, if already name already registered, else true
  */
 bool
-Blossom::registerOutputField(const std::string &name)
+Blossom::registerOutputField(const std::string &name,
+                             const FieldType type,
+                             const std::string &comment)
 {
-    return registerField(name, OUTPUT_TYPE, false);
+    return registerField(name, OUTPUT_TYPE, type, false, comment);
 }
 
 /**
@@ -79,8 +83,10 @@ Blossom::registerOutputField(const std::string &name)
  */
 bool
 Blossom::registerField(const std::string &name,
-                       const IO_ValueType type,
-                       const bool required)
+                       const IO_ValueType ioType,
+                       const FieldType fieldType,
+                       const bool required,
+                       const std::string &comment)
 {
     std::map<std::string, BlossomValidDef>::const_iterator defIt;
     defIt = validationMap.find(name);
@@ -88,7 +94,7 @@ Blossom::registerField(const std::string &name,
         return false;
     }
 
-    validationMap.emplace(name, BlossomValidDef(type, required));
+    validationMap.emplace(name, BlossomValidDef(ioType, fieldType, required, comment));
 
     return true;
 }
@@ -164,7 +170,7 @@ Blossom::validateInput(const DataMap &input,
         defIt++)
     {
         if(defIt->second.isRequired == true
-                && defIt->second.type == IO_ValueType::INPUT_TYPE)
+                && defIt->second.ioType == IO_ValueType::INPUT_TYPE)
         {
             // search for values
             const bool ret = input.contains(defIt->first);
@@ -233,7 +239,7 @@ Blossom::validateInput(BlossomItem &blossomItem,
             compareIt = compareMap.find(defIt->first);
             if(compareIt != compareMap.end())
             {
-                if(defIt->second.type != compareIt->second)
+                if(defIt->second.ioType != compareIt->second)
                 {
                     error.addMeesage("variable \""
                                      + defIt->first
