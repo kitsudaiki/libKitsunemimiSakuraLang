@@ -50,9 +50,11 @@ Blossom::~Blossom() {}
  */
 bool
 Blossom::registerInputField(const std::string &name,
-                            const bool required)
+                            const FieldType type,
+                            const bool required,
+                            const std::string &comment)
 {
-    return registerField(name, INPUT_TYPE, required);
+    return registerField(name, INPUT_TYPE, type, required, comment);
 }
 
 /**
@@ -63,9 +65,11 @@ Blossom::registerInputField(const std::string &name,
  * @return false, if already name already registered, else true
  */
 bool
-Blossom::registerOutputField(const std::string &name)
+Blossom::registerOutputField(const std::string &name,
+                             const FieldType type,
+                             const std::string &comment)
 {
-    return registerField(name, OUTPUT_TYPE, false);
+    return registerField(name, OUTPUT_TYPE, type, false, comment);
 }
 
 /**
@@ -79,8 +83,10 @@ Blossom::registerOutputField(const std::string &name)
  */
 bool
 Blossom::registerField(const std::string &name,
-                       const IO_ValueType type,
-                       const bool required)
+                       const IO_ValueType ioType,
+                       const FieldType fieldType,
+                       const bool required,
+                       const std::string &comment)
 {
     std::map<std::string, BlossomValidDef>::const_iterator defIt;
     defIt = validationMap.find(name);
@@ -88,7 +94,7 @@ Blossom::registerField(const std::string &name,
         return false;
     }
 
-    validationMap.emplace(name, BlossomValidDef(type, required));
+    validationMap.emplace(name, BlossomValidDef(ioType, fieldType, required, comment));
 
     return true;
 }
@@ -112,12 +118,19 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
 
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
-    const bool ret = runTask(blossomLeaf, *context, status, error);
+
+    if(checkValues(blossomLeaf.input, INPUT_TYPE, error) == false) {
+        return false;
+    }
 
     // handle result
-    if(ret == false)
+    if(runTask(blossomLeaf, *context, status, error) == false)
     {
         createError(blossomLeaf, "blossom execute", error);
+        return false;
+    }
+
+    if(checkValues(blossomLeaf.output, OUTPUT_TYPE, error) == false) {
         return false;
     }
 
@@ -164,7 +177,7 @@ Blossom::validateInput(const DataMap &input,
         defIt++)
     {
         if(defIt->second.isRequired == true
-                && defIt->second.type == IO_ValueType::INPUT_TYPE)
+                && defIt->second.ioType == IO_ValueType::INPUT_TYPE)
         {
             // search for values
             const bool ret = input.contains(defIt->first);
@@ -233,7 +246,7 @@ Blossom::validateInput(BlossomItem &blossomItem,
             compareIt = compareMap.find(defIt->first);
             if(compareIt != compareMap.end())
             {
-                if(defIt->second.type != compareIt->second)
+                if(defIt->second.ioType != compareIt->second)
                 {
                     error.addMeesage("variable \""
                                      + defIt->first
@@ -289,6 +302,89 @@ Blossom::getCompareMap(const ValueItemMap &valueMap,
     {
         compareMap.emplace(itChilds->first, INPUT_TYPE);
     }
+}
+
+/**
+ * @brief Blossom::checkValues
+ * @param values
+ * @param ioType
+ * @param error
+ * @return
+ */
+bool
+Blossom::checkValues(const DataMap &values,
+                     const IO_ValueType ioType,
+                     ErrorContainer &error)
+{
+    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    for(defIt = validationMap.begin();
+        defIt != validationMap.end();
+        defIt++)
+    {
+        if(defIt->second.ioType == ioType)
+        {
+            DataItem* item = values.get(defIt->first);
+            if(item != nullptr
+                    && checkType(item, defIt->second.fieldType) == false)
+            {
+                error.addMeesage("value-validation failed, because a value has the false type: "
+                                 "'" + defIt->first + "'");
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @brief Blossom::checkType
+ * @param item
+ * @param fieldType
+ * @return
+ */
+bool
+Blossom::checkType(DataItem* item,
+                   const FieldType fieldType)
+{
+    if(item->getType() == DataItem::ARRAY_TYPE
+            && fieldType == SAKURA_ARRAY_TYPE)
+    {
+        return true;
+    }
+
+    if(item->getType() == DataItem::MAP_TYPE
+            && fieldType == SAKURA_MAP_TYPE)
+    {
+        return true;
+    }
+
+    if(item->getType() == DataItem::VALUE_TYPE)
+    {
+        DataValue* value = item->toValue();
+        if(value->getValueType() == DataItem::INT_TYPE
+                && fieldType == SAKURA_INT_TYPE)
+        {
+            return true;
+        }
+        if(value->getValueType() == DataItem::FLOAT_TYPE
+                && fieldType == SAKURA_FLOAT_TYPE)
+        {
+            return true;
+        }
+        if(value->getValueType() == DataItem::BOOL_TYPE
+                && fieldType == SAKURA_BOOL_TYPE)
+        {
+            return true;
+        }
+        if(value->getValueType() == DataItem::STRING_TYPE
+                && fieldType == SAKURA_STRING_TYPE)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } // namespace Sakura

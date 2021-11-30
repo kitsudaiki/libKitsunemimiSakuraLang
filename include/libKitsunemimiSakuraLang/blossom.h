@@ -64,6 +64,19 @@ struct BlossomStatus
 
 //--------------------------------------------------------------------------------------------------
 
+enum FieldType
+{
+    SAKURA_UNDEFINED_TYPE = 0,
+    SAKURA_INT_TYPE = 1,
+    SAKURA_FLOAT_TYPE = 2,
+    SAKURA_BOOL_TYPE = 3,
+    SAKURA_STRING_TYPE = 4,
+    SAKURA_ARRAY_TYPE = 5,
+    SAKURA_MAP_TYPE = 6
+};
+
+//--------------------------------------------------------------------------------------------------
+
 class Blossom
 {
 public:
@@ -77,8 +90,13 @@ protected:
                          ErrorContainer &error) = 0;
     bool allowUnmatched = false;
 
-    bool registerInputField(const std::string &name, const bool required);
-    bool registerOutputField(const std::string &name);
+    bool registerInputField(const std::string &name,
+                            const FieldType type,
+                            const bool required,
+                            const std::string &comment);
+    bool registerOutputField(const std::string &name,
+                             const FieldType type,
+                             const std::string &comment);
 
 private:
     friend SakuraThread;
@@ -94,19 +112,28 @@ private:
 
     struct BlossomValidDef
     {
-        IO_ValueType type = UNDEFINED_VALUE_TYPE;
+        IO_ValueType ioType = UNDEFINED_VALUE_TYPE;
+        FieldType fieldType = SAKURA_UNDEFINED_TYPE;
         bool isRequired = false;
+        std::string comment;
 
-        BlossomValidDef(IO_ValueType type, bool isRequired)
+        BlossomValidDef(const IO_ValueType ioType,
+                        const FieldType fieldType,
+                        const bool isRequired,
+                        const std::string &comment)
         {
-            this->type = type;
+            this->ioType = ioType;
+            this->fieldType = fieldType;
             this->isRequired = isRequired;
+            this->comment = comment;
         }
     };
 
     bool registerField(const std::string &name,
                        const IO_ValueType type,
-                       const bool required);
+                       const FieldType fieldType,
+                       const bool required,
+                       const std::string &comment);
 
     std::map<std::string, BlossomValidDef> validationMap;
 
@@ -121,6 +148,12 @@ private:
                        ErrorContainer &error);
     void getCompareMap(const ValueItemMap &valueMap,
                        std::map<std::string, IO_ValueType> &compareMap);
+
+    bool checkValues(const DataMap &values,
+                    const IO_ValueType ioType,
+                    ErrorContainer &error);
+    bool checkType(DataItem* item,
+                   const FieldType fieldType);
 };
 
 } // namespace Sakura
