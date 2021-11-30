@@ -179,6 +179,20 @@ Interface_Test::runAndTriggerTree_test()
     TEST_EQUAL(status.errorMessage, "");
 
     //----------------------------------------------------------------------------------------------
+    // test invalid input-type
+    DataMap brokenInput = inputValues;
+    // correct type would be int
+    brokenInput.insert("input", new DataValue(true), true);
+    TEST_EQUAL(interface->triggerTree(result,
+                                      "test-tree",
+                                      context,
+                                      falseMap,
+                                      status,
+                                      error), false);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+
+    //----------------------------------------------------------------------------------------------
     // test fail within blossom
     error._errorMessages.clear();
     inputValues.insert("should_fail", new DataValue(true));
@@ -254,6 +268,21 @@ Interface_Test::runAndTriggerBlossom_test()
     //----------------------------------------------------------------------------------------------
     // test invalid input-values
     DataMap falseMap;
+    TEST_EQUAL(interface->triggerBlossom(result,
+                                         "standalone",
+                                         "-",
+                                         context,
+                                         falseMap,
+                                         status,
+                                         error), false);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+
+    //----------------------------------------------------------------------------------------------
+    // test invalid input-type
+    DataMap brokenInput = inputValues;
+    // correct type would be int
+    brokenInput.insert("input", new DataValue(true), true);
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "-",

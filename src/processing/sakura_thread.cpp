@@ -229,9 +229,8 @@ SakuraThread::processBlossom(GrowthPlan* plan,
         return false;
     }
 
-    BlossomLeaf blossomLeaf;
-
     // update blossom-leaf for processing
+    BlossomLeaf blossomLeaf;
     blossomLeaf.blossomPath = plan->filePath;
     blossomLeaf.nameHirarchie = plan->hirarchy;
     blossomLeaf.parentValues = &plan->items;

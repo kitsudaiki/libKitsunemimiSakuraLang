@@ -148,6 +148,12 @@ private:
                        ErrorContainer &error);
     void getCompareMap(const ValueItemMap &valueMap,
                        std::map<std::string, IO_ValueType> &compareMap);
+
+    bool checkValues(const DataMap &values,
+                    const IO_ValueType ioType,
+                    ErrorContainer &error);
+    bool checkType(DataItem* item,
+                   const FieldType fieldType);
 };
 
 } // namespace Sakura
