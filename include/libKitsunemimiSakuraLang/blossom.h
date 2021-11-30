@@ -83,6 +83,32 @@ public:
     Blossom();
     virtual ~Blossom();
 
+    enum IO_ValueType
+    {
+        UNDEFINED_VALUE_TYPE = 0,
+        INPUT_TYPE = 1,
+        OUTPUT_TYPE = 2,
+    };
+
+    struct BlossomValidDef
+    {
+        const IO_ValueType ioType;
+        const FieldType fieldType;
+        const bool isRequired;
+        const std::string comment;
+
+        BlossomValidDef(const IO_ValueType ioType,
+                        const FieldType fieldType,
+                        const bool isRequired,
+                        const std::string &comment)
+            : ioType(ioType),
+              fieldType(fieldType),
+              isRequired(isRequired),
+              comment(comment) { }
+    };
+
+    std::map<std::string, BlossomValidDef> validationMap;
+
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
                          const DataMap &context,
@@ -103,39 +129,12 @@ private:
     friend Validator;
     friend SakuraLangInterface;
 
-    enum IO_ValueType
-    {
-        UNDEFINED_VALUE_TYPE = 0,
-        INPUT_TYPE = 1,
-        OUTPUT_TYPE = 2,
-    };
-
-    struct BlossomValidDef
-    {
-        IO_ValueType ioType = UNDEFINED_VALUE_TYPE;
-        FieldType fieldType = SAKURA_UNDEFINED_TYPE;
-        bool isRequired = false;
-        std::string comment;
-
-        BlossomValidDef(const IO_ValueType ioType,
-                        const FieldType fieldType,
-                        const bool isRequired,
-                        const std::string &comment)
-        {
-            this->ioType = ioType;
-            this->fieldType = fieldType;
-            this->isRequired = isRequired;
-            this->comment = comment;
-        }
-    };
-
     bool registerField(const std::string &name,
                        const IO_ValueType type,
                        const FieldType fieldType,
                        const bool required,
                        const std::string &comment);
 
-    std::map<std::string, BlossomValidDef> validationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      const DataMap* context,
