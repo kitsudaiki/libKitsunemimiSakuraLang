@@ -91,11 +91,11 @@ protected:
     bool allowUnmatched = false;
 
     bool registerInputField(const std::string &name,
-                            const FieldType type,
+                            const FieldType fieldType,
                             const bool required,
                             const std::string &comment);
     bool registerOutputField(const std::string &name,
-                             const FieldType type,
+                             const FieldType fieldType,
                              const std::string &comment);
 
 private:

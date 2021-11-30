@@ -44,40 +44,46 @@ Blossom::~Blossom() {}
  * @brief register input field for validation of incoming messages
  *
  * @param name name of the filed to identifiy value
+ * @param fieldType type for value-validation
  * @param required false, to make field optional, true to make it required
+ * @param comment additional comment to describe the content of the field
  *
  * @return false, if already name already registered, else true
  */
 bool
 Blossom::registerInputField(const std::string &name,
-                            const FieldType type,
+                            const FieldType fieldType,
                             const bool required,
                             const std::string &comment)
 {
-    return registerField(name, INPUT_TYPE, type, required, comment);
+    return registerField(name, INPUT_TYPE, fieldType, required, comment);
 }
 
 /**
  * @brief register output field for validation of incoming messages
  *
  * @param name name of the filed to identifiy value
+ * @param fieldType type for value-validation
+ * @param comment additional comment to describe the content of the field
  *
  * @return false, if already name already registered, else true
  */
 bool
 Blossom::registerOutputField(const std::string &name,
-                             const FieldType type,
+                             const FieldType fieldType,
                              const std::string &comment)
 {
-    return registerField(name, OUTPUT_TYPE, type, false, comment);
+    return registerField(name, OUTPUT_TYPE, fieldType, false, comment);
 }
 
 /**
  * @brief register field for validation of incoming messages
  *
  * @param name name of the filed to identifiy value
- * @param type INPUT_TYPE or OUTPUT_TYPE
+ * @param ioType INPUT_TYPE or OUTPUT_TYPE
+ * @param fieldType type for value-validation
  * @param required false, to make field optional, true to make it required
+ * @param comment additional comment to describe the content of the field
  *
  * @return false, if already name already registered, else true
  */
@@ -103,6 +109,7 @@ Blossom::registerField(const std::string &name,
  * @brief execute blossom
  *
  * @param blossomLeaf leaf-object for values-handling while processing
+ * @param context const-map with global accasible values
  * @param status reference for status-output
  * @param error reference for error-output
  *
@@ -305,11 +312,13 @@ Blossom::getCompareMap(const ValueItemMap &valueMap,
 }
 
 /**
- * @brief Blossom::checkValues
- * @param values
- * @param ioType
- * @param error
- * @return
+ * @brief check valure-types of the blossom-input and -output
+ *
+ * @param values map of the input or output-values to validate
+ * @param ioType select input- or output-values
+ * @param error reference for error-output
+ *
+ * @return true, if everything match, else false
  */
 bool
 Blossom::checkValues(const DataMap &values,
@@ -338,10 +347,12 @@ Blossom::checkValues(const DataMap &values,
 }
 
 /**
- * @brief Blossom::checkType
- * @param item
- * @param fieldType
- * @return
+ * @brief Check type of an item with the registered field
+ *
+ * @param item item to check
+ * @param fieldType field-type to compare
+ *
+ * @return true, if match, else false
  */
 bool
 Blossom::checkType(DataItem* item,
