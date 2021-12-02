@@ -32,6 +32,38 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
+const std::string
+createErrorMessage(const std::string &name,
+                   const FieldType fieldType)
+{
+    std::string err = "Value-validation failed, because a value has the false type: "
+                       "'" + name + "'.";
+    switch(fieldType)
+    {
+        case SAKURA_UNDEFINED_TYPE:
+            break;
+        case SAKURA_INT_TYPE:
+            err.append("\nExprect int-type.");
+            break;
+        case SAKURA_FLOAT_TYPE:
+            err.append("\nExprect float-type.");
+            break;
+        case SAKURA_BOOL_TYPE:
+            err.append("\nExprect bool-type.");
+            break;
+        case SAKURA_STRING_TYPE:
+            err.append("\nExprect string-type.");
+            break;
+        case SAKURA_ARRAY_TYPE:
+            err.append("\nExprect array-type.");
+            break;
+        case SAKURA_MAP_TYPE:
+            err.append("\nExprect map-type.");
+            break;
+    }
+
+    return err;
+}
 
 /**
  * @brief check valure-types of the blossom-input and -output
@@ -59,8 +91,7 @@ checkValues(const std::map<std::string, FieldDef> &defs,
             if(item != nullptr
                     && checkType(item, defIt->second.fieldType) == false)
             {
-                error.addMeesage("value-validation failed, because a value has the false type: "
-                                 "'" + defIt->first + "'");
+                error.addMeesage(createErrorMessage(defIt->first, defIt->second.fieldType));
                 return false;
             }
         }
@@ -97,8 +128,7 @@ checkValues(const ValueItemMap &defs,
             if(item != nullptr
                     && checkType(item, defIt->second.fieldType) == false)
             {
-                error.addMeesage("value-validation failed, because a value has the false type: "
-                                 "'" + defIt->first + "'");
+                error.addMeesage(createErrorMessage(defIt->first, defIt->second.fieldType));
                 return false;
             }
         }
