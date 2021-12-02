@@ -128,11 +128,18 @@ TreeItem::copy()
     newItem->unparsedConent = unparsedConent;
     newItem->relativePath = relativePath;
     newItem->rootPath = rootPath;
+    newItem->comment = comment;
 
     newItem->id = id;
     newItem->childs = childs->copy();
 
     return newItem;
+}
+
+void
+TreeItem::getValidationMap(std::map<std::string, FieldDef> &validationMap) const
+{
+    values.getValidationMap(validationMap);
 }
 
 //===================================================================

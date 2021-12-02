@@ -1,5 +1,5 @@
-﻿/**
- * @file        validator.h
+/**
+ * @file        runtime_validation.h
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -20,38 +20,35 @@
  *      limitations under the License.
  */
 
-#ifndef KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
-#define KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
+#ifndef KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
+#define KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
 
-#include <string>
-#include <map>
+#include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
+
+#include <items/value_items.h>
+#include <libKitsunemimiSakuraLang/blossom.h>
 
 namespace Kitsunemimi
 {
 namespace Sakura
 {
-class SakuraLangInterface;
-class BlossomItem;
-class SakuraItem;
+class ValueItemMap;
 
-class Validator
-{
-public:
-    Validator();
-    ~Validator();
+bool checkValues(const std::map<std::string, FieldDef> &defs,
+                 const DataMap &values,
+                 const FieldDef::IO_ValueType ioType,
+                 ErrorContainer &error);
 
-    bool checkBlossomItem(BlossomItem &blossomItem,
-                          const std::string &filePath,
-                          ErrorContainer &error);
+bool checkValues(const ValueItemMap &defs,
+                 const DataMap &values,
+                 const ValueItem::ValueType ioType,
+                 ErrorContainer &error);
 
-    bool checkSakuraItem(SakuraItem* sakuraItem,
-                         const std::string &filePath,
-                         ErrorContainer &error);
-    bool checkAllItems(ErrorContainer &error);
-};
+bool checkType(DataItem* item,
+               const FieldType fieldType);
 
 } // namespace Sakura
 } // namespace Kitsunemimi
 
-#endif // KITSUNEMIMI_SAKURA_LANG_VALIDATOR_H
+#endif // KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H

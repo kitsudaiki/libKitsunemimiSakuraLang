@@ -25,6 +25,7 @@
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
+#include <libKitsunemimiSakuraLang/structs.h>
 
 namespace Kitsunemimi
 {
@@ -32,82 +33,19 @@ namespace Sakura
 {
 class BlossomItem;
 class SakuraThread;
-class Validator;
+class InitialValidator;
 class SakuraLangInterface;
 class ValueItemMap;
-
-//--------------------------------------------------------------------------------------------------
-
-struct BlossomLeaf
-{
-    std::string blossomType = "";
-    std::string blossomName = "";
-    std::string blossomPath = "";
-    std::string blossomGroupType = "";
-    std::vector<std::string> nameHirarchie;
-
-    DataMap output;
-    DataMap input;
-
-    DataMap* parentValues = nullptr;
-
-    std::string terminalOutput = "";
-};
-
-//--------------------------------------------------------------------------------------------------
-
-struct BlossomStatus
-{
-    uint64_t statusCode = 0;
-    std::string errorMessage = "";
-};
-
-//--------------------------------------------------------------------------------------------------
-
-enum FieldType
-{
-    SAKURA_UNDEFINED_TYPE = 0,
-    SAKURA_INT_TYPE = 1,
-    SAKURA_FLOAT_TYPE = 2,
-    SAKURA_BOOL_TYPE = 3,
-    SAKURA_STRING_TYPE = 4,
-    SAKURA_ARRAY_TYPE = 5,
-    SAKURA_MAP_TYPE = 6
-};
-
-//--------------------------------------------------------------------------------------------------
 
 class Blossom
 {
 public:
-    Blossom();
+    Blossom(const std::string &comment);
     virtual ~Blossom();
 
-    enum IO_ValueType
-    {
-        UNDEFINED_VALUE_TYPE = 0,
-        INPUT_TYPE = 1,
-        OUTPUT_TYPE = 2,
-    };
+    const std::string comment;
 
-    struct BlossomValidDef
-    {
-        const IO_ValueType ioType;
-        const FieldType fieldType;
-        const bool isRequired;
-        const std::string comment;
-
-        BlossomValidDef(const IO_ValueType ioType,
-                        const FieldType fieldType,
-                        const bool isRequired,
-                        const std::string &comment)
-            : ioType(ioType),
-              fieldType(fieldType),
-              isRequired(isRequired),
-              comment(comment) { }
-    };
-
-    std::map<std::string, BlossomValidDef> validationMap;
+    const std::map<std::string, FieldDef>* getValidationMap() const;
 
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
@@ -126,11 +64,13 @@ protected:
 
 private:
     friend SakuraThread;
-    friend Validator;
+    friend InitialValidator;
     friend SakuraLangInterface;
 
+    std::map<std::string, FieldDef> validationMap;
+
     bool registerField(const std::string &name,
-                       const IO_ValueType type,
+                       const FieldDef::IO_ValueType type,
                        const FieldType fieldType,
                        const bool required,
                        const std::string &comment);
@@ -145,14 +85,8 @@ private:
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        ErrorContainer &error);
-    void getCompareMap(const ValueItemMap &valueMap,
-                       std::map<std::string, IO_ValueType> &compareMap);
-
-    bool checkValues(const DataMap &values,
-                    const IO_ValueType ioType,
-                    ErrorContainer &error);
-    bool checkType(DataItem* item,
-                   const FieldType fieldType);
+    void getCompareMap(std::map<std::string, FieldDef::IO_ValueType> &compareMap,
+                       const ValueItemMap &valueMap);
 };
 
 } // namespace Sakura

@@ -27,8 +27,11 @@ INCLUDEPATH += $$PWD \
 HEADERS += \
     ../include/libKitsunemimiSakuraLang/blossom.h \
     ../include/libKitsunemimiSakuraLang/sakura_lang_interface.h \
+    ../include/libKitsunemimiSakuraLang/structs.h \
+    initial_validator.h \
     processing/active_counter.h \
     processing/growth_plan.h \
+    runtime_validation.h \
     sakura_file_collector.h \
     sakura_garden.h \
     items/sakura_items.h \
@@ -39,12 +42,13 @@ HEADERS += \
     parsing/sakura_parser_interface.h \
     processing/sakura_thread.h \
     processing/subtree_queue.h \
-    processing/thread_pool.h \
-    validator.h
+    processing/thread_pool.h
 
 SOURCES += \
+    initial_validator.cpp \
     items/item_methods.cpp \
     processing/growth_plan.cpp \
+    runtime_validation.cpp \
     sakura_file_collector.cpp \
     sakura_garden.cpp \
     items/sakura_items.cpp \
@@ -55,7 +59,6 @@ SOURCES += \
     processing/sakura_thread.cpp \
     processing/subtree_queue.cpp \
     processing/thread_pool.cpp \
-    validator.cpp \
     sakura_lang_interface.cpp
 
 

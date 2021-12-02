@@ -598,7 +598,7 @@ checkItems(DataMap &items)
         it != items.map.end();
         it++)
     {
-        if(it->second->getString() == "{{}}") {
+        if(it->second->getString() == "?") {
             result.push_back(it->first);
         }
     }

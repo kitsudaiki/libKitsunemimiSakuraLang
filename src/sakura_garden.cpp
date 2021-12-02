@@ -217,11 +217,12 @@ SakuraGarden::getRessource(const std::string &id)
  * @brief request a tree
  *
  * @param id name of the tree
+ * @param copy if true, then create a real copy
  *
  * @return copy of the tree-item, if id exist, else nullptr
  */
 TreeItem*
-SakuraGarden::getTree(std::string id)
+SakuraGarden::getTree(std::string id, const bool copy)
 {
     if(id == "") {
        id = "root.sakura";
@@ -230,7 +231,11 @@ SakuraGarden::getTree(std::string id)
     std::map<std::string, TreeItem*>::const_iterator it;
     it = m_trees.find(id);
     if(it != m_trees.end()) {
-        return dynamic_cast<TreeItem*>(it->second->copy());
+        if(copy) {
+            return dynamic_cast<TreeItem*>(it->second->copy());
+        } else {
+            return dynamic_cast<TreeItem*>(it->second);
+        }
     }
 
     return nullptr;

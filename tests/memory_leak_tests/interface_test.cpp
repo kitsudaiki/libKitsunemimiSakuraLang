@@ -83,6 +83,9 @@ Interface_Test::runAndTriggerTree_test()
     interface->triggerTree(*result, "fail", context, *input, *status, *error);
     DataMap falseMap;
     interface->triggerTree(*result, "test-tree", context, falseMap, *status, *error);
+    input->insert("input", new DataValue(true), true);
+    interface->triggerTree(*result, "test-tree", context, *input, *status, *error);
+    input->insert("input", new DataValue(42), true);
     input->insert("should_fail", new DataValue(true));
     interface->triggerTree(*result, "test-tree", context, *input, *status, *error);
 
@@ -117,6 +120,9 @@ Interface_Test::runAndTriggerBlossom_test()
     interface->triggerBlossom(*result, "fail", "-", context, *input, *status, *error);
     DataMap falseMap;
     interface->triggerBlossom(*result, "standalone", "-", context, falseMap, *status, *error);
+    input->insert("input", new DataValue(true), true);
+    interface->triggerBlossom(*result, "standalone", "-", context, *input, *status, *error);
+    input->insert("input", new DataValue(42), true);
     input->insert("should_fail", new DataValue(true));
     interface->triggerBlossom(*result, "standalone", "-", context, *input, *status, *error);
 
@@ -136,7 +142,7 @@ const std::string
 Interface_Test::getTestTree()
 {
     const std::string tree = "[\"test\"]\n"
-                             "- input = \"{{}}\"\n"
+                             "- input = ?\n"
                              "- should_fail = false\n"
                              "- test_output = >>\n"
                              "\n"

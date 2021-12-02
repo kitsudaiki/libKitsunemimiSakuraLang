@@ -24,9 +24,9 @@
 #include <libKitsunemimiSakuraLang/blossom.h>
 
 #include <sakura_garden.h>
-#include <validator.h>
+#include <initial_validator.h>
 #include <sakura_file_collector.h>
-
+#include <runtime_validation.h>
 #include <parsing/sakura_parser_interface.h>
 
 #include <processing/subtree_queue.h>
@@ -53,7 +53,7 @@ Kitsunemimi::Sakura::SakuraLangInterface* SakuraLangInterface::m_instance = null
 SakuraLangInterface::SakuraLangInterface(const uint16_t numberOfThreads,
                                          const bool enableDebug)
 {
-    m_validator = new Validator();
+    m_validator = new InitialValidator();
     m_fileCollector = new SakuraFileCollector(this);
     m_parser = new SakuraParserInterface(enableDebug);
     m_garden = new SakuraGarden();
@@ -125,18 +125,34 @@ SakuraLangInterface::triggerTree(DataMap &result,
     overrideItems(growthPlan.items, tree->values, ONLY_NON_EXISTING);
     result.clear();
 
+    // check input-values for its type
+    if(checkValues(tree->values, growthPlan.items, ValueItem::INPUT_PAIR_TYPE, error) == false)
+    {
+        LOG_ERROR(error);
+        delete tree;
+        return false;
+    }
+
     // process sakura-file with initial values
-    const bool ret = runProcess(result, &growthPlan, tree);
-    if(ret == false)
+    if(runProcess(result, &growthPlan, tree) == false)
     {
         status = growthPlan.status;
         error = growthPlan.error;
         LOG_ERROR(error);
+        delete tree;
+        return false;
+    }
+
+    // check output-values for its type
+    if(checkValues(tree->values, result, ValueItem::OUTPUT_PAIR_TYPE, error) == false)
+    {
+        LOG_ERROR(error);
+        delete tree;
+        return false;
     }
 
     delete tree;
-
-    return ret;
+    return true;
 }
 
 /**
@@ -291,6 +307,48 @@ SakuraLangInterface::getBlossom(const std::string &groupName,
     }
 
     return nullptr;
+}
+
+/**
+ * @brief getter for the comment of a tree-item
+ *
+ * @param comment reference for the comment-output
+ * @param id id of the tree
+ *
+ * @return false, if tree for the given id was not found, else true
+ */
+bool
+SakuraLangInterface::getTreeComment(std::string &comment,
+                                    const std::string &id) const
+{
+    TreeItem* tree = m_garden->getTree(id, false);
+    if(tree == nullptr) {
+        return false;
+    }
+
+    comment = tree->comment;
+    return true;
+}
+
+/**
+ * @brief get the validation-map of a tree-item
+ *
+ * @param validationMap reference for the resulting validaiton-map
+ * @param id id of the tree
+ *
+ * @return false, if tree for the given id was not found, else true
+ */
+bool
+SakuraLangInterface::getTreeValidMap(std::map<std::string, FieldDef> &validationMap,
+                                     const std::string &id) const
+{
+    TreeItem* tree = m_garden->getTree(id);
+    if(tree == nullptr) {
+        return false;
+    }
+
+    tree->getValidationMap(validationMap);
+    return true;
 }
 
 /**

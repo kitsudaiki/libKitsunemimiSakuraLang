@@ -9,7 +9,7 @@ namespace Sakura
 {
 
 TestBlossom::TestBlossom(Interface_Test* sessionTest)
-    : Blossom()
+    : Blossom("")
 {
     m_sessionTest = sessionTest;
     registerInputField("input", SAKURA_INT_TYPE, true, "comment1");

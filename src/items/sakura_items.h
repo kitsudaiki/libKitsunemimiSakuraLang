@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file        sakura_items.h
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
@@ -110,12 +110,14 @@ public:
     TreeItem();
     ~TreeItem();
     SakuraItem* copy();
+    void getValidationMap(std::map<std::string, FieldDef> &validationMap) const;
 
     std::string id = "";
 
     std::string unparsedConent = "";
     std::string relativePath = "";
     std::string rootPath = "";
+    std::string comment = "";
     std::vector<std::string> outputKeys;
 
     SakuraItem* childs;

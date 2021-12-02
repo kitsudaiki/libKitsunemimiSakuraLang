@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiSakuraLang/blossom.h>
 
 namespace Kitsunemimi
 {
@@ -61,6 +62,8 @@ struct ValueItem
     DataItem* item = nullptr;
     ValueType type = INPUT_PAIR_TYPE;
     bool isIdentifier = false;
+    std::string comment = "";
+    FieldType fieldType = SAKURA_UNDEFINED_TYPE;
     std::vector<FunctionItem> functions;
 
     ValueItem() {}
@@ -80,6 +83,8 @@ struct ValueItem
         type = other.type;
         isIdentifier = other.isIdentifier;
         functions = other.functions;
+        fieldType = other.fieldType;
+        comment = other.comment;
     }
 
     ~ValueItem()
@@ -106,6 +111,8 @@ struct ValueItem
             this->type = other.type;
             this->isIdentifier = other.isIdentifier;
             this->functions = other.functions;
+            this->fieldType = other.fieldType;
+            this->comment = other.comment;
         }
         return *this;
     }
