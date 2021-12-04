@@ -24,6 +24,7 @@
 
 #include <items/item_methods.h>
 #include <libKitsunemimiCommon/logger.h>
+#include <runtime_validation.h>
 
 namespace Kitsunemimi
 {
@@ -33,7 +34,8 @@ namespace Sakura
 /**
  * @brief constructor
  */
-Blossom::Blossom() {}
+Blossom::Blossom(const std::string &comment)
+    : comment(comment) {}
 
 /**
  * @brief destructor
@@ -56,7 +58,7 @@ Blossom::registerInputField(const std::string &name,
                             const bool required,
                             const std::string &comment)
 {
-    return registerField(name, INPUT_TYPE, fieldType, required, comment);
+    return registerField(name, FieldDef::INPUT_TYPE, fieldType, required, comment);
 }
 
 /**
@@ -73,7 +75,18 @@ Blossom::registerOutputField(const std::string &name,
                              const FieldType fieldType,
                              const std::string &comment)
 {
-    return registerField(name, OUTPUT_TYPE, fieldType, false, comment);
+    return registerField(name, FieldDef::OUTPUT_TYPE, fieldType, false, comment);
+}
+
+/**
+ * @brief get a pointer to the validation-map
+ *
+ * @return pointer to validation-map
+ */
+const std::map<std::string, FieldDef>*
+Blossom::getValidationMap() const
+{
+    return &validationMap;
 }
 
 /**
@@ -89,18 +102,18 @@ Blossom::registerOutputField(const std::string &name,
  */
 bool
 Blossom::registerField(const std::string &name,
-                       const IO_ValueType ioType,
+                       const FieldDef::IO_ValueType ioType,
                        const FieldType fieldType,
                        const bool required,
                        const std::string &comment)
 {
-    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    std::map<std::string, FieldDef>::const_iterator defIt;
     defIt = validationMap.find(name);
     if(defIt != validationMap.end()) {
         return false;
     }
 
-    validationMap.emplace(name, BlossomValidDef(ioType, fieldType, required, comment));
+    validationMap.emplace(name, FieldDef(ioType, fieldType, required, comment));
 
     return true;
 }
@@ -126,7 +139,8 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
 
-    if(checkValues(blossomLeaf.input, INPUT_TYPE, error) == false) {
+    // validate input
+    if(checkValues(validationMap, blossomLeaf.input, FieldDef::INPUT_TYPE, error) == false) {
         return false;
     }
 
@@ -137,7 +151,8 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
         return false;
     }
 
-    if(checkValues(blossomLeaf.output, OUTPUT_TYPE, error) == false) {
+    // validate output
+    if(checkValues(validationMap, blossomLeaf.output, FieldDef::OUTPUT_TYPE, error) == false) {
         return false;
     }
 
@@ -164,7 +179,7 @@ Blossom::validateInput(const DataMap &input,
             compareIt != input.map.end();
             compareIt++)
         {
-            std::map<std::string, BlossomValidDef>::const_iterator defIt;
+            std::map<std::string, FieldDef>::const_iterator defIt;
             defIt = validationMap.find(compareIt->first);
             if(defIt == validationMap.end())
             {
@@ -178,13 +193,13 @@ Blossom::validateInput(const DataMap &input,
     }
 
     // check that all keys in the required keys are also in the values of the blossom-item
-    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    std::map<std::string, FieldDef>::const_iterator defIt;
     for(defIt = validationMap.begin();
         defIt != validationMap.end();
         defIt++)
     {
         if(defIt->second.isRequired == true
-                && defIt->second.ioType == IO_ValueType::INPUT_TYPE)
+                && defIt->second.ioType == FieldDef::IO_ValueType::INPUT_TYPE)
         {
             // search for values
             const bool ret = input.contains(defIt->first);
@@ -215,18 +230,18 @@ Blossom::validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        ErrorContainer &error)
 {
-    std::map<std::string, IO_ValueType> compareMap;
-    getCompareMap(blossomItem.values, compareMap);
+    std::map<std::string, FieldDef::IO_ValueType> compareMap;
+    getCompareMap(compareMap, blossomItem.values);
 
     if(allowUnmatched == false)
     {
         // check if all keys in the values of the blossom-item also exist in the required-key-list
-        std::map<std::string, IO_ValueType>::const_iterator compareIt;
+        std::map<std::string, FieldDef::IO_ValueType>::const_iterator compareIt;
         for(compareIt = compareMap.begin();
             compareIt != compareMap.end();
             compareIt++)
         {
-            std::map<std::string, BlossomValidDef>::const_iterator defIt;
+            std::map<std::string, FieldDef>::const_iterator defIt;
             defIt = validationMap.find(compareIt->first);
             if(defIt == validationMap.end())
             {
@@ -241,7 +256,7 @@ Blossom::validateInput(BlossomItem &blossomItem,
     }
 
     // check that all keys in the required keys are also in the values of the blossom-item
-    std::map<std::string, BlossomValidDef>::const_iterator defIt;
+    std::map<std::string, FieldDef>::const_iterator defIt;
     for(defIt = validationMap.begin();
         defIt != validationMap.end();
         defIt++)
@@ -249,7 +264,7 @@ Blossom::validateInput(BlossomItem &blossomItem,
         if(defIt->second.isRequired == true)
         {
             // search for values
-            std::map<std::string, IO_ValueType>::const_iterator compareIt;
+            std::map<std::string, FieldDef::IO_ValueType>::const_iterator compareIt;
             compareIt = compareMap.find(defIt->first);
             if(compareIt != compareMap.end())
             {
@@ -279,12 +294,12 @@ Blossom::validateInput(BlossomItem &blossomItem,
 /**
  * @brief get map for comparism in validator
  *
- * @param value-map to compare
  * @param compareMap reference for the resulting map
+ * @param value-map to compare
  */
 void
-Blossom::getCompareMap(const ValueItemMap &valueMap,
-                       std::map<std::string, IO_ValueType> &compareMap)
+Blossom::getCompareMap(std::map<std::string, FieldDef::IO_ValueType> &compareMap,
+                       const ValueItemMap &valueMap)
 {
     // copy items
     std::map<std::string, ValueItem>::const_iterator it;
@@ -293,11 +308,11 @@ Blossom::getCompareMap(const ValueItemMap &valueMap,
         it++)
     {
         if(it->second.type == ValueItem::INPUT_PAIR_TYPE) {
-            compareMap.emplace(it->first, INPUT_TYPE);
+            compareMap.emplace(it->first, FieldDef::INPUT_TYPE);
         }
 
         if(it->second.type == ValueItem::OUTPUT_PAIR_TYPE) {
-            compareMap.emplace(it->second.item->toString(), OUTPUT_TYPE);
+            compareMap.emplace(it->second.item->toString(), FieldDef::OUTPUT_TYPE);
         }
     }
 
@@ -307,95 +322,8 @@ Blossom::getCompareMap(const ValueItemMap &valueMap,
         itChilds != valueMap.m_childMaps.end();
         itChilds++)
     {
-        compareMap.emplace(itChilds->first, INPUT_TYPE);
+        compareMap.emplace(itChilds->first, FieldDef::INPUT_TYPE);
     }
-}
-
-/**
- * @brief check valure-types of the blossom-input and -output
- *
- * @param values map of the input or output-values to validate
- * @param ioType select input- or output-values
- * @param error reference for error-output
- *
- * @return true, if everything match, else false
- */
-bool
-Blossom::checkValues(const DataMap &values,
-                     const IO_ValueType ioType,
-                     ErrorContainer &error)
-{
-    std::map<std::string, BlossomValidDef>::const_iterator defIt;
-    for(defIt = validationMap.begin();
-        defIt != validationMap.end();
-        defIt++)
-    {
-        if(defIt->second.ioType == ioType)
-        {
-            DataItem* item = values.get(defIt->first);
-            if(item != nullptr
-                    && checkType(item, defIt->second.fieldType) == false)
-            {
-                error.addMeesage("value-validation failed, because a value has the false type: "
-                                 "'" + defIt->first + "'");
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-/**
- * @brief Check type of an item with the registered field
- *
- * @param item item to check
- * @param fieldType field-type to compare
- *
- * @return true, if match, else false
- */
-bool
-Blossom::checkType(DataItem* item,
-                   const FieldType fieldType)
-{
-    if(item->getType() == DataItem::ARRAY_TYPE
-            && fieldType == SAKURA_ARRAY_TYPE)
-    {
-        return true;
-    }
-
-    if(item->getType() == DataItem::MAP_TYPE
-            && fieldType == SAKURA_MAP_TYPE)
-    {
-        return true;
-    }
-
-    if(item->getType() == DataItem::VALUE_TYPE)
-    {
-        DataValue* value = item->toValue();
-        if(value->getValueType() == DataItem::INT_TYPE
-                && fieldType == SAKURA_INT_TYPE)
-        {
-            return true;
-        }
-        if(value->getValueType() == DataItem::FLOAT_TYPE
-                && fieldType == SAKURA_FLOAT_TYPE)
-        {
-            return true;
-        }
-        if(value->getValueType() == DataItem::BOOL_TYPE
-                && fieldType == SAKURA_BOOL_TYPE)
-        {
-            return true;
-        }
-        if(value->getValueType() == DataItem::STRING_TYPE
-                && fieldType == SAKURA_STRING_TYPE)
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 } // namespace Sakura

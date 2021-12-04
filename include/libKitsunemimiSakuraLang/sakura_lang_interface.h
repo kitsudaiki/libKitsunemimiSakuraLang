@@ -32,6 +32,7 @@
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
+#include <libKitsunemimiSakuraLang/structs.h>
 
 namespace Kitsunemimi
 {
@@ -49,8 +50,7 @@ class SakuraThread;
 class Blossom;
 class BlossomGroupItem;
 class BlossomItem;
-class BlossomLeaf;
-class Validator;
+class InitialValidator;
 class SakuraParserInterface;
 class SakuraFileCollector;
 struct GrowthPlan;
@@ -88,6 +88,11 @@ public:
                     Blossom *newBlossom);
     Blossom* getBlossom(const std::string &groupName,
                         const std::string &itemName);
+    bool getTreeComment(std::string &comment,
+                        const std::string &id) const;
+    bool getTreeValidMap(std::map<std::string, FieldDef> &validationMap,
+                         const std::string &id) const;
+
 
     // add
     bool addTree(std::string id,
@@ -107,7 +112,7 @@ public:
 
 private:
     friend SakuraThread;
-    friend Validator;
+    friend InitialValidator;
 
     SakuraLangInterface(const uint16_t numberOfThreads = 6,
                         const bool enableDebug = false);
@@ -120,7 +125,7 @@ private:
     SakuraGarden* m_garden = nullptr;
     SubtreeQueue* m_queue = nullptr;
     ThreadPool* m_threadPoos = nullptr;
-    Validator* m_validator = nullptr;
+    InitialValidator* m_validator = nullptr;
     SakuraFileCollector* m_fileCollector = nullptr;
     std::mutex m_lock;
 

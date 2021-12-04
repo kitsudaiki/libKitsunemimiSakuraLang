@@ -1,5 +1,5 @@
 /**
- * @file        validator.cpp
+ * @file        initial_validator.cpp
  *
  * @author      Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -20,7 +20,7 @@
  *      limitations under the License.
  */
 
-#include "validator.h"
+#include "initial_validator.h"
 
 #include <items/item_methods.h>
 #include <sakura_garden.h>
@@ -36,12 +36,12 @@ namespace Sakura
 /**
  * @brief constructor
  */
-Validator::Validator() {}
+InitialValidator::InitialValidator() {}
 
 /**
  * @brief destructor
  */
-Validator::~Validator() {}
+InitialValidator::~InitialValidator() {}
 
 /**
  * @brief check content of a blossom-item
@@ -53,9 +53,9 @@ Validator::~Validator() {}
  * @return true, if check successful, else false
  */
 bool
-Validator::checkBlossomItem(BlossomItem &blossomItem,
-                            const std::string &filePath,
-                            ErrorContainer &error)
+InitialValidator::checkBlossomItem(BlossomItem &blossomItem,
+                                   const std::string &filePath,
+                                   ErrorContainer &error)
 {
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 
@@ -88,9 +88,9 @@ Validator::checkBlossomItem(BlossomItem &blossomItem,
  * @return true, if check successful, else false
  */
 bool
-Validator::checkSakuraItem(SakuraItem* sakuraItem,
-                           const std::string &filePath,
-                           ErrorContainer &error)
+InitialValidator::checkSakuraItem(SakuraItem* sakuraItem,
+                                  const std::string &filePath,
+                                  ErrorContainer &error)
 {
     //----------------------------------------------------------------------------------------------
     if(sakuraItem->getType() == SakuraItem::SEQUENTIELL_ITEM)
@@ -189,7 +189,7 @@ Validator::checkSakuraItem(SakuraItem* sakuraItem,
  * @return true, if check successful, else false
  */
 bool
-Validator::checkAllItems(ErrorContainer &error)
+InitialValidator::checkAllItems(ErrorContainer &error)
 {
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
 

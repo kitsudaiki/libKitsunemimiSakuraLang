@@ -87,6 +87,13 @@ YY_DECL;
     IF  "if"
     ELSE  "else"
     FOR  "for"
+    MAP_TYPE "[map]"
+    ARRAY_TYPE "[array]"
+    INT_TYPE "[int]"
+    FLOAT_TYPE "[float]"
+    BOOL_TYPE "[bool]"
+    STRING_TYPE "[str]"
+    UNDEFINED_VALUE "?"
     ASSIGN  ":"
     SEMICOLON  ";"
     DOT  "."
@@ -131,6 +138,8 @@ YY_DECL;
 %type  <std::vector<BlossomItem*>*> blossom_set
 
 %type  <ValueItemMap*> item_set
+%type  <std::string> item_set_comment
+%type  <FieldType> item_set_type
 
 %type  <FunctionItem> access
 %type  <std::vector<FunctionItem>*> access_list
@@ -170,6 +179,16 @@ tree:
         $$->values = *$4;
         delete $4;
         $$->childs = $5;
+    }
+|
+    "[" name_item "]" "(" "string" ")" item_set blossom_group_set
+    {
+        $$ = new TreeItem();
+        $$->id = $2;
+        $$->comment = $5;
+        $$->values = *$7;
+        delete $7;
+        $$->childs = $8;
     }
 
 blossom_group_set:
@@ -451,11 +470,27 @@ item_set:
         $$ = new ValueItemMap();
     }
 |
-    item_set  "-" registerable_identifier "=" "{" "{" "}" "}"
+    item_set  "-" registerable_identifier "=" value_item item_set_comment
     {
-        std::string empty = "{{}}";
+        if($1->contains($3))
+        {
+            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
+            return 1;
+        }
+
+        $5.comment = $6;
+
+        $1->insert($3, $5);
+        $$ = $1;
+    }
+|
+    item_set  "-" registerable_identifier "=" "?" item_set_type item_set_comment
+    {
+        std::string empty = "?";
         ValueItem newItem;
         newItem.item = new DataValue(empty);
+        newItem.fieldType = $6;
+        newItem.comment = $7;
 
         if($1->contains($3))
         {
@@ -467,19 +502,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" registerable_identifier "=" value_item
-    {
-        if($1->contains($3))
-        {
-            driver.error(yyla.location, "name already used: \"" + $3 + "\"", true);
-            return 1;
-        }
-
-        $1->insert($3, $5);
-        $$ = $1;
-    }
-|
-    item_set  "-" registerable_identifier "=" "{" item_set "}"
+    item_set  "-" registerable_identifier "=" "{" item_set "}" item_set_comment
     {
         if($1->contains($3))
         {
@@ -491,10 +514,11 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" registerable_identifier "=" json_abstract
+    item_set  "-" registerable_identifier "=" json_abstract item_set_comment
     {
         ValueItem newItem;
         newItem.item = $5;
+        newItem.comment = $6;
 
         if($1->contains($3))
         {
@@ -506,7 +530,7 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" "identifier" ">>" "identifier"
+    item_set  "-" "identifier" ">>" "identifier" item_set_comment
     {
         if(driver.isKeyRegistered($5) == false)
         {
@@ -518,6 +542,7 @@ item_set:
         newItem.item = new DataValue($3);
         newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+        newItem.comment = $6;
 
         if($1->contains($5))
         {
@@ -529,11 +554,13 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" registerable_identifier "=" ">>"
+    item_set  "-" registerable_identifier "=" ">>" item_set_type item_set_comment
     {
         ValueItem newItem;
         newItem.item = new DataValue(std::string(""));
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+        newItem.fieldType = $6;
+        newItem.comment = $7;
 
         if($1->contains($3))
         {
@@ -545,9 +572,10 @@ item_set:
         $$ = $1;
     }
 |
-    item_set  "-" "identifier" compare_type value_item
+    item_set  "-" "identifier" compare_type value_item item_set_comment
     {
         ValueItem newItem = $5;
+        newItem.comment = $6;
 
         if($1->contains($3))
         {
@@ -566,21 +594,26 @@ item_set:
         $$ = $1;
     }
 |
-    "-" registerable_identifier "=" "{" "{" "}" "}"
+    "-" registerable_identifier "=" value_item item_set_comment
     {
         $$ = new ValueItemMap();
 
-        std::string empty = "{{}}";
-        ValueItem newItem;
-        newItem.item = new DataValue(empty);
+        $4.comment = $5;
 
-        $$->insert($2, newItem);
+        $$->insert($2, $4);
     }
 |
-    "-" registerable_identifier "=" value_item
+    "-" registerable_identifier "=" "?" item_set_type item_set_comment
     {
         $$ = new ValueItemMap();
-        $$->insert($2, $4);
+
+        std::string empty = "?";
+        ValueItem newItem;
+        newItem.item = new DataValue(empty);
+        newItem.fieldType = $5;
+        newItem.comment = $6;
+
+        $$->insert($2, newItem);
     }
 |
     "-" registerable_identifier "=" "{" item_set "}"
@@ -589,17 +622,32 @@ item_set:
         $$->insert($2, $5);
     }
 |
-    "-" registerable_identifier "=" json_abstract
+    "-" registerable_identifier "=" json_abstract item_set_comment
     {
         $$ = new ValueItemMap();
 
         ValueItem newItem;
         newItem.item = $4;
+        newItem.comment = $5;
+
+        if($4->isMap()) {
+            newItem.fieldType = SAKURA_MAP_TYPE;
+        } else if($4->isArray()) {
+            newItem.fieldType = SAKURA_ARRAY_TYPE;
+        } else if($4->isStringValue()) {
+            newItem.fieldType = SAKURA_STRING_TYPE;
+        } else if($4->isIntValue()) {
+            newItem.fieldType = SAKURA_INT_TYPE;
+        } else if($4->isFloatValue()) {
+            newItem.fieldType = SAKURA_FLOAT_TYPE;
+        } else if($4->isBoolValue()) {
+            newItem.fieldType = SAKURA_BOOL_TYPE;
+        }
 
         $$->insert($2, newItem);
     }
 |
-    "-" "identifier" ">>" "identifier"
+    "-" "identifier" ">>" "identifier" item_set_comment
     {
         if(driver.isKeyRegistered($4) == false)
         {
@@ -615,26 +663,30 @@ item_set:
         newItem.item = new DataValue($2);
         newItem.isIdentifier = true;
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+        newItem.comment = $5;
 
         $$->insert($4, newItem);
     }
 |
-    "-" registerable_identifier "=" ">>"
+    "-" registerable_identifier "=" ">>" item_set_type item_set_comment
     {
         $$ = new ValueItemMap();
 
         ValueItem newItem;
         newItem.item = new DataValue(std::string(""));
         newItem.type = ValueItem::OUTPUT_PAIR_TYPE;
+        newItem.fieldType = $5;
+        newItem.comment = $6;
 
         $$->insert($2, newItem);
     }
 |
-    "-" "identifier" compare_type value_item
+    "-" "identifier" compare_type value_item item_set_comment
     {
         $$ = new ValueItemMap();
 
         ValueItem newItem = $4;
+        newItem.comment = $5;
 
         if($3 == "==") {
             newItem.type = ValueItem::COMPARE_EQUAL_PAIR_TYPE;
@@ -673,6 +725,7 @@ value_item:
     {
         ValueItem newItem;
         newItem.item = new DataValue($1);
+        newItem.fieldType = SAKURA_FLOAT_TYPE;
         $$ = newItem;
     }
 |
@@ -680,6 +733,7 @@ value_item:
     {
         ValueItem newItem;
         newItem.item = new DataValue($1);
+        newItem.fieldType = SAKURA_INT_TYPE;
         $$ = newItem;
     }
 |
@@ -687,6 +741,7 @@ value_item:
     {
         ValueItem newItem;
         newItem.item = new DataValue(true);
+        newItem.fieldType = SAKURA_BOOL_TYPE;
         $$ = newItem;
     }
 |
@@ -694,6 +749,7 @@ value_item:
     {
         ValueItem newItem;
         newItem.item = new DataValue(false);
+        newItem.fieldType = SAKURA_BOOL_TYPE;
         $$ = newItem;
     }
 |
@@ -701,6 +757,7 @@ value_item:
     {
         ValueItem newItem;
         newItem.item = new DataValue($1);
+        newItem.fieldType = SAKURA_STRING_TYPE;
         $$ = newItem;
     }
 |
@@ -754,6 +811,48 @@ value_item:
         newItem.functions = *$2;
         delete $2;
         $$ = newItem;
+    }
+
+item_set_type:
+    "[map]"
+    {
+        $$ = SAKURA_MAP_TYPE;
+    }
+|
+    "[array]"
+    {
+        $$ = SAKURA_ARRAY_TYPE;
+    }
+|
+    "[int]"
+    {
+        $$ = SAKURA_INT_TYPE;
+    }
+|
+    "[float]"
+    {
+        $$ = SAKURA_FLOAT_TYPE;
+    }
+|
+    "[bool]"
+    {
+        $$ = SAKURA_BOOL_TYPE;
+    }
+|
+    "[str]"
+    {
+        $$ = SAKURA_STRING_TYPE;
+    }
+
+item_set_comment:
+    "(" "string" ")"
+    {
+        $$ = $2;
+    }
+|
+    %empty
+    {
+        $$ = "";
     }
 
 function_list:

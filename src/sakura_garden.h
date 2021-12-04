@@ -35,7 +35,7 @@ struct DataBuffer;
 namespace Sakura
 {
 class TreeItem;
-class Validator;
+class InitialValidator;
 
 class SakuraGarden
 {
@@ -55,7 +55,7 @@ public:
     bool containsTree(std::string id);
 
     // get
-    TreeItem* getTree(std::string id);
+    TreeItem* getTree(std::string id, const bool copy = true);
     TreeItem* getRessource(const std::string &id);
     const std::string getTemplate(const std::string &id);
     DataBuffer* getFile(const std::string &id);
@@ -64,7 +64,7 @@ public:
     std::string rootPath = "";
 
 private:
-    friend Validator;
+    friend InitialValidator;
 
     std::map<std::string, TreeItem*> m_trees;
     std::map<std::string, TreeItem*> m_resources;

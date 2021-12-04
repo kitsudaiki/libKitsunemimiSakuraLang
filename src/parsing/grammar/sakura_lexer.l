@@ -68,6 +68,13 @@ blank [ \t]
 "if"            return Kitsunemimi::Sakura::SakuraParser::make_IF (sakuraloc);
 "else"          return Kitsunemimi::Sakura::SakuraParser::make_ELSE (sakuraloc);
 "for"           return Kitsunemimi::Sakura::SakuraParser::make_FOR (sakuraloc);
+"[map]"         return Kitsunemimi::Sakura::SakuraParser::make_MAP_TYPE (sakuraloc);
+"[array]"       return Kitsunemimi::Sakura::SakuraParser::make_ARRAY_TYPE (sakuraloc);
+"[int]"         return Kitsunemimi::Sakura::SakuraParser::make_INT_TYPE (sakuraloc);
+"[float]"       return Kitsunemimi::Sakura::SakuraParser::make_FLOAT_TYPE (sakuraloc);
+"[bool]"        return Kitsunemimi::Sakura::SakuraParser::make_BOOL_TYPE (sakuraloc);
+"[str]"         return Kitsunemimi::Sakura::SakuraParser::make_STRING_TYPE (sakuraloc);
+"?"             return Kitsunemimi::Sakura::SakuraParser::make_UNDEFINED_VALUE (sakuraloc);
 "->"            return Kitsunemimi::Sakura::SakuraParser::make_ARROW (sakuraloc);
 "=="            return Kitsunemimi::Sakura::SakuraParser::make_EQUAL_COMPARE (sakuraloc);
 "!="            return Kitsunemimi::Sakura::SakuraParser::make_UNEQUAL_COMPARE (sakuraloc);

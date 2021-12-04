@@ -186,7 +186,7 @@ Interface_Test::runAndTriggerTree_test()
     TEST_EQUAL(interface->triggerTree(result,
                                       "test-tree",
                                       context,
-                                      falseMap,
+                                      brokenInput,
                                       status,
                                       error), false);
     TEST_EQUAL(status.statusCode, 0);
@@ -287,7 +287,7 @@ Interface_Test::runAndTriggerBlossom_test()
                                          "standalone",
                                          "-",
                                          context,
-                                         falseMap,
+                                         brokenInput,
                                          status,
                                          error), false);
     TEST_EQUAL(status.statusCode, 0);
@@ -337,9 +337,14 @@ const std::string
 Interface_Test::getTestTree()
 {
     const std::string tree = "[\"test\"]\n"
-                             "- input = \"{{}}\"\n"
+                             "(\"tree-comment\")\n"
+                             "\n"
+                             "- input = ?[int]\n"
+                             "  (\"test-comment1\")\n"
                              "- should_fail = false\n"
-                             "- test_output = >>\n"
+                             "  (\"test-comment2\")\n"
+                             "- test_output = >> [int]\n"
+                             "  (\"test-comment3\")\n"
                              "\n"
                              "test1(\"this is a test\")\n"
                              "->test2:\n"
