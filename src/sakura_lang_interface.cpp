@@ -178,8 +178,6 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
 {
     LOG_DEBUG("trigger blossom");
 
-    std::lock_guard<std::mutex> guard(m_lock);
-
     // get initial blossom-item
     Blossom* blossom = getBlossom(blossomGroupName, blossomName);
     if(blossom == nullptr)
