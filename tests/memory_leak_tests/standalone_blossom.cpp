@@ -28,7 +28,7 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
 
     if(blossomLeaf.input.contains("should_fail"))
     {
-        const bool shouldFail = blossomLeaf.input.get("should_fail")->toValue()->getBool();
+        const bool shouldFail = blossomLeaf.input.get("should_fail").getBool();
         if(shouldFail)
         {
             status.statusCode = 1337;
@@ -38,7 +38,7 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", new Kitsunemimi::DataValue(42));
+    blossomLeaf.output.insert("output", 42);
     return true;
 }
 

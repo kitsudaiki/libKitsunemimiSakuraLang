@@ -25,13 +25,13 @@ TestBlossom::runTask(BlossomLeaf &blossomLeaf,
                      ErrorContainer &error)
 {
     LOG_DEBUG("TestBlossom");
-    DataValue* value = blossomLeaf.input.get("input")->toValue();
-    m_sessionTest->compare(value->getInt(), 42);
+    const int value = blossomLeaf.input.get("input").getInt();
+    m_sessionTest->compare(value, 42);
     m_sessionTest->compare(context.get("test-key")->getString(), std::string("asdf"));
 
     if(blossomLeaf.input.contains("should_fail"))
     {
-        const bool shouldFail = blossomLeaf.input.get("should_fail")->toValue()->getBool();
+        const bool shouldFail = blossomLeaf.input.get("should_fail").getBool();
         if(shouldFail)
         {
             status.statusCode = 1337;
