@@ -191,8 +191,8 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.blossomName = blossomName;
     blossomLeaf.blossomPath = blossomName;
     blossomLeaf.blossomGroupType = blossomGroupName;
-    blossomLeaf.input = initialValues;
-    blossomLeaf.parentValues = &blossomLeaf.input;
+    blossomLeaf.input = &initialValues;
+    blossomLeaf.parentValues = blossomLeaf.input.getItemContent()->toMap();
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
     if(blossom->validateInput(initialValues, error) == false) {
@@ -206,7 +206,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     result.clear();
-    overrideItems(result, blossomLeaf.output, ALL);
+    overrideItems(result, *blossomLeaf.output.getItemContent()->toMap(), ALL);
 
     return true;
 }

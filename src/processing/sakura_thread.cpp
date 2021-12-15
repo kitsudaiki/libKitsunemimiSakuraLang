@@ -236,7 +236,7 @@ SakuraThread::processBlossom(GrowthPlan* plan,
     blossomLeaf.parentValues = &plan->items;
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomItem.blossomName);
 
-    convertValueMap(blossomLeaf.input, blossomItem.values);
+    convertValueMap(*blossomLeaf.input.getItemContent()->toMap(), blossomItem.values);
 
     // process blossom
     if(blossom->growBlossom(blossomLeaf, plan->context, plan->status, plan->error) == false) {
@@ -247,7 +247,7 @@ SakuraThread::processBlossom(GrowthPlan* plan,
     m_interface->printOutput(blossomLeaf);
 
     // write processing result back to parent
-    fillOutputValueItemMap(blossomItem.values, blossomLeaf.output);
+    fillOutputValueItemMap(blossomItem.values, *blossomLeaf.output.getItemContent()->toMap());
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     overrideItems(plan->items, blossomItem.values, ONLY_EXISTING);

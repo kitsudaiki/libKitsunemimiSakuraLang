@@ -23,7 +23,7 @@
 #ifndef KITSUNEMIMI_SAKURA_LANG_STRUCTS_H
 #define KITSUNEMIMI_SAKURA_LANG_STRUCTS_H
 
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiJson/json_item.h>
 
 namespace Kitsunemimi
 {
@@ -40,12 +40,19 @@ struct BlossomLeaf
     std::string blossomGroupType = "";
     std::vector<std::string> nameHirarchie;
 
-    DataMap output;
-    DataMap input;
+    Json::JsonItem output;
+    Json::JsonItem input;
 
     DataMap* parentValues = nullptr;
 
     std::string terminalOutput = "";
+
+    BlossomLeaf()
+    {
+        std::map<std::string, Json::JsonItem> temp;
+        output = Json::JsonItem(temp);
+        input = Json::JsonItem(temp);
+    }
 };
 
 //--------------------------------------------------------------------------------------------------

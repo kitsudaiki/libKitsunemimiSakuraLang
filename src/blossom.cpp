@@ -134,13 +134,15 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
-    blossomLeaf.output.clear();
-
     // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
 
     // validate input
-    if(checkValues(validationMap, blossomLeaf.input, FieldDef::INPUT_TYPE, error) == false) {
+    if(checkValues(validationMap,
+                   *blossomLeaf.input.getItemContent()->toMap(),
+                   FieldDef::INPUT_TYPE,
+                   error) == false)
+    {
         return false;
     }
 
@@ -152,7 +154,11 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     }
 
     // validate output
-    if(checkValues(validationMap, blossomLeaf.output, FieldDef::OUTPUT_TYPE, error) == false) {
+    if(checkValues(validationMap,
+                   *blossomLeaf.output.getItemContent()->toMap(),
+                   FieldDef::OUTPUT_TYPE,
+                   error) == false)
+    {
         return false;
     }
 

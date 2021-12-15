@@ -72,8 +72,8 @@ public:
     bool triggerBlossom(DataMap& result,
                         const std::string &blossomName,
                         const std::string &blossomGroupName,
-                        const DataMap &initialValues,
                         const DataMap &context,
+                        const DataMap &initialValues,
                         BlossomStatus &status,
                         ErrorContainer &error);
 
