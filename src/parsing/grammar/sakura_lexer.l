@@ -45,6 +45,7 @@ Kitsunemimi::Sakura::location sakuraloc;
 
 id    [a-zA-Z][a-zA-Z_0-9]*
 long   -?([0-9]+)
+double -?([0-9]+)\.([0-9]+)
 blank [ \t]
 
 %{
@@ -114,7 +115,7 @@ blank [ \t]
     return Kitsunemimi::Sakura::SakuraParser::make_NUMBER(length, sakuraloc);
 }
 
-{long}+"."{long}*	{
+{double}	{
     double value = strtod( yytext , NULL );
     return Kitsunemimi::Sakura::SakuraParser::make_FLOAT(value, sakuraloc);
 }
