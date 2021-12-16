@@ -80,8 +80,9 @@ private:
                      const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error);
-    bool validateInput(const DataMap &input,
-                       ErrorContainer &error);
+    bool validateFields(const DataMap &input,
+                        const FieldDef::IO_ValueType valueType,
+                        ErrorContainer &error);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        ErrorContainer &error);

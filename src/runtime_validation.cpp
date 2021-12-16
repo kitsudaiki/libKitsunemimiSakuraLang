@@ -148,7 +148,7 @@ checkValues(const ValueItemMap &defs,
  */
 bool
 checkType(DataItem* item,
-                   const FieldType fieldType)
+          const FieldType fieldType)
 {
     if(item->getType() == DataItem::ARRAY_TYPE
             && fieldType == SAKURA_ARRAY_TYPE)

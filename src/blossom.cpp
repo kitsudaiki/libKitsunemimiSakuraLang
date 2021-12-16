@@ -174,8 +174,9 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @return true, if successful, else false
  */
 bool
-Blossom::validateInput(const DataMap &input,
-                       ErrorContainer &error)
+Blossom::validateFields(const DataMap &input,
+                        const FieldDef::IO_ValueType valueType,
+                        ErrorContainer &error)
 {
     if(allowUnmatched == false)
     {
@@ -205,7 +206,7 @@ Blossom::validateInput(const DataMap &input,
         defIt++)
     {
         if(defIt->second.isRequired == true
-                && defIt->second.ioType == FieldDef::IO_ValueType::INPUT_TYPE)
+                && defIt->second.ioType == valueType)
         {
             // search for values
             const bool ret = input.contains(defIt->first);

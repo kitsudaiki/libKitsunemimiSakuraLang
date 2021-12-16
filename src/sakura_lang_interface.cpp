@@ -195,18 +195,34 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.parentValues = blossomLeaf.input.getItemContent()->toMap();
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
-    if(blossom->validateInput(initialValues, error) == false) {
+    // check input to be complete
+    if(blossom->validateFields(initialValues, FieldDef::INPUT_TYPE, error) == false)
+    {
+        error.addMeesage("check of completeness of input-fields failed");
+        LOG_ERROR(error);
         return false;
     }
 
     // process blossom
-    if(blossom->growBlossom(blossomLeaf, &context, status, error) == false) {
+    if(blossom->growBlossom(blossomLeaf, &context, status, error) == false)
+    {
+        error.addMeesage("trigger blossom failed.");
+        LOG_ERROR(error);
+        return false;
+    }
+
+    // check output to be complete
+    DataMap* output = blossomLeaf.output.getItemContent()->toMap();
+    if(blossom->validateFields(*output, FieldDef::OUTPUT_TYPE, error) == false)
+    {
+        error.addMeesage("check of completeness of output-fields failed");
+        LOG_ERROR(error);
         return false;
     }
 
     // TODO: override only with the output-values to avoid unnecessary conflicts
     result.clear();
-    overrideItems(result, *blossomLeaf.output.getItemContent()->toMap(), ALL);
+    overrideItems(result, *output, ALL);
 
     return true;
 }
