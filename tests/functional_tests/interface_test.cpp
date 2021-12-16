@@ -313,6 +313,8 @@ Interface_Test::runAndTriggerBlossom_test()
 
     const std::string expectedError =
             "+---------------------+------------------------------------------+\n"
+            "| Error-Message Nr. 2 | trigger blossom failed.                  |\n"
+            "+---------------------+------------------------------------------+\n"
             "| Error-Message Nr. 1 | Error in location:                       |\n"
             "|                     | +--------------------+-----------------+ |\n"
             "|                     | | location           | blossom execute | |\n"
