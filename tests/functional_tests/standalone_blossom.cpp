@@ -13,6 +13,7 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 {
     m_sessionTest = sessionTest;
     registerInputField("input", SAKURA_INT_TYPE, true, "comment1");
+
     registerInputField("should_fail", SAKURA_BOOL_TYPE, false, "comment2");
 
     registerOutputField("output", SAKURA_INT_TYPE, "comment3");

@@ -126,7 +126,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     result.clear();
 
     // check input-values for its type
-    if(checkValues(tree->values, growthPlan.items, ValueItem::INPUT_PAIR_TYPE, error) == false)
+    if(checkTreeValues(tree->values, growthPlan.items, ValueItem::INPUT_PAIR_TYPE, error) == false)
     {
         LOG_ERROR(error);
         delete tree;
@@ -144,7 +144,7 @@ SakuraLangInterface::triggerTree(DataMap &result,
     }
 
     // check output-values for its type
-    if(checkValues(tree->values, result, ValueItem::OUTPUT_PAIR_TYPE, error) == false)
+    if(checkTreeValues(tree->values, result, ValueItem::OUTPUT_PAIR_TYPE, error) == false)
     {
         LOG_ERROR(error);
         delete tree;
@@ -196,7 +196,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
     // check input to be complete
-    if(blossom->validateFields(initialValues, FieldDef::INPUT_TYPE, error) == false)
+    if(blossom->validateFieldsCompleteness(initialValues, FieldDef::INPUT_TYPE, error) == false)
     {
         error.addMeesage("check of completeness of input-fields failed");
         LOG_ERROR(error);
@@ -213,7 +213,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
 
     // check output to be complete
     DataMap* output = blossomLeaf.output.getItemContent()->toMap();
-    if(blossom->validateFields(*output, FieldDef::OUTPUT_TYPE, error) == false)
+    if(blossom->validateFieldsCompleteness(*output, FieldDef::OUTPUT_TYPE, error) == false)
     {
         error.addMeesage("check of completeness of output-fields failed");
         LOG_ERROR(error);

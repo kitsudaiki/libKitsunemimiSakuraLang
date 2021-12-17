@@ -35,15 +35,15 @@ namespace Sakura
 {
 class ValueItemMap;
 
-bool checkValues(const std::map<std::string, FieldDef> &defs,
-                 const DataMap &values,
-                 const FieldDef::IO_ValueType ioType,
-                 ErrorContainer &error);
+bool checkBlossomValues(const std::map<std::string, FieldDef> &defs,
+                        const DataMap &values,
+                        const FieldDef::IO_ValueType ioType,
+                        ErrorContainer &error);
 
-bool checkValues(const ValueItemMap &defs,
-                 const DataMap &values,
-                 const ValueItem::ValueType ioType,
-                 ErrorContainer &error);
+bool checkTreeValues(const ValueItemMap &defs,
+                     const DataMap &values,
+                     const ValueItem::ValueType ioType,
+                     ErrorContainer &error);
 
 bool checkType(DataItem* item,
                const FieldType fieldType);

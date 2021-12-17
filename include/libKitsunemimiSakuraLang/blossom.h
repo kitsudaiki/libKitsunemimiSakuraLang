@@ -61,6 +61,10 @@ protected:
     bool registerOutputField(const std::string &name,
                              const FieldType fieldType,
                              const std::string &comment);
+    bool addFieldMatch(const std::string &name,
+                       DataItem* match);
+    bool addFieldDefault(const std::string &name,
+                         DataItem* defaultValue);
 
 private:
     friend SakuraThread;
@@ -80,14 +84,15 @@ private:
                      const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error);
-    bool validateFields(const DataMap &input,
-                        const FieldDef::IO_ValueType valueType,
-                        ErrorContainer &error);
+    bool validateFieldsCompleteness(const DataMap &input,
+                                    const FieldDef::IO_ValueType valueType,
+                                    ErrorContainer &error);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        ErrorContainer &error);
     void getCompareMap(std::map<std::string, FieldDef::IO_ValueType> &compareMap,
                        const ValueItemMap &valueMap);
+    void fillDefaultValues(DataMap &values);
 };
 
 } // namespace Sakura

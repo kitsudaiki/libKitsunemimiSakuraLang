@@ -75,24 +75,43 @@ createErrorMessage(const std::string &name,
  * @return true, if everything match, else false
  */
 bool
-checkValues(const std::map<std::string, FieldDef> &defs,
-            const DataMap &values,
-            const FieldDef::IO_ValueType ioType,
-            ErrorContainer &error)
+checkBlossomValues(const std::map<std::string, FieldDef> &defs,
+                   const DataMap &values,
+                   const FieldDef::IO_ValueType ioType,
+                   ErrorContainer &error)
 {
     std::map<std::string, FieldDef>::const_iterator defIt;
     for(defIt = defs.begin();
         defIt != defs.end();
         defIt++)
     {
-        if(defIt->second.ioType == ioType)
+        if(defIt->second.ioType != ioType) {
+            continue;
+        }
+
+        DataItem* item = values.get(defIt->first);
+
+        if(item != nullptr)
         {
-            DataItem* item = values.get(defIt->first);
-            if(item != nullptr
-                    && checkType(item, defIt->second.fieldType) == false)
+            // check type
+            if(checkType(item, defIt->second.fieldType) == false)
             {
                 error.addMeesage(createErrorMessage(defIt->first, defIt->second.fieldType));
                 return false;
+            }
+
+            // check match
+            if(defIt->second.match != nullptr)
+            {
+                if(defIt->second.match->toString() != item->toString())
+                {
+                    std::string errorMessage = "Value '"
+                                               + defIt->first
+                                               + "' doesn't match the the expected value:\n   ";
+                    errorMessage.append(defIt->second.match->toString());
+                    error.addMeesage(errorMessage);
+                    return false;
+                }
             }
         }
     }
@@ -110,10 +129,10 @@ checkValues(const std::map<std::string, FieldDef> &defs,
  * @return true, if everything match, else false
  */
 bool
-checkValues(const ValueItemMap &defs,
-            const DataMap &values,
-            const ValueItem::ValueType ioType,
-            ErrorContainer &error)
+checkTreeValues(const ValueItemMap &defs,
+                const DataMap &values,
+                const ValueItem::ValueType ioType,
+                ErrorContainer &error)
 {
     std::map<std::string, ValueItem> m_valueMap;
 
