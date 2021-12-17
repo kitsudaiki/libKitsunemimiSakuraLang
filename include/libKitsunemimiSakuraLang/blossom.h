@@ -65,6 +65,9 @@ protected:
                        DataItem* match);
     bool addFieldDefault(const std::string &name,
                          DataItem* defaultValue);
+    bool addBorder(const std::string &name,
+                   const long lowerBorder,
+                   const long upperBorder);
 
 private:
     friend SakuraThread;

@@ -147,6 +147,42 @@ Blossom::addFieldDefault(const std::string &name,
 }
 
 /**
+ * @brief add lower and upper border for int and string values
+ *
+ * @param name name of the filed to identifiy value
+ * @param lowerBorder lower value or length border
+ * @param upperBorder upper value or length border
+ *
+ * @return false, if field doesn't exist or not matching requirements, else true
+ */
+bool
+Blossom::addBorder(const std::string &name,
+                   const long lowerBorder,
+                   const long upperBorder)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an input-field
+        const bool correctType = defIt->second.fieldType == SAKURA_STRING_TYPE
+                                 || defIt->second.fieldType == SAKURA_INT_TYPE;
+        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
+                && correctType)
+        {
+            return false;
+        }
+
+        defIt->second.lowerBorder = lowerBorder;
+        defIt->second.upperBorder = upperBorder;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * @brief get a pointer to the validation-map
  *
  * @return pointer to validation-map

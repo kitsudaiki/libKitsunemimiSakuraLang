@@ -93,6 +93,8 @@ struct FieldDef
     const std::string comment;
     DataItem* match = nullptr;
     DataItem* defaultVal = nullptr;
+    long lowerBorder = 0;
+    long upperBorder = 0;
 
     FieldDef(const IO_ValueType ioType,
              const FieldType fieldType,

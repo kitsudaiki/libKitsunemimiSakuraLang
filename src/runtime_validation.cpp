@@ -100,12 +100,67 @@ checkBlossomValues(const std::map<std::string, FieldDef> &defs,
                 return false;
             }
 
+            // check value border
+            if(defIt->second.upperBorder != 0
+                    || defIt->second.lowerBorder != 0)
+            {
+                if(item->isIntValue())
+                {
+                    const long value = item->toValue()->getLong();
+                    if(value < defIt->second.lowerBorder)
+                    {
+                        std::string errorMessage = "Given item '"
+                                                   + defIt->first
+                                                   + "' is smaller than "
+                                                   + std::to_string(defIt->second.lowerBorder);
+                        error.addMeesage(errorMessage);
+                        return false;
+                    }
+
+                    if(value > defIt->second.upperBorder)
+                    {
+                        std::string errorMessage = "Given item '"
+                                                   + defIt->first
+                                                   + "' is bigger than "
+                                                   + std::to_string(defIt->second.upperBorder);
+                        error.addMeesage(errorMessage);
+                        return false;
+                    }
+                }
+
+                if(item->isStringValue())
+                {
+                    const long length = item->toValue()->getString().size();
+                    if(length < defIt->second.lowerBorder)
+                    {
+                        std::string errorMessage = "Given item '"
+                                                   + defIt->first
+                                                   + "' is shorter than "
+                                                   + std::to_string(defIt->second.lowerBorder)
+                                                   + " characters";
+                        error.addMeesage(errorMessage);
+                        return false;
+                    }
+
+                    if(length > defIt->second.upperBorder)
+                    {
+                        std::string errorMessage = "Given item '"
+                                                   + defIt->first
+                                                   + "' is longer than "
+                                                   + std::to_string(defIt->second.upperBorder)
+                                                   + " characters";
+                        error.addMeesage(errorMessage);
+                        return false;
+                    }
+                }
+            }
+
             // check match
             if(defIt->second.match != nullptr)
             {
                 if(defIt->second.match->toString() != item->toString())
                 {
-                    std::string errorMessage = "Value '"
+                    std::string errorMessage = "Item '"
                                                + defIt->first
                                                + "' doesn't match the the expected value:\n   ";
                     errorMessage.append(defIt->second.match->toString());
