@@ -57,6 +57,13 @@ private:
 
     DataBuffer* getTestFile();
     const std::string getExpectedError();
+
+    void positive_BlossomTest();
+    void nonExisting_BlossomTest();
+    void invalidInputValues_BlossomTest();
+    void invalidInputType_BlossomTest();
+    void failWithin_BlossomTest();
+    void outofBorder_BlossomTest();
 };
 
 } // namespace Sakura

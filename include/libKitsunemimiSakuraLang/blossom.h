@@ -65,9 +65,9 @@ protected:
                        DataItem* match);
     bool addFieldDefault(const std::string &name,
                          DataItem* defaultValue);
-    bool addRegex(const std::string &name,
-                  const std::string &regex);
-    bool addBorder(const std::string &name,
+    bool addFieldRegex(const std::string &name,
+                       const std::string &regex);
+    bool addFieldBorder(const std::string &name,
                    const long lowerBorder,
                    const long upperBorder);
 

@@ -155,7 +155,8 @@ Blossom::addFieldDefault(const std::string &name,
  * @return false, if field doesn't exist or a string-type, else true
  */
 bool
-Blossom::addRegex(const std::string &name, const std::string &regex)
+Blossom::addFieldRegex(const std::string &name,
+                       const std::string &regex)
 {
     std::map<std::string, FieldDef>::iterator defIt;
     defIt = validationMap.find(name);
@@ -186,9 +187,9 @@ Blossom::addRegex(const std::string &name, const std::string &regex)
  * @return false, if field doesn't exist or not matching requirements, else true
  */
 bool
-Blossom::addBorder(const std::string &name,
-                   const long lowerBorder,
-                   const long upperBorder)
+Blossom::addFieldBorder(const std::string &name,
+                        const long lowerBorder,
+                        const long upperBorder)
 {
     std::map<std::string, FieldDef>::iterator defIt;
     defIt = validationMap.find(name);
@@ -266,7 +267,7 @@ Blossom::fillDefaultValues(DataMap &values)
         defIt++)
     {
         if(defIt->second.defaultVal != nullptr) {
-            values.insert(defIt->first, defIt->second.defaultVal, false);
+            values.insert(defIt->first, defIt->second.defaultVal->copy(), false);
         }
     }
 }

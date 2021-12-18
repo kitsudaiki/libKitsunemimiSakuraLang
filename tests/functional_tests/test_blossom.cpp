@@ -41,7 +41,7 @@ TestBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", new Kitsunemimi::DataValue(42));
+    blossomLeaf.output.insert("output", 42);
     return true;
 }
 
