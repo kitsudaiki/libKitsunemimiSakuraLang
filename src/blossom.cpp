@@ -147,6 +147,36 @@ Blossom::addFieldDefault(const std::string &name,
 }
 
 /**
+ * @brief add regex to check string for special styling
+ *
+ * @param name name of the filed to identifiy value
+ * @param regex regex-string
+ *
+ * @return false, if field doesn't exist or a string-type, else true
+ */
+bool
+Blossom::addRegex(const std::string &name, const std::string &regex)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an input-field and not required
+        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
+                || defIt->second.fieldType != SAKURA_STRING_TYPE)
+        {
+            return false;
+        }
+
+        defIt->second.regex = regex;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * @brief add lower and upper border for int and string values
  *
  * @param name name of the filed to identifiy value

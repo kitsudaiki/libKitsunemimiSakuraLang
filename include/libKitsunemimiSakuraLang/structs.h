@@ -93,6 +93,7 @@ struct FieldDef
     const std::string comment;
     DataItem* match = nullptr;
     DataItem* defaultVal = nullptr;
+    std::string regex = "";
     long lowerBorder = 0;
     long upperBorder = 0;
 

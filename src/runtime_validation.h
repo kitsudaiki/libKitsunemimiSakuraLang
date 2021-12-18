@@ -23,6 +23,8 @@
 #ifndef KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
 #define KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
 
+#include <regex>
+
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 

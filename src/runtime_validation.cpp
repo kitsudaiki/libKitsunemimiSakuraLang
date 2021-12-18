@@ -100,6 +100,22 @@ checkBlossomValues(const std::map<std::string, FieldDef> &defs,
                 return false;
             }
 
+            // check regex
+            if(defIt->second.regex.size() > 0)
+            {
+                const std::regex re("^" + defIt->second.regex + "$");
+                if(std::regex_match(item->toValue()->getString(), re) == false)
+                {
+                    std::string errorMessage = "Given item '"
+                                               + defIt->first
+                                               + "' doesn't match with regex \"^"
+                                               + defIt->second.regex
+                                               + "$\"";
+                    error.addMeesage(errorMessage);
+                    return false;
+                }
+            }
+
             // check value border
             if(defIt->second.upperBorder != 0
                     || defIt->second.lowerBorder != 0)
