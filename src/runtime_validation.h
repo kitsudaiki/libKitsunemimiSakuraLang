@@ -23,6 +23,8 @@
 #ifndef KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
 #define KITSUNEMIMI_SAKURA_LANG_RUNTIME_VALIDATION_H
 
+#include <regex>
+
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 
@@ -35,15 +37,15 @@ namespace Sakura
 {
 class ValueItemMap;
 
-bool checkValues(const std::map<std::string, FieldDef> &defs,
-                 const DataMap &values,
-                 const FieldDef::IO_ValueType ioType,
-                 ErrorContainer &error);
+bool checkBlossomValues(const std::map<std::string, FieldDef> &defs,
+                        const DataMap &values,
+                        const FieldDef::IO_ValueType ioType,
+                        ErrorContainer &error);
 
-bool checkValues(const ValueItemMap &defs,
-                 const DataMap &values,
-                 const ValueItem::ValueType ioType,
-                 ErrorContainer &error);
+bool checkTreeValues(const ValueItemMap &defs,
+                     const DataMap &values,
+                     const ValueItem::ValueType ioType,
+                     ErrorContainer &error);
 
 bool checkType(DataItem* item,
                const FieldType fieldType);

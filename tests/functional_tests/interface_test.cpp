@@ -224,22 +224,16 @@ Interface_Test::runAndTriggerTree_test()
     TEST_EQUAL(error.toString(), expectedError);
 }
 
-/**
- * @brief runAndTriggerBlossom_test
- */
 void
-Interface_Test::runAndTriggerBlossom_test()
+Interface_Test::positive_BlossomTest()
 {
     ErrorContainer error;
     DataMap inputValues;
     inputValues.insert("input", new DataValue(42));
-    inputValues.insert("output", new DataValue(""));
     SakuraLangInterface* interface = SakuraLangInterface::getInstance();
     DataMap context;
     context.insert("test-key", new DataValue("asdf"));
 
-    //----------------------------------------------------------------------------------------------
-    // positiv test
     DataMap result;
     BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
@@ -251,10 +245,21 @@ Interface_Test::runAndTriggerBlossom_test()
                                          error), true);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
-
-    //----------------------------------------------------------------------------------------------
-    // test non-existing blossom
     TEST_EQUAL(result.get("output")->toValue()->getInt(), 42);
+}
+
+void
+Interface_Test::nonExisting_BlossomTest()
+{
+    ErrorContainer error;
+    DataMap inputValues;
+    inputValues.insert("input", new DataValue(42));
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
+
+    DataMap result;
+    BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "fail",
                                          "-",
@@ -264,10 +269,19 @@ Interface_Test::runAndTriggerBlossom_test()
                                          error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
+}
 
-    //----------------------------------------------------------------------------------------------
-    // test invalid input-values
+void
+Interface_Test::invalidInputValues_BlossomTest()
+{
+    ErrorContainer error;
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
     DataMap falseMap;
+
+    DataMap result;
+    BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "-",
@@ -277,25 +291,68 @@ Interface_Test::runAndTriggerBlossom_test()
                                          error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
+}
 
-    //----------------------------------------------------------------------------------------------
-    // test invalid input-type
-    DataMap brokenInput = inputValues;
-    // correct type would be int
-    brokenInput.insert("input", new DataValue(true), true);
+void
+Interface_Test::invalidInputType_BlossomTest()
+{
+    ErrorContainer error;
+    DataMap inputValues;
+    inputValues.insert("input", new DataValue(true));  // value should be int
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
+
+    DataMap result;
+    BlossomStatus status;
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
                                          "-",
                                          context,
-                                         brokenInput,
+                                         inputValues,
                                          status,
                                          error), false);
     TEST_EQUAL(status.statusCode, 0);
     TEST_EQUAL(status.errorMessage, "");
+}
 
-    //----------------------------------------------------------------------------------------------
+void
+Interface_Test::outofBorder_BlossomTest()
+{
+    ErrorContainer error;
+    DataMap inputValues;
+    inputValues.insert("input", new DataValue(142)); // value too high
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
+
+    DataMap result;
+    BlossomStatus status;
+    TEST_EQUAL(interface->triggerBlossom(result,
+                                         "standalone",
+                                         "-",
+                                         context,
+                                         inputValues,
+                                         status,
+                                         error), false);
+    TEST_EQUAL(status.statusCode, 0);
+    TEST_EQUAL(status.errorMessage, "");
+}
+
+void
+Interface_Test::failWithin_BlossomTest()
+{
+    ErrorContainer error;
+    DataMap inputValues;
+    inputValues.insert("input", new DataValue(42));
+    SakuraLangInterface* interface = SakuraLangInterface::getInstance();
+    DataMap context;
+    context.insert("test-key", new DataValue("asdf"));
+
+    DataMap result;
+    BlossomStatus status;
+
     // test fail within blossom
-    error._errorMessages.clear();
     inputValues.insert("should_fail", new DataValue(true));
     TEST_EQUAL(interface->triggerBlossom(result,
                                          "standalone",
@@ -329,6 +386,20 @@ Interface_Test::runAndTriggerBlossom_test()
             "| Error-Message Nr. 0 | successfully failed                      |\n"
             "+---------------------+------------------------------------------+\n";
     TEST_EQUAL(error.toString(), expectedError);
+}
+
+/**
+ * @brief runAndTriggerBlossom_test
+ */
+void
+Interface_Test::runAndTriggerBlossom_test()
+{
+    positive_BlossomTest();
+    nonExisting_BlossomTest();
+    outofBorder_BlossomTest();
+    invalidInputValues_BlossomTest();
+    invalidInputType_BlossomTest();
+    failWithin_BlossomTest();
 }
 
 /**

@@ -13,6 +13,11 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 {
     m_sessionTest = sessionTest;
     registerInputField("input", SAKURA_INT_TYPE, true, "comment1");
+    addFieldBorder("input", 0, 100);
+
+    registerInputField("default", SAKURA_STRING_TYPE, false, "default-field");
+    addFieldDefault("default", new DataValue("defaultVal"));
+
     registerInputField("should_fail", SAKURA_BOOL_TYPE, false, "comment2");
 
     registerOutputField("output", SAKURA_INT_TYPE, "comment3");
@@ -28,6 +33,7 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
     const int value = blossomLeaf.input.get("input").getInt();
     m_sessionTest->compare(value, 42);
     m_sessionTest->compare(context.get("test-key")->getString(), std::string("asdf"));
+    m_sessionTest->compare(blossomLeaf.input.get("default").getString(), std::string("defaultVal"));
 
     if(blossomLeaf.input.contains("should_fail"))
     {
@@ -41,7 +47,7 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", new Kitsunemimi::DataValue(42));
+    blossomLeaf.output.insert("output", 42);
     return true;
 }
 

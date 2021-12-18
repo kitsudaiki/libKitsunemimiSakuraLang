@@ -79,6 +79,141 @@ Blossom::registerOutputField(const std::string &name,
 }
 
 /**
+ * @brief add match-value for a specific field for static expected outputs
+ *
+ * @param name name of the filed to identifiy value
+ * @param match value, which should match in the validation
+ *
+ * @return false, if field doesn't exist, else true
+ */
+bool
+Blossom::addFieldMatch(const std::string &name,
+                       DataItem* match)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an output-field
+        if(defIt->second.ioType == FieldDef::INPUT_TYPE) {
+            return false;
+        }
+
+        // delete old entry
+        if(defIt->second.match != nullptr) {
+            delete defIt->second.match;
+        }
+
+        defIt->second.match = match;
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief add default-value for a specific field (only works if the field is NOT required)
+ *
+ * @param name name of the filed to identifiy value
+ * @param defaultValue default-value for a field
+ *
+ * @return false, if field doesn't exist, else true
+ */
+bool
+Blossom::addFieldDefault(const std::string &name,
+                         DataItem* defaultValue)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an input-field and not required
+        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
+                || defIt->second.isRequired)
+        {
+            return false;
+        }
+
+        // delete old entry
+        if(defIt->second.defaultVal != nullptr) {
+            delete defIt->second.defaultVal;
+        }
+
+        defIt->second.defaultVal = defaultValue;
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief add regex to check string for special styling
+ *
+ * @param name name of the filed to identifiy value
+ * @param regex regex-string
+ *
+ * @return false, if field doesn't exist or a string-type, else true
+ */
+bool
+Blossom::addFieldRegex(const std::string &name,
+                       const std::string &regex)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an input-field and not required
+        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
+                || defIt->second.fieldType != SAKURA_STRING_TYPE)
+        {
+            return false;
+        }
+
+        defIt->second.regex = regex;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief add lower and upper border for int and string values
+ *
+ * @param name name of the filed to identifiy value
+ * @param lowerBorder lower value or length border
+ * @param upperBorder upper value or length border
+ *
+ * @return false, if field doesn't exist or not matching requirements, else true
+ */
+bool
+Blossom::addFieldBorder(const std::string &name,
+                        const long lowerBorder,
+                        const long upperBorder)
+{
+    std::map<std::string, FieldDef>::iterator defIt;
+    defIt = validationMap.find(name);
+    if(defIt != validationMap.end())
+    {
+        // make sure, that it is an input-field
+        const bool correctType = defIt->second.fieldType == SAKURA_STRING_TYPE
+                                 || defIt->second.fieldType == SAKURA_INT_TYPE;
+        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
+                && correctType)
+        {
+            return false;
+        }
+
+        defIt->second.lowerBorder = lowerBorder;
+        defIt->second.upperBorder = upperBorder;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * @brief get a pointer to the validation-map
  *
  * @return pointer to validation-map
@@ -119,6 +254,25 @@ Blossom::registerField(const std::string &name,
 }
 
 /**
+ * @brief fill with default-values
+ *
+ * @param values input-values to fill
+ */
+void
+Blossom::fillDefaultValues(DataMap &values)
+{
+    std::map<std::string, FieldDef>::const_iterator defIt;
+    for(defIt = validationMap.begin();
+        defIt != validationMap.end();
+        defIt++)
+    {
+        if(defIt->second.defaultVal != nullptr) {
+            values.insert(defIt->first, defIt->second.defaultVal->copy(), false);
+        }
+    }
+}
+
+/**
  * @brief execute blossom
  *
  * @param blossomLeaf leaf-object for values-handling while processing
@@ -134,14 +288,16 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
-    // process blossom
     LOG_DEBUG("runTask " + blossomLeaf.blossomName);
 
+    // set default-values
+    fillDefaultValues(*blossomLeaf.input.getItemContent()->toMap());
+
     // validate input
-    if(checkValues(validationMap,
-                   *blossomLeaf.input.getItemContent()->toMap(),
-                   FieldDef::INPUT_TYPE,
-                   error) == false)
+    if(checkBlossomValues(validationMap,
+                          *blossomLeaf.input.getItemContent()->toMap(),
+                          FieldDef::INPUT_TYPE,
+                          error) == false)
     {
         return false;
     }
@@ -154,10 +310,10 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     }
 
     // validate output
-    if(checkValues(validationMap,
-                   *blossomLeaf.output.getItemContent()->toMap(),
-                   FieldDef::OUTPUT_TYPE,
-                   error) == false)
+    if(checkBlossomValues(validationMap,
+                          *blossomLeaf.output.getItemContent()->toMap(),
+                          FieldDef::OUTPUT_TYPE,
+                          error) == false)
     {
         return false;
     }
@@ -174,9 +330,9 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @return true, if successful, else false
  */
 bool
-Blossom::validateFields(const DataMap &input,
-                        const FieldDef::IO_ValueType valueType,
-                        ErrorContainer &error)
+Blossom::validateFieldsCompleteness(const DataMap &input,
+                                    const FieldDef::IO_ValueType valueType,
+                                    ErrorContainer &error)
 {
     if(allowUnmatched == false)
     {
@@ -209,8 +365,7 @@ Blossom::validateFields(const DataMap &input,
                 && defIt->second.ioType == valueType)
         {
             // search for values
-            const bool ret = input.contains(defIt->first);
-            if(ret == false)
+            if(input.contains(defIt->first) == false)
             {
                 error.addMeesage("Validation failed, because variable \""
                                  + defIt->first

@@ -15,6 +15,9 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
     registerInputField("input", SAKURA_INT_TYPE, true, "comment1");
     registerInputField("should_fail", SAKURA_BOOL_TYPE, false, "comment2");
 
+    registerInputField("default", SAKURA_STRING_TYPE, false, "default-field");
+    addFieldDefault("default", new DataValue("defaultVal"));
+
     registerOutputField("output", SAKURA_INT_TYPE, "comment3");
 }
 

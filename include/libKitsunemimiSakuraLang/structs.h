@@ -91,6 +91,11 @@ struct FieldDef
     const FieldType fieldType;
     const bool isRequired;
     const std::string comment;
+    DataItem* match = nullptr;
+    DataItem* defaultVal = nullptr;
+    std::string regex = "";
+    long lowerBorder = 0;
+    long upperBorder = 0;
 
     FieldDef(const IO_ValueType ioType,
              const FieldType fieldType,
