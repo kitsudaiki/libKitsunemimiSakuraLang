@@ -75,7 +75,10 @@ InitialValidator::checkBlossomItem(BlossomItem &blossomItem,
         return false;
     }
 
-    return blossom->validateInput(blossomItem, filePath, error);
+    std::map<std::string, FieldDef> validationMap = *blossom->getInputValidationMap();
+    validationMap.insert(blossom->getOutputValidationMap()->begin(),
+                         blossom->getOutputValidationMap()->end());
+    return blossom->validateInput(blossomItem, validationMap, filePath, error);
 }
 
 /**

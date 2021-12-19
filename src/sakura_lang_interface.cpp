@@ -198,6 +198,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     std::string errorMessage;
     // check input to be complete
     if(blossom->validateFieldsCompleteness(initialValues,
+                                           *blossom->getInputValidationMap(),
                                            FieldDef::INPUT_TYPE,
                                            errorMessage) == false)
     {
@@ -220,6 +221,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     // check output to be complete
     DataMap* output = blossomLeaf.output.getItemContent()->toMap();
     if(blossom->validateFieldsCompleteness(*output,
+                                           *blossom->getOutputValidationMap(),
                                            FieldDef::OUTPUT_TYPE,
                                            errorMessage) == false)
     {
