@@ -45,7 +45,8 @@ public:
 
     const std::string comment;
 
-    const std::map<std::string, FieldDef>* getValidationMap() const;
+    const std::map<std::string, FieldDef>* getInputValidationMap() const;
+    const std::map<std::string, FieldDef>* getOutputValidationMap() const;
 
 protected:
     virtual bool runTask(BlossomLeaf &blossomLeaf,
@@ -76,23 +77,19 @@ private:
     friend InitialValidator;
     friend SakuraLangInterface;
 
-    std::map<std::string, FieldDef> validationMap;
-
-    bool registerField(const std::string &name,
-                       const FieldDef::IO_ValueType type,
-                       const FieldType fieldType,
-                       const bool required,
-                       const std::string &comment);
-
+    std::map<std::string, FieldDef> m_inputValidationMap;
+    std::map<std::string, FieldDef> m_outputValidationMap;
 
     bool growBlossom(BlossomLeaf &blossomLeaf,
                      const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error);
     bool validateFieldsCompleteness(const DataMap &input,
+                                    const std::map<std::string, FieldDef> &validationMap,
                                     const FieldDef::IO_ValueType valueType,
                                     std::string &errorMessage);
     bool validateInput(BlossomItem &blossomItem,
+                       const std::map<std::string, FieldDef> &validationMap,
                        const std::string &filePath,
                        ErrorContainer &error);
     void getCompareMap(std::map<std::string, FieldDef::IO_ValueType> &compareMap,

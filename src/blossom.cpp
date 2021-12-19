@@ -58,7 +58,15 @@ Blossom::registerInputField(const std::string &name,
                             const bool required,
                             const std::string &comment)
 {
-    return registerField(name, FieldDef::INPUT_TYPE, fieldType, required, comment);
+    std::map<std::string, FieldDef>::const_iterator defIt;
+    defIt = m_inputValidationMap.find(name);
+    if(defIt != m_inputValidationMap.end()) {
+        return false;
+    }
+
+    m_inputValidationMap.emplace(name, FieldDef(FieldDef::INPUT_TYPE, fieldType, required, comment));
+
+    return true;
 }
 
 /**
@@ -75,7 +83,15 @@ Blossom::registerOutputField(const std::string &name,
                              const FieldType fieldType,
                              const std::string &comment)
 {
-    return registerField(name, FieldDef::OUTPUT_TYPE, fieldType, false, comment);
+    std::map<std::string, FieldDef>::const_iterator defIt;
+    defIt = m_outputValidationMap.find(name);
+    if(defIt != m_outputValidationMap.end()) {
+        return false;
+    }
+
+    m_outputValidationMap.emplace(name, FieldDef(FieldDef::OUTPUT_TYPE, fieldType, false, comment));
+
+    return true;
 }
 
 /**
@@ -91,14 +107,9 @@ Blossom::addFieldMatch(const std::string &name,
                        DataItem* match)
 {
     std::map<std::string, FieldDef>::iterator defIt;
-    defIt = validationMap.find(name);
-    if(defIt != validationMap.end())
+    defIt = m_outputValidationMap.find(name);
+    if(defIt != m_outputValidationMap.end())
     {
-        // make sure, that it is an output-field
-        if(defIt->second.ioType == FieldDef::INPUT_TYPE) {
-            return false;
-        }
-
         // delete old entry
         if(defIt->second.match != nullptr) {
             delete defIt->second.match;
@@ -124,13 +135,11 @@ Blossom::addFieldDefault(const std::string &name,
                          DataItem* defaultValue)
 {
     std::map<std::string, FieldDef>::iterator defIt;
-    defIt = validationMap.find(name);
-    if(defIt != validationMap.end())
+    defIt = m_inputValidationMap.find(name);
+    if(defIt != m_inputValidationMap.end())
     {
-        // make sure, that it is an input-field and not required
-        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
-                || defIt->second.isRequired)
-        {
+        // make sure, that it is not required
+        if(defIt->second.isRequired) {
             return false;
         }
 
@@ -159,13 +168,11 @@ Blossom::addFieldRegex(const std::string &name,
                        const std::string &regex)
 {
     std::map<std::string, FieldDef>::iterator defIt;
-    defIt = validationMap.find(name);
-    if(defIt != validationMap.end())
+    defIt = m_inputValidationMap.find(name);
+    if(defIt != m_inputValidationMap.end())
     {
-        // make sure, that it is an input-field and not required
-        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
-                || defIt->second.fieldType != SAKURA_STRING_TYPE)
-        {
+        // make sure, that it is a string-type
+        if(defIt->second.fieldType != SAKURA_STRING_TYPE) {
             return false;
         }
 
@@ -192,14 +199,12 @@ Blossom::addFieldBorder(const std::string &name,
                         const long upperBorder)
 {
     std::map<std::string, FieldDef>::iterator defIt;
-    defIt = validationMap.find(name);
-    if(defIt != validationMap.end())
+    defIt = m_inputValidationMap.find(name);
+    if(defIt != m_inputValidationMap.end())
     {
-        // make sure, that it is an input-field
-        const bool correctType = defIt->second.fieldType == SAKURA_STRING_TYPE
-                                 || defIt->second.fieldType == SAKURA_INT_TYPE;
-        if(defIt->second.ioType == FieldDef::OUTPUT_TYPE
-                && correctType)
+        // make sure, that it is an int- or string-type
+        if(defIt->second.fieldType != SAKURA_STRING_TYPE
+                && defIt->second.fieldType != SAKURA_INT_TYPE)
         {
             return false;
         }
@@ -214,43 +219,26 @@ Blossom::addFieldBorder(const std::string &name,
 }
 
 /**
- * @brief get a pointer to the validation-map
+ * @brief get a pointer to the input-validation-map
  *
  * @return pointer to validation-map
  */
 const std::map<std::string, FieldDef>*
-Blossom::getValidationMap() const
+Blossom::getInputValidationMap() const
 {
-    return &validationMap;
+    return &m_inputValidationMap;
 }
 
+
 /**
- * @brief register field for validation of incoming messages
+ * @brief get a pointer to the output-validation-map
  *
- * @param name name of the filed to identifiy value
- * @param ioType INPUT_TYPE or OUTPUT_TYPE
- * @param fieldType type for value-validation
- * @param required false, to make field optional, true to make it required
- * @param comment additional comment to describe the content of the field
- *
- * @return false, if already name already registered, else true
+ * @return pointer to validation-map
  */
-bool
-Blossom::registerField(const std::string &name,
-                       const FieldDef::IO_ValueType ioType,
-                       const FieldType fieldType,
-                       const bool required,
-                       const std::string &comment)
+const std::map<std::string, FieldDef>*
+Blossom::getOutputValidationMap() const
 {
-    std::map<std::string, FieldDef>::const_iterator defIt;
-    defIt = validationMap.find(name);
-    if(defIt != validationMap.end()) {
-        return false;
-    }
-
-    validationMap.emplace(name, FieldDef(ioType, fieldType, required, comment));
-
-    return true;
+    return &m_outputValidationMap;
 }
 
 /**
@@ -262,8 +250,8 @@ void
 Blossom::fillDefaultValues(DataMap &values)
 {
     std::map<std::string, FieldDef>::const_iterator defIt;
-    for(defIt = validationMap.begin();
-        defIt != validationMap.end();
+    for(defIt = m_inputValidationMap.begin();
+        defIt != m_inputValidationMap.end();
         defIt++)
     {
         if(defIt->second.defaultVal != nullptr) {
@@ -295,7 +283,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     std::string errorMessage;
 
     // validate input
-    if(checkBlossomValues(validationMap,
+    if(checkBlossomValues(m_inputValidationMap,
                           *blossomLeaf.input.getItemContent()->toMap(),
                           FieldDef::INPUT_TYPE,
                           errorMessage) == false)
@@ -314,7 +302,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     }
 
     // validate output
-    if(checkBlossomValues(validationMap,
+    if(checkBlossomValues(m_outputValidationMap,
                           *blossomLeaf.output.getItemContent()->toMap(),
                           FieldDef::OUTPUT_TYPE,
                           errorMessage) == false)
@@ -339,6 +327,7 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  */
 bool
 Blossom::validateFieldsCompleteness(const DataMap &input,
+                                    const std::map<std::string, FieldDef> &validationMap,
                                     const FieldDef::IO_ValueType valueType,
                                     std::string &errorMessage)
 {
@@ -397,6 +386,7 @@ Blossom::validateFieldsCompleteness(const DataMap &input,
  */
 bool
 Blossom::validateInput(BlossomItem &blossomItem,
+                       const std::map<std::string, FieldDef> &validationMap,
                        const std::string &filePath,
                        ErrorContainer &error)
 {
