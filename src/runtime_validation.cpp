@@ -180,6 +180,8 @@ checkBlossomValues(const std::map<std::string, FieldDef> &defs,
                                                + defIt->first
                                                + "' doesn't match the the expected value:\n   ";
                     errorMessage.append(defIt->second.match->toString());
+                    errorMessage.append("\nbut has value:\n   ");
+                    errorMessage.append(item->toString());
                     error.addMeesage(errorMessage);
                     return false;
                 }
