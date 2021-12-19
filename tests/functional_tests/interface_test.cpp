@@ -289,8 +289,9 @@ Interface_Test::invalidInputValues_BlossomTest()
                                          falseMap,
                                          status,
                                          error), false);
-    TEST_EQUAL(status.statusCode, 0);
-    TEST_EQUAL(status.errorMessage, "");
+    TEST_EQUAL(status.statusCode, 400);
+    TEST_EQUAL(status.errorMessage, "Validation failed, because variable 'input' "
+                                    "is required, but is not set.");
 }
 
 void
@@ -312,8 +313,9 @@ Interface_Test::invalidInputType_BlossomTest()
                                          inputValues,
                                          status,
                                          error), false);
-    TEST_EQUAL(status.statusCode, 0);
-    TEST_EQUAL(status.errorMessage, "");
+    TEST_EQUAL(status.statusCode, 400);
+    TEST_EQUAL(status.errorMessage, "Value-validation failed, because a item 'input'  "
+                                    "has the false type: Exprect int-type.");
 }
 
 void
@@ -335,8 +337,8 @@ Interface_Test::outofBorder_BlossomTest()
                                          inputValues,
                                          status,
                                          error), false);
-    TEST_EQUAL(status.statusCode, 0);
-    TEST_EQUAL(status.errorMessage, "");
+    TEST_EQUAL(status.statusCode, 400);
+    TEST_EQUAL(status.errorMessage, "Given item 'input' is bigger than 100");
 }
 
 void
