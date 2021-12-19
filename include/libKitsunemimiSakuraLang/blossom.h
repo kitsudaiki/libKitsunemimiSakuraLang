@@ -91,7 +91,7 @@ private:
                      ErrorContainer &error);
     bool validateFieldsCompleteness(const DataMap &input,
                                     const FieldDef::IO_ValueType valueType,
-                                    ErrorContainer &error);
+                                    std::string &errorMessage);
     bool validateInput(BlossomItem &blossomItem,
                        const std::string &filePath,
                        ErrorContainer &error);

@@ -40,7 +40,7 @@ class ValueItemMap;
 bool checkBlossomValues(const std::map<std::string, FieldDef> &defs,
                         const DataMap &values,
                         const FieldDef::IO_ValueType ioType,
-                        ErrorContainer &error);
+                        std::string &errorMessage);
 
 bool checkTreeValues(const ValueItemMap &defs,
                      const DataMap &values,

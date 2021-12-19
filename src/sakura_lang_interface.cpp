@@ -195,10 +195,16 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     blossomLeaf.parentValues = blossomLeaf.input.getItemContent()->toMap();
     blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
+    std::string errorMessage;
     // check input to be complete
-    if(blossom->validateFieldsCompleteness(initialValues, FieldDef::INPUT_TYPE, error) == false)
+    if(blossom->validateFieldsCompleteness(initialValues,
+                                           FieldDef::INPUT_TYPE,
+                                           errorMessage) == false)
     {
+        error.addMeesage(errorMessage);
         error.addMeesage("check of completeness of input-fields failed");
+        status.statusCode = 400;
+        status.errorMessage = errorMessage;
         LOG_ERROR(error);
         return false;
     }
@@ -213,9 +219,14 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
 
     // check output to be complete
     DataMap* output = blossomLeaf.output.getItemContent()->toMap();
-    if(blossom->validateFieldsCompleteness(*output, FieldDef::OUTPUT_TYPE, error) == false)
+    if(blossom->validateFieldsCompleteness(*output,
+                                           FieldDef::OUTPUT_TYPE,
+                                           errorMessage) == false)
     {
+        error.addMeesage(errorMessage);
         error.addMeesage("check of completeness of output-fields failed");
+        status.statusCode = 500;
+        status.errorMessage = errorMessage;
         LOG_ERROR(error);
         return false;
     }

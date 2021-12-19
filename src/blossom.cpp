@@ -292,13 +292,17 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
 
     // set default-values
     fillDefaultValues(*blossomLeaf.input.getItemContent()->toMap());
+    std::string errorMessage;
 
     // validate input
     if(checkBlossomValues(validationMap,
                           *blossomLeaf.input.getItemContent()->toMap(),
                           FieldDef::INPUT_TYPE,
-                          error) == false)
+                          errorMessage) == false)
     {
+        error.addMeesage(errorMessage);
+        status.errorMessage = errorMessage;
+        status.statusCode = 400;
         return false;
     }
 
@@ -313,8 +317,11 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     if(checkBlossomValues(validationMap,
                           *blossomLeaf.output.getItemContent()->toMap(),
                           FieldDef::OUTPUT_TYPE,
-                          error) == false)
+                          errorMessage) == false)
     {
+        error.addMeesage(errorMessage);
+        status.errorMessage = errorMessage;
+        status.statusCode = 500;
         return false;
     }
 
@@ -325,14 +332,15 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
  * @brief validate given input with the required and allowed values of the selected blossom
  *
  * @param input given input values
- * @param error reference for error-output
+ * @param valueType say if input or output should be checked
+ * @param errorMessage reference for error-output
  *
  * @return true, if successful, else false
  */
 bool
 Blossom::validateFieldsCompleteness(const DataMap &input,
                                     const FieldDef::IO_ValueType valueType,
-                                    ErrorContainer &error)
+                                    std::string &errorMessage)
 {
     if(allowUnmatched == false)
     {
@@ -347,9 +355,9 @@ Blossom::validateFieldsCompleteness(const DataMap &input,
             if(defIt == validationMap.end())
             {
                 // build error-output
-                error.addMeesage("Validation failed, because variable \""
-                                 + compareIt->first
-                                 + "\" is not in the list of allowed keys");
+                errorMessage = "Validation failed, because item '"
+                               + compareIt->first
+                               + "' is not in the list of allowed keys";
                 return false;
             }
         }
@@ -367,9 +375,9 @@ Blossom::validateFieldsCompleteness(const DataMap &input,
             // search for values
             if(input.contains(defIt->first) == false)
             {
-                error.addMeesage("Validation failed, because variable \""
-                                 + defIt->first
-                                 + "\" is required, but is not set.");
+                errorMessage = "Validation failed, because variable '"
+                               + defIt->first
+                               + "' is required, but is not set.";
                 return false;
             }
         }
@@ -408,9 +416,9 @@ Blossom::validateInput(BlossomItem &blossomItem,
             if(defIt == validationMap.end())
             {
                 // build error-output
-                error.addMeesage("variable \""
+                error.addMeesage("item '"
                                  + compareIt->first
-                                 + "\" is not in the list of allowed keys");
+                                 + "' is not in the list of allowed keys");
                 createError(blossomItem, filePath, "validator", error);
                 return false;
             }
@@ -432,18 +440,18 @@ Blossom::validateInput(BlossomItem &blossomItem,
             {
                 if(defIt->second.ioType != compareIt->second)
                 {
-                    error.addMeesage("variable \""
+                    error.addMeesage("item '"
                                      + defIt->first
-                                     + "\" has not the correct input/output type");
+                                     + "' has not the correct input/output type");
                     createError(blossomItem, filePath, "validator", error);
                     return false;
                 }
             }
             else
             {
-                error.addMeesage("variable \""
+                error.addMeesage("item '"
                                  + defIt->first
-                                 + "\" is required, but is not set.");
+                                 + "' is required, but is not set.");
                 createError(blossomItem, filePath, "validator", error);
                 return false;
             }
