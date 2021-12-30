@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.12.0] - 2021-12-30
+
+### Added
+- value-validation for blossoms and trees
+    - type
+    - required or not 
+    - regex
+    - default 
+- value-validation for blossoms
+    - regex
+    - exact matching
+    - min and max values and string-length
+
+### Fixed
+- thread-naming
+- fixed conflict in case that an input- and an output-field have the same name
+
+### Removed
+- mutex in blossom-trigger
+
+
+
 ## [0.11.0] - 2021-11-26
 
 ### Added
