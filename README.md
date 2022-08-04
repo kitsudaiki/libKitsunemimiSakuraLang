@@ -1,6 +1,6 @@
 # libKitsunemimiSakuraLang
 
-![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/kitsudaiki/libKitsunemimiSakuraLang?label=build%20and%20test&style=flat-square)
+![Github workfloat status](https://img.shields.io/github/workflow/status/kitsudaiki/libKitsunemimiSakuraLang/build-and-test/develop?label=build%20and%20test&style=flat-square)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kitsudaiki/libKitsunemimiSakuraLang?label=version&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/kitsudaiki/libKitsunemimiSakuraLang?style=flat-square)
 ![C++Version](https://img.shields.io/badge/c%2B%2B-17-blue?style=flat-square)
