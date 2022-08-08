@@ -25,7 +25,7 @@
 
 #include <regex>
 
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 
 #include <items/value_items.h>

@@ -26,8 +26,8 @@
 #include <vector>
 #include <string>
 
-#include <libKitsunemimiCommon/common_items/data_items.h>
-#include <libKitsunemimiCommon/common_items/table_item.h>
+#include <libKitsunemimiCommon/items/data_items.h>
+#include <libKitsunemimiCommon/items/table_item.h>
 #include <libKitsunemimiCommon/logger.h>
 
 #include <iostream>

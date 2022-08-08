@@ -22,8 +22,8 @@
 
 #include "value_item_functions.h"
 
-#include <libKitsunemimiCommon/common_methods/string_methods.h>
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/methods/string_methods.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 
 #include <libKitsunemimiJson/json_item.h>
 

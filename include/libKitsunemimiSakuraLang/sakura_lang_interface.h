@@ -30,7 +30,7 @@
 #include <filesystem>
 #include <sys/ioctl.h>
 
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiSakuraLang/structs.h>
 

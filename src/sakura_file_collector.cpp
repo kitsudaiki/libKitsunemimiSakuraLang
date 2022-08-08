@@ -24,12 +24,12 @@
 
 #include <libKitsunemimiCommon/files/text_file.h>
 #include <libKitsunemimiCommon/files/binary_file.h>
-#include <libKitsunemimiCommon/common_methods/file_methods.h>
+#include <libKitsunemimiCommon/methods/file_methods.h>
 
 #include <libKitsunemimiSakuraLang/sakura_lang_interface.h>
 
-#include <libKitsunemimiCommon/common_items/table_item.h>
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/table_item.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 #include <libKitsunemimiCommon/buffer/data_buffer.h>
 
 namespace Kitsunemimi
@@ -229,9 +229,8 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             {
                 Kitsunemimi::DataBuffer* buffer = new DataBuffer();
                 Kitsunemimi::BinaryFile binFile(itr->path().string());
-                bool ret = binFile.readCompleteFile(*buffer);
 
-                if(ret == false)
+                if(binFile.readCompleteFile(*buffer, error) == false)
                 {
                     error.addMeesage("can not read file " + itr->path().string());
                     LOG_ERROR(error);
@@ -250,8 +249,7 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             {
                 // read resource-file
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::readFile(fileContent,  itr->path().string(), error);
-                if(ret == false)
+                if(Kitsunemimi::readFile(fileContent, itr->path().string(), error) == false)
                 {
                     error.addMeesage("Error while reading ressource-files");
                     LOG_ERROR(error);
@@ -269,8 +267,7 @@ SakuraFileCollector::getFilesInDir(const std::filesystem::path &rootPath,
             if(type == "templates")
             {
                 std::string fileContent = "";
-                bool ret = Kitsunemimi::readFile(fileContent, itr->path().string(), error);
-                if(ret == false)
+                if(Kitsunemimi::readFile(fileContent, itr->path().string(), error) == false)
                 {
                     error.addMeesage("Error while reading template-files");
                     LOG_ERROR(error);

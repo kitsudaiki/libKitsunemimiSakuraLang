@@ -41,7 +41,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 #include <items/sakura_items.h>
 
 using Kitsunemimi::DataItem;

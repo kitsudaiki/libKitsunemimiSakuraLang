@@ -24,10 +24,10 @@
 
 #include <items/sakura_items.h>
 
-#include <libKitsunemimiCommon/common_methods/string_methods.h>
+#include <libKitsunemimiCommon/methods/string_methods.h>
 
 #include <libKitsunemimiCommon/logger.h>
-#include <libKitsunemimiCommon/common_methods/file_methods.h>
+#include <libKitsunemimiCommon/methods/file_methods.h>
 
 namespace Kitsunemimi
 {

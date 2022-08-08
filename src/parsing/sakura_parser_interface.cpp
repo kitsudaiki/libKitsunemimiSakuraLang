@@ -24,7 +24,7 @@
 #include <sakura_parser.h>
 #include <items/sakura_items.h>
 
-#include <libKitsunemimiCommon/common_methods/string_methods.h>
+#include <libKitsunemimiCommon/methods/string_methods.h>
 
 # define YY_DECL \
     Kitsunemimi::Sakura::SakuraParser::symbol_type sakuralex (Kitsunemimi::Sakura::SakuraParserInterface& driver)

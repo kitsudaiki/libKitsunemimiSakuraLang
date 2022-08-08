@@ -26,8 +26,8 @@
 #include <libKitsunemimiSakuraLang/blossom.h>
 
 #include <libKitsunemimiJinja2/jinja2_converter.h>
-#include <libKitsunemimiCommon/common_items/data_items.h>
-#include <libKitsunemimiCommon/common_items/table_item.h>
+#include <libKitsunemimiCommon/items/data_items.h>
+#include <libKitsunemimiCommon/items/table_item.h>
 
 namespace Kitsunemimi
 {

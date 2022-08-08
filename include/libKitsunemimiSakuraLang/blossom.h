@@ -23,7 +23,7 @@
 #ifndef KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 #define KITSUNEMIMI_SAKURA_LANG_BLOSSOM_H
 
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 #include <libKitsunemimiSakuraLang/structs.h>
 

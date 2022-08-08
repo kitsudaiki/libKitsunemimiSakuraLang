@@ -22,8 +22,8 @@
 
 #include <items/value_item_map.h>
 
-#include <libKitsunemimiCommon/common_items/table_item.h>
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/table_item.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 
 namespace Kitsunemimi
 {

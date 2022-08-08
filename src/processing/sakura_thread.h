@@ -31,7 +31,7 @@
 #include <items/sakura_items.h>
 
 #include <libKitsunemimiCommon/threading/thread.h>
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <libKitsunemimiCommon/items/data_items.h>
 
 namespace Kitsunemimi
 {
