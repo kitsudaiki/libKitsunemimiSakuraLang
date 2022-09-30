@@ -22,16 +22,16 @@ StandaloneBlossom::StandaloneBlossom(Interface_Test* sessionTest)
 }
 
 bool
-StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
+StandaloneBlossom::runTask(BlossomIO &blossomIO,
                            const DataMap&,
                            BlossomStatus &status,
                            ErrorContainer &error)
 {
     LOG_DEBUG("StandaloneBlossom");
 
-    if(blossomLeaf.input.contains("should_fail"))
+    if(blossomIO.input.contains("should_fail"))
     {
-        const bool shouldFail = blossomLeaf.input.get("should_fail").getBool();
+        const bool shouldFail = blossomIO.input.get("should_fail").getBool();
         if(shouldFail)
         {
             status.statusCode = 1337;
@@ -41,7 +41,7 @@ StandaloneBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", 42);
+    blossomIO.output.insert("output", 42);
     return true;
 }
 

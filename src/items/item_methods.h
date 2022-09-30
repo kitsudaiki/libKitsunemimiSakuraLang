@@ -35,7 +35,7 @@ namespace Kitsunemimi
 {
 namespace Sakura
 {
-struct BlossomLeaf;
+struct BlossomIO;
 
 using Kitsunemimi::DataMap;
 
@@ -83,7 +83,7 @@ const std::vector<std::string> checkInput(ValueItemMap &original,
 const std::vector<std::string> checkItems(DataMap &items);
 
 // convert
-const std::string convertBlossomOutput(const BlossomLeaf &blossom);
+const std::string convertBlossomOutput(const BlossomIO &blossom);
 void convertValueMap(DataMap &result,
                      const ValueItemMap &input);
 
@@ -93,7 +93,7 @@ void createError(const BlossomItem &blossomItem,
                  const std::string &errorLocation,
                  ErrorContainer &error,
                  const std::string &possibleSolution = "");
-void createError(const BlossomLeaf &blossomLeaf,
+void createError(const BlossomIO &blossomIO,
                  const std::string &errorLocation,
                  ErrorContainer &error,
                  const std::string &possibleSolution = "");

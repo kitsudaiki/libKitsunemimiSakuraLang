@@ -49,7 +49,7 @@ public:
     const std::map<std::string, FieldDef>* getOutputValidationMap() const;
 
 protected:
-    virtual bool runTask(BlossomLeaf &blossomLeaf,
+    virtual bool runTask(BlossomIO &blossomIO,
                          const DataMap &context,
                          BlossomStatus &status,
                          ErrorContainer &error) = 0;
@@ -80,7 +80,7 @@ private:
     std::map<std::string, FieldDef> m_inputValidationMap;
     std::map<std::string, FieldDef> m_outputValidationMap;
 
-    bool growBlossom(BlossomLeaf &blossomLeaf,
+    bool growBlossom(BlossomIO &blossomIO,
                      const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error);

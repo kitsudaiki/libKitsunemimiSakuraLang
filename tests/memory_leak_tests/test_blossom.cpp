@@ -19,16 +19,16 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
 }
 
 bool
-TestBlossom::runTask(BlossomLeaf &blossomLeaf,
+TestBlossom::runTask(BlossomIO &blossomIO,
                      const DataMap &,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
     LOG_DEBUG("TestBlossom");
 
-    if(blossomLeaf.input.contains("should_fail"))
+    if(blossomIO.input.contains("should_fail"))
     {
-        const bool shouldFail = blossomLeaf.input.get("should_fail").getBool();
+        const bool shouldFail = blossomIO.input.get("should_fail").getBool();
         if(shouldFail)
         {
             status.statusCode = 1337;
@@ -38,7 +38,7 @@ TestBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", 42);
+    blossomIO.output.insert("output", 42);
     return true;
 }
 

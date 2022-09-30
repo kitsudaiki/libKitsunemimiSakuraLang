@@ -263,7 +263,7 @@ Blossom::fillDefaultValues(DataMap &values)
 /**
  * @brief execute blossom
  *
- * @param blossomLeaf leaf-object for values-handling while processing
+ * @param blossomIO leaf-object for values-handling while processing
  * @param context const-map with global accasible values
  * @param status reference for status-output
  * @param error reference for error-output
@@ -271,20 +271,20 @@ Blossom::fillDefaultValues(DataMap &values)
  * @return true, if successful, else false
  */
 bool
-Blossom::growBlossom(BlossomLeaf &blossomLeaf,
+Blossom::growBlossom(BlossomIO &blossomIO,
                      const DataMap* context,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
-    LOG_DEBUG("runTask " + blossomLeaf.blossomName);
+    LOG_DEBUG("runTask " + blossomIO.blossomName);
 
     // set default-values
-    fillDefaultValues(*blossomLeaf.input.getItemContent()->toMap());
+    fillDefaultValues(*blossomIO.input.getItemContent()->toMap());
     std::string errorMessage;
 
     // validate input
     if(checkBlossomValues(m_inputValidationMap,
-                          *blossomLeaf.input.getItemContent()->toMap(),
+                          *blossomIO.input.getItemContent()->toMap(),
                           FieldDef::INPUT_TYPE,
                           errorMessage) == false)
     {
@@ -295,15 +295,15 @@ Blossom::growBlossom(BlossomLeaf &blossomLeaf,
     }
 
     // handle result
-    if(runTask(blossomLeaf, *context, status, error) == false)
+    if(runTask(blossomIO, *context, status, error) == false)
     {
-        createError(blossomLeaf, "blossom execute", error);
+        createError(blossomIO, "blossom execute", error);
         return false;
     }
 
     // validate output
     if(checkBlossomValues(m_outputValidationMap,
-                          *blossomLeaf.output.getItemContent()->toMap(),
+                          *blossomIO.output.getItemContent()->toMap(),
                           FieldDef::OUTPUT_TYPE,
                           errorMessage) == false)
     {

@@ -187,13 +187,13 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // inialize a new blossom-leaf for processing
-    BlossomLeaf blossomLeaf;
-    blossomLeaf.blossomName = blossomName;
-    blossomLeaf.blossomPath = blossomName;
-    blossomLeaf.blossomGroupType = blossomGroupName;
-    blossomLeaf.input = &initialValues;
-    blossomLeaf.parentValues = blossomLeaf.input.getItemContent()->toMap();
-    blossomLeaf.nameHirarchie.push_back("BLOSSOM: " + blossomName);
+    BlossomIO blossomIO;
+    blossomIO.blossomName = blossomName;
+    blossomIO.blossomPath = blossomName;
+    blossomIO.blossomGroupType = blossomGroupName;
+    blossomIO.input = &initialValues;
+    blossomIO.parentValues = blossomIO.input.getItemContent()->toMap();
+    blossomIO.nameHirarchie.push_back("BLOSSOM: " + blossomName);
 
     std::string errorMessage;
     // check input to be complete
@@ -211,7 +211,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // process blossom
-    if(blossom->growBlossom(blossomLeaf, &context, status, error) == false)
+    if(blossom->growBlossom(blossomIO, &context, status, error) == false)
     {
         error.addMeesage("trigger blossom failed.");
         LOG_ERROR(error);
@@ -219,7 +219,7 @@ SakuraLangInterface::triggerBlossom(DataMap &result,
     }
 
     // check output to be complete
-    DataMap* output = blossomLeaf.output.getItemContent()->toMap();
+    DataMap* output = blossomIO.output.getItemContent()->toMap();
     if(blossom->validateFieldsCompleteness(*output,
                                            *blossom->getOutputValidationMap(),
                                            FieldDef::OUTPUT_TYPE,
@@ -601,7 +601,7 @@ SakuraLangInterface::printOutput(const BlossomGroupItem &blossomGroupItem)
  * @param blossomItem blossom-item to generate the output
  */
 void
-SakuraLangInterface::printOutput(const BlossomLeaf &blossomItem)
+SakuraLangInterface::printOutput(const BlossomIO &blossomItem)
 {
     printOutput(convertBlossomOutput(blossomItem));
 }

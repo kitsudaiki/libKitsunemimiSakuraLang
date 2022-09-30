@@ -16,7 +16,7 @@ public:
     StandaloneBlossom(Interface_Test* sessionTest);
 
 protected:
-    bool runTask(BlossomLeaf &blossomLeaf,
+    bool runTask(BlossomIO &blossomIO,
                  const DataMap &,
                  BlossomStatus &status,
                  ErrorContainer &error);
