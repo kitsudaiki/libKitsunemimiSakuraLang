@@ -19,19 +19,19 @@ TestBlossom::TestBlossom(Interface_Test* sessionTest)
 }
 
 bool
-TestBlossom::runTask(BlossomLeaf &blossomLeaf,
+TestBlossom::runTask(BlossomIO &blossomIO,
                      const DataMap &context,
                      BlossomStatus &status,
                      ErrorContainer &error)
 {
     LOG_DEBUG("TestBlossom");
-    const int value = blossomLeaf.input.get("input").getInt();
+    const int value = blossomIO.input.get("input").getInt();
     m_sessionTest->compare(value, 42);
     m_sessionTest->compare(context.get("test-key")->getString(), std::string("asdf"));
 
-    if(blossomLeaf.input.contains("should_fail"))
+    if(blossomIO.input.contains("should_fail"))
     {
-        const bool shouldFail = blossomLeaf.input.get("should_fail").getBool();
+        const bool shouldFail = blossomIO.input.get("should_fail").getBool();
         if(shouldFail)
         {
             status.statusCode = 1337;
@@ -41,7 +41,7 @@ TestBlossom::runTask(BlossomLeaf &blossomLeaf,
         }
     }
 
-    blossomLeaf.output.insert("output", 42);
+    blossomIO.output.insert("output", 42);
     return true;
 }
 

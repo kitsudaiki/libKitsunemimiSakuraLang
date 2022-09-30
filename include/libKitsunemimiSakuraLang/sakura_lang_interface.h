@@ -114,7 +114,7 @@ private:
     friend SakuraThread;
     friend InitialValidator;
 
-    SakuraLangInterface(const uint16_t numberOfThreads = 6,
+    SakuraLangInterface(const uint16_t numberOfThreads = 2,
                         const bool enableDebug = false);
 
     static SakuraLangInterface* m_instance;
@@ -137,7 +137,7 @@ private:
 
     // output
     void printOutput(const BlossomGroupItem &blossomGroupItem);
-    void printOutput(const BlossomLeaf &blossomItem);
+    void printOutput(const BlossomIO &blossomItem);
     void printOutput(const std::string &output);
 };
 

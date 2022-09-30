@@ -614,7 +614,7 @@ checkItems(DataMap &items)
  * @return output as string
  */
 const std::string
-convertBlossomOutput(const BlossomLeaf &blossom)
+convertBlossomOutput(const BlossomIO &blossom)
 {
     std::string output = "";
 
@@ -744,13 +744,13 @@ createError(const BlossomItem &blossomItem,
 /**
  * @brief create an error-output
  *
- * @param blossomLeaf blossom-item with information of the error-location
+ * @param blossomIO blossom-item with information of the error-location
  * @param errorLocation location where the error appeared
  * @param error reference for error-output
  * @param possibleSolution message with a possible solution to solve the problem
  */
 void
-createError(const BlossomLeaf &blossomLeaf,
+createError(const BlossomIO &blossomIO,
             const std::string &errorLocation,
             ErrorContainer &error,
             const std::string &possibleSolution)
@@ -758,10 +758,10 @@ createError(const BlossomLeaf &blossomLeaf,
     return createError(errorLocation,
                        error,
                        possibleSolution,
-                       blossomLeaf.blossomType,
-                       blossomLeaf.blossomGroupType,
-                       blossomLeaf.blossomName,
-                       blossomLeaf.blossomPath);
+                       blossomIO.blossomType,
+                       blossomIO.blossomGroupType,
+                       blossomIO.blossomName,
+                       blossomIO.blossomPath);
 }
 
 } // namespace Sakura

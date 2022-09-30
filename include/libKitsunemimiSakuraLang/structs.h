@@ -32,7 +32,7 @@ namespace Sakura
 
 //--------------------------------------------------------------------------------------------------
 
-struct BlossomLeaf
+struct BlossomIO
 {
     std::string blossomType = "";
     std::string blossomName = "";
@@ -47,7 +47,7 @@ struct BlossomLeaf
 
     std::string terminalOutput = "";
 
-    BlossomLeaf()
+    BlossomIO()
     {
         std::map<std::string, Json::JsonItem> temp;
         output = Json::JsonItem(temp);
