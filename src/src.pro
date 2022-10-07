@@ -3,7 +3,7 @@ QT -= qt core gui
 TARGET = KitsunemimiSakuraLang
 CONFIG += c++17
 TEMPLATE = lib
-VERSION = 0.12.0
+VERSION = 0.13.0
 
 LIBS += -L../../libKitsunemimiCommon/src -lKitsunemimiCommon
 LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
