@@ -1,4 +1,4 @@
-# libKitsunemimiSakuraLang
+# libKitsunemimiSakuraLang (DEPRECATED)
 
 ![Github workfloat status](https://img.shields.io/github/workflow/status/kitsudaiki/libKitsunemimiSakuraLang/build-and-test/develop?label=build%20and%20test&style=flat-square)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/kitsudaiki/libKitsunemimiSakuraLang?label=version&style=flat-square)
@@ -7,6 +7,8 @@
 ![Platform](https://img.shields.io/badge/platform-Linux--x64-lightgrey?style=flat-square)
 
 ## Description
+
+**IMPORTANT: This library is no longer maintained** 
 
 This library provides a simple script-language created by myself. It is packed as library for easy used in different tools. Originally it was created exclusively for the SakuraTree project (https://github.com/kitsudaiki/SakuraTree), but in the end it become generic and flexible enough to be also interesting for other upcoming projects, so it was moved into its own library.
 
